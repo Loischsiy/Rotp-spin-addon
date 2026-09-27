@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "nnn",
+    "nln",
+    "nnn"
+  ],
+  "key": {
+    "n": {
+      "tag": "forge:nuggets/gold"
+    },
+    "l": {
+      "item": "minecraft:leather"
+    }
+  },
+  "result": {
+    "item": "rotp_spin:calibration_buckle"
+  }
+}

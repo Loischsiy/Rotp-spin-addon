@@ -1,5 +1,8 @@
 package com.loischsiy.rotpspin.config;
 
+import java.util.Arrays;
+import java.util.List;
+
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class SpinConfig {
@@ -38,6 +41,14 @@ public class SpinConfig {
     public static final ForgeConfigSpec.BooleanValue LESSONS_ENABLED;
     public static final ForgeConfigSpec.IntValue LESSON2_BALL_HITS;
     public static final ForgeConfigSpec.IntValue LESSON3_HIJACKS;
+    public static final ForgeConfigSpec.IntValue LESSON4_GOLDEN_HITS;
+    public static final ForgeConfigSpec.IntValue LESSON5_GOLDEN_HITS;
+
+    // Golden Spin (lesson 4) and Super Spin (lesson 5)
+    public static final ForgeConfigSpec.DoubleValue GOLDEN_MULT_4;
+    public static final ForgeConfigSpec.DoubleValue GOLDEN_MULT_5;
+    public static final ForgeConfigSpec.DoubleValue GOLDEN_CHIPPED_RETENTION;
+    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> GOLDEN_DEAD_CATEGORIES;
 
     public static final ForgeConfigSpec.DoubleValue HEALING_ENERGY_PER_TICK;
     public static final ForgeConfigSpec.IntValue HEALING_INTERVAL_TICKS;
@@ -141,6 +152,22 @@ public class SpinConfig {
                 .defineInRange("lesson2BallHits", 10, 0, 10000);
         LESSON3_HIJACKS = b.comment("Lesson 3 \"Believe in the rotation\" is learned after this many successful Muscle Hijacks.")
                 .defineInRange("lesson3Hijacks", 5, 0, 10000);
+        LESSON4_GOLDEN_HITS = b.comment("Lesson 4 \"Pay tribute. Spin the bullets in the golden ratio\" is learned after this many hits on creatures with a spinning steel ball at lesson 3.")
+                .defineInRange("lesson4GoldenHits", 15, 0, 10000);
+        LESSON5_GOLDEN_HITS = b.comment("Lesson 5 \"The shortest route is the detour\" (Super Spin) is learned after this many spinning ball hits in total at lesson 4+ (cumulative with the lesson 4 counter).")
+                .defineInRange("lesson5GoldenHits", 30, 0, 10000);
+        b.pop();
+
+        b.push("golden_spin");
+        GOLDEN_MULT_4 = b.comment("Lesson 4 Golden Spin: damage multiplier of a spinning steel ball while calibrated (living biome or calibration buckle in the inventory).")
+                .defineInRange("multiplier4", 1.5, 1.0, 100.0);
+        GOLDEN_MULT_5 = b.comment("Lesson 5 Super Spin: damage multiplier of a spinning steel ball, everywhere, no calibration needed.")
+                .defineInRange("multiplier5", 2.0, 1.0, 100.0);
+        GOLDEN_CHIPPED_RETENTION = b.comment("A chipped (imperfect) ball keeps only this share of the Golden bonus above x1 (Ball Breaker was incomplete with a damaged ball).")
+                .defineInRange("chippedRetention", 0.5, 0.0, 1.0);
+        GOLDEN_DEAD_CATEGORIES = b.comment("Biome categories with no natural golden-ratio markers (frozen strait, desert, void): Golden Spin needs the calibration buckle there. Names of Biome.Category.")
+                .defineList("deadBiomeCategories", Arrays.asList("NETHER", "THEEND", "ICY", "DESERT", "NONE"),
+                        entry -> entry instanceof String);
         b.pop();
 
         b.push("zeppeli_healing");

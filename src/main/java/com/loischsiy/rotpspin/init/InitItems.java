@@ -18,4 +18,9 @@ public class InitItems {
 
     public static final RegistryObject<GyrosHolsterItem> GYROS_HOLSTER = ITEMS.register("gyros_holster",
             () -> new GyrosHolsterItem(new Item.Properties().tab(ModItems.MAIN_TAB).stacksTo(1)));
+
+    // Lesson 4: Gyro's belt buckle in golden-ratio proportions, the calibration reference.
+    // A plain item on purpose: the whole behaviour is "in the inventory or not" (SteelBallEntity).
+    public static final RegistryObject<Item> CALIBRATION_BUCKLE = ITEMS.register("calibration_buckle",
+            () -> new Item(new Item.Properties().tab(ModItems.MAIN_TAB).stacksTo(1)));
 }

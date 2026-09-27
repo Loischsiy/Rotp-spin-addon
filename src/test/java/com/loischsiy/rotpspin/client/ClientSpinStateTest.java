@@ -22,10 +22,10 @@ class ClientSpinStateTest {
     @Test
     void lessonIsClampedToKnownLessons() {
         assertEquals(1, ClientSpinState.getLesson());
-        ClientSpinState.setLesson(3);
-        assertEquals(3, ClientSpinState.getLesson());
+        ClientSpinState.setLesson(5);
+        assertEquals(5, ClientSpinState.getLesson());
         ClientSpinState.setLesson(99);
-        assertEquals(3, ClientSpinState.getLesson());
+        assertEquals(5, ClientSpinState.getLesson());
         ClientSpinState.setLesson(0);
         assertEquals(1, ClientSpinState.getLesson());
     }

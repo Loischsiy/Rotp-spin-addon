@@ -113,9 +113,17 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
   - ЛКМ: `spin_ball_throw` (урок 1; также быстрый доступ, средняя кнопка), `spin_muscle_hijack` (урок 2),
     `spin_item_throw` (урок 3, сущность `entity.SpunItemEntity`).
   - ПКМ (удержание): `spin_ball_steer` (урок 3), `spin_healing` (урок 2).
-- Уроки: `power.SpinData` хранит урок и счётчики практики (NBT `Lesson`, `BallHits`, `Hijacks`),
+- Уроки: `power.SpinData` хранит урок и счётчики практики (NBT `Lesson`, `BallHits`, `Hijacks`, `GoldenHits`),
   `SpinData#isActionUnlocked` (хук RotP `TypeSpecificData`) закрывает действия старших уроков;
-  соответствие действие → урок — `SpinData#requiredLesson`, логика перехода — `power.SpinLessons` (JUnit).
+  соответствие действие → урок — `SpinData#requiredLesson` (действия только до урока 3; уроки 4–5 —
+  пассивный бонус Golden/Super Spin к урону шара, `power.SpinGolden`, JUnit), логика перехода —
+  `power.SpinLessons` (JUnit).
+  Урок 2: попадания вращающимся шаром по существам (`SteelBallEntity#hurtTarget`), урок 3: успешные
+  перехваты мышц, уроки 4–5: попадания вращающимся шаром на уроке 3+ (`SpinData#onGoldenHit`).
+  Бонус применяется в конструкторе `SteelBallEntity`: урок 4 — при калибровке (живой биом не из
+  `golden_spin.deadBiomeCategories` или `calibration_buckle` в инвентаре), урок 5 — везде;
+  сколотый шар сохраняет лишь долю бонуса (`golden_spin.chippedRetention` — в манге Ball Breaker
+  с повреждённым шаром был неполноценным).
   Урок 2: попадания вращающимся шаром по существам (`SteelBallEntity#hurtTarget`), урок 3: успешные
   перехваты мышц. Клиенту уходит «действующий» урок (`SpinLessonSyncPacket` → `ClientSpinState`),
   т.к. COMMON-конфиг (`lessons.enabled`) на клиент не синхронизируется. Для тестов — `/spinlesson set|get`.

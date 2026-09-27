@@ -29,6 +29,7 @@ public class SpinData extends TypeSpecificData {
     private int lesson = SpinLessons.FIRST;
     private int ballHits;
     private int hijacks;
+    private int goldenHits;
 
     public static Optional<SpinData> of(LivingEntity entity) {
         return INonStandPower.getNonStandPowerOptional(entity).resolve()
@@ -65,6 +66,10 @@ public class SpinData extends TypeSpecificData {
         return hijacks;
     }
 
+    public int getGoldenHits() {
+        return goldenHits;
+    }
+
     private int effectiveLesson() {
         return SpinConfig.LESSONS_ENABLED.get() ? lesson : SpinLessons.MAX;
     }
@@ -87,9 +92,20 @@ public class SpinData extends TypeSpecificData {
         }
     }
 
+    /** Server: a spinning steel ball of this user hit a creature at lesson 3+ (practice for lessons 4-5). */
+    public void onGoldenHit() {
+        if (lesson >= 3 && lesson < SpinLessons.MAX) {
+            goldenHits++;
+            showProgress(lesson + 1, goldenHits, lesson == 3
+                    ? SpinConfig.LESSON4_GOLDEN_HITS.get() : SpinConfig.LESSON5_GOLDEN_HITS.get());
+            checkProgress();
+        }
+    }
+
     private void checkProgress() {
-        int reached = SpinLessons.reached(lesson, ballHits, hijacks,
-                SpinConfig.LESSON2_BALL_HITS.get(), SpinConfig.LESSON3_HIJACKS.get());
+        int reached = SpinLessons.reached(lesson, ballHits, hijacks, goldenHits,
+                SpinConfig.LESSON2_BALL_HITS.get(), SpinConfig.LESSON3_HIJACKS.get(),
+                SpinConfig.LESSON4_GOLDEN_HITS.get(), SpinConfig.LESSON5_GOLDEN_HITS.get());
         if (reached > lesson) {
             setLesson(reached, true);
         }
@@ -103,6 +119,7 @@ public class SpinData extends TypeSpecificData {
             // Taken back: the practice has to be repeated.
             ballHits = 0;
             hijacks = 0;
+            goldenHits = 0;
         }
         serverPlayer.ifPresent(player -> {
             sync(player);
@@ -135,6 +152,7 @@ public class SpinData extends TypeSpecificData {
         nbt.putInt("Lesson", lesson);
         nbt.putInt("BallHits", ballHits);
         nbt.putInt("Hijacks", hijacks);
+        nbt.putInt("GoldenHits", goldenHits);
         return nbt;
     }
 
@@ -143,6 +161,7 @@ public class SpinData extends TypeSpecificData {
         lesson = SpinLessons.clamp(nbt.contains("Lesson") ? nbt.getInt("Lesson") : SpinLessons.FIRST);
         ballHits = nbt.getInt("BallHits");
         hijacks = nbt.getInt("Hijacks");
+        goldenHits = nbt.getInt("GoldenHits");
     }
 
     @Override

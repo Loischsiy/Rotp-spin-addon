@@ -14,6 +14,7 @@
 | `textures/action/spin_ball_steer.png` | 32×32 | [action_spin_ball_steer.md](action_spin_ball_steer.md) | ❌ нужна |
 | `textures/action/spin_healing.png` | 32×32 | [action_spin_healing.md](action_spin_healing.md) | ❌ нужна |
 | `textures/action/spin_item_throw.png` | 32×32 | [action_spin_item_throw.md](action_spin_item_throw.md) | ❌ нужна |
+| `textures/item/calibration_buckle.png` | 16×16 | [calibration_buckle.md](calibration_buckle.md) | ❌ нужна |
 
 Вращающийся предмет (`rotp_spin:spun_item`) рисуется иконкой самого брошенного предмета — своей текстуры
 не нужно.

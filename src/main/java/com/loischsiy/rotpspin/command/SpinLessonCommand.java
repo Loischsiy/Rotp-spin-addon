@@ -79,7 +79,8 @@ public class SpinLessonCommand {
         source.sendSuccess(new TranslationTextComponent(KEY + ".get.success", target.getDisplayName(),
                 data.getLesson(), new TranslationTextComponent("rotp_spin.lesson." + data.getLesson()),
                 data.getBallHits(), SpinConfig.LESSON2_BALL_HITS.get(),
-                data.getHijacks(), SpinConfig.LESSON3_HIJACKS.get()), false);
+                data.getHijacks(), SpinConfig.LESSON3_HIJACKS.get(),
+                data.getGoldenHits()), false);
         return data.getLesson();
     }
 }
