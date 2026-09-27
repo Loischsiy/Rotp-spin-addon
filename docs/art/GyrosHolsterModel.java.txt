@@ -1,0 +1,23 @@
+// Textured geometry export for Minecraft 1.16.5 (official mappings adaptation may be required)
+// Wearable cubes: 8. player_body_reference is guide-only and not exported.
+public class GyrosHolsterModel {
+    public final ModelRenderer body;
+    public final ModelRenderer belt;
+    public final ModelRenderer ball_left;
+    public final ModelRenderer ball_right;
+
+    public GyrosHolsterModel() {
+        body = new ModelRenderer(this); body.setPos(0.0F, 24.0F, 0.0F);
+        belt = new ModelRenderer(this); belt.setPos(0.0F, 0.0F, 0.0F); body.addChild(belt);
+        belt.texOffs(0,0).addBox(-4.0F,-12.0F,-2.0F,8.0F,2.0F,4.0F,0.6F,false);
+        belt.texOffs(0,8).addBox(2.5F,-15.0F,-4.5F,3.0F,3.0F,3.0F,0.0F,false);
+        belt.texOffs(12,8).addBox(-5.5F,-15.0F,-4.5F,3.0F,3.0F,3.0F,0.0F,true);
+        belt.texOffs(24,8).addBox(3.5F,-13.0F,-2.8F,1.0F,2.0F,1.0F,0.0F,false);
+        belt.texOffs(28,8).addBox(-4.5F,-13.0F,-2.8F,1.0F,2.0F,1.0F,0.0F,true);
+        belt.texOffs(48,8).addBox(-1.618F,-12.0F,-2.85F,3.236F,2.0F,0.5F,0.0F,false);
+        ball_right = new ModelRenderer(this); ball_right.setPos(0.0F,0.0F,0.0F); belt.addChild(ball_right);
+        ball_right.texOffs(32,8).addBox(3.0F,-13.0F,-4.8F,2.0F,2.0F,2.0F,0.0F,false);
+        ball_left = new ModelRenderer(this); ball_left.setPos(0.0F,0.0F,0.0F); belt.addChild(ball_left);
+        ball_left.texOffs(40,8).addBox(-5.0F,-13.0F,-4.8F,2.0F,2.0F,2.0F,0.0F,true);
+    }
+}

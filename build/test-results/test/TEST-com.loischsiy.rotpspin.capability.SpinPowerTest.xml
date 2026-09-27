@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.loischsiy.rotpspin.capability.SpinPowerTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-09-26T03:00:32" hostname="db61b35c4d15" time="0.006">
+  <properties/>
+  <testcase name="configChangeTriggersSync()" classname="com.loischsiy.rotpspin.capability.SpinPowerTest" time="0.002"/>
+  <testcase name="startsEmpty()" classname="com.loischsiy.rotpspin.capability.SpinPowerTest" time="0.0"/>
+  <testcase name="copyFromTransfersEnergy()" classname="com.loischsiy.rotpspin.capability.SpinPowerTest" time="0.0"/>
+  <testcase name="fractionalRegenDoesNotSyncUntilWholeUnit()" classname="com.loischsiy.rotpspin.capability.SpinPowerTest" time="0.0"/>
+  <testcase name="tickRegeneratesUpToMax()" classname="com.loischsiy.rotpspin.capability.SpinPowerTest" time="0.0"/>
+  <testcase name="consumeSucceedsOnlyWithEnoughEnergy()" classname="com.loischsiy.rotpspin.capability.SpinPowerTest" time="0.0"/>
+  <testcase name="consumeTriggersSync()" classname="com.loischsiy.rotpspin.capability.SpinPowerTest" time="0.0"/>
+  <testcase name="syncStateIsNotCopiedOnClone()" classname="com.loischsiy.rotpspin.capability.SpinPowerTest" time="0.0"/>
+  <testcase name="freshInstanceAlwaysNeedsFirstSync()" classname="com.loischsiy.rotpspin.capability.SpinPowerTest" time="0.0"/>
+  <testcase name="tickClampsWhenMaxWasLowered()" classname="com.loischsiy.rotpspin.capability.SpinPowerTest" time="0.0"/>
+  <testcase name="zeroCostIsAlwaysFree()" classname="com.loischsiy.rotpspin.capability.SpinPowerTest" time="0.0"/>
+  <testcase name="setEnergyNeverNegative()" classname="com.loischsiy.rotpspin.capability.SpinPowerTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

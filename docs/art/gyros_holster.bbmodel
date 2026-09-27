@@ -1,0 +1,409 @@
+{
+  "meta": {
+    "format_version": "4.10",
+    "model_format": "modded_entity",
+    "box_uv": true
+  },
+  "name": "gyros_holster",
+  "model_identifier": "rotp_spin:gyros_holster",
+  "modded_entity_version": "1.15 - 1.16",
+  "visible_box": [
+    1,
+    1,
+    0
+  ],
+  "variable_placeholders": "",
+  "resolution": {
+    "width": 64,
+    "height": 64
+  },
+  "elements": [
+    {
+      "name": "player_body_reference",
+      "box_uv": true,
+      "rescale": false,
+      "locked": false,
+      "light_emission": 0,
+      "render_order": "default",
+      "allow_mirror_modeling": true,
+      "from": [
+        -4,
+        12,
+        -2
+      ],
+      "to": [
+        4,
+        24,
+        2
+      ],
+      "autouv": 0,
+      "color": 7,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "faces": {},
+      "type": "cube",
+      "uuid": "d3c8f25b-c293-4801-a8b1-89153d98b186",
+      "export": false,
+      "uv_offset": [
+        0,
+        48
+      ]
+    },
+    {
+      "name": "belt_band",
+      "box_uv": true,
+      "rescale": false,
+      "locked": false,
+      "light_emission": 0,
+      "render_order": "default",
+      "allow_mirror_modeling": true,
+      "from": [
+        -4,
+        12,
+        -2
+      ],
+      "to": [
+        4,
+        14,
+        2
+      ],
+      "autouv": 0,
+      "color": 5,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "faces": {},
+      "type": "cube",
+      "uuid": "71b3a8ba-fac4-4f6d-9d7a-c2ab16700a6f",
+      "inflate": 0.6,
+      "uv_offset": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "holster_right",
+      "box_uv": true,
+      "rescale": false,
+      "locked": false,
+      "light_emission": 0,
+      "render_order": "default",
+      "allow_mirror_modeling": true,
+      "from": [
+        2.5,
+        9,
+        -4.5
+      ],
+      "to": [
+        5.5,
+        12,
+        -1.5
+      ],
+      "autouv": 0,
+      "color": 1,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "faces": {},
+      "type": "cube",
+      "uuid": "743660e0-125a-4316-9268-1cc680f8695f",
+      "uv_offset": [
+        0,
+        8
+      ]
+    },
+    {
+      "name": "strap_right",
+      "box_uv": true,
+      "rescale": false,
+      "locked": false,
+      "light_emission": 0,
+      "render_order": "default",
+      "allow_mirror_modeling": true,
+      "from": [
+        3.5,
+        11,
+        -2.8
+      ],
+      "to": [
+        4.5,
+        13,
+        -1.8
+      ],
+      "autouv": 0,
+      "color": 3,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "faces": {},
+      "type": "cube",
+      "uuid": "7975b67e-a356-466f-a6b3-d18c1c9f60f0",
+      "uv_offset": [
+        24,
+        8
+      ]
+    },
+    {
+      "name": "ball_right",
+      "box_uv": true,
+      "rescale": false,
+      "locked": false,
+      "light_emission": 0,
+      "render_order": "default",
+      "allow_mirror_modeling": true,
+      "from": [
+        3,
+        11,
+        -4.8
+      ],
+      "to": [
+        5,
+        13,
+        -2.8
+      ],
+      "autouv": 0,
+      "color": 4,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "faces": {},
+      "type": "cube",
+      "uuid": "b89b8a64-8bf3-436f-8f3c-617128e54037",
+      "uv_offset": [
+        32,
+        8
+      ]
+    },
+    {
+      "name": "holster_left",
+      "box_uv": true,
+      "rescale": false,
+      "locked": false,
+      "light_emission": 0,
+      "render_order": "default",
+      "allow_mirror_modeling": true,
+      "from": [
+        -5.5,
+        9,
+        -4.5
+      ],
+      "to": [
+        -2.5,
+        12,
+        -1.5
+      ],
+      "autouv": 0,
+      "color": 1,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "faces": {},
+      "type": "cube",
+      "uuid": "fa9eaa83-823c-4447-8184-6effb33995d3",
+      "uv_offset": [
+        12,
+        8
+      ]
+    },
+    {
+      "name": "strap_left",
+      "box_uv": true,
+      "rescale": false,
+      "locked": false,
+      "light_emission": 0,
+      "render_order": "default",
+      "allow_mirror_modeling": true,
+      "from": [
+        -4.5,
+        11,
+        -2.8
+      ],
+      "to": [
+        -3.5,
+        13,
+        -1.8
+      ],
+      "autouv": 0,
+      "color": 3,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "faces": {},
+      "type": "cube",
+      "uuid": "97bb66ef-3bc1-41c6-81bf-1ad1e76647ed",
+      "uv_offset": [
+        28,
+        8
+      ]
+    },
+    {
+      "name": "ball_left",
+      "box_uv": true,
+      "rescale": false,
+      "locked": false,
+      "light_emission": 0,
+      "render_order": "default",
+      "allow_mirror_modeling": true,
+      "from": [
+        -5,
+        11,
+        -4.8
+      ],
+      "to": [
+        -3,
+        13,
+        -2.8
+      ],
+      "autouv": 0,
+      "color": 4,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "faces": {},
+      "type": "cube",
+      "uuid": "96c485d2-cfb0-4970-96e2-79d08e303db9",
+      "uv_offset": [
+        40,
+        8
+      ]
+    },
+    {
+      "name": "buckle",
+      "box_uv": true,
+      "rescale": false,
+      "locked": false,
+      "light_emission": 0,
+      "render_order": "default",
+      "allow_mirror_modeling": true,
+      "from": [
+        -1.618,
+        12,
+        -2.85
+      ],
+      "to": [
+        1.618,
+        14,
+        -2.35
+      ],
+      "autouv": 0,
+      "color": 2,
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "faces": {},
+      "type": "cube",
+      "uuid": "a0754c9f-0f57-46ed-9ced-835712a60624",
+      "uv_offset": [
+        48,
+        8
+      ]
+    }
+  ],
+  "outliner": [
+    {
+      "name": "body",
+      "origin": [
+        0,
+        24,
+        0
+      ],
+      "color": 7,
+      "uuid": "e2b987aa-e0a7-45c1-ba2f-a61971128b91",
+      "export": true,
+      "isOpen": true,
+      "children": [
+        "d3c8f25b-c293-4801-a8b1-89153d98b186",
+        {
+          "name": "belt",
+          "origin": [
+            0,
+            24,
+            0
+          ],
+          "color": 5,
+          "uuid": "f7c8158d-301f-46f4-b045-5c91c0e7c4b7",
+          "export": true,
+          "isOpen": true,
+          "children": [
+            "71b3a8ba-fac4-4f6d-9d7a-c2ab16700a6f",
+            "743660e0-125a-4316-9268-1cc680f8695f",
+            "7975b67e-a356-466f-a6b3-d18c1c9f60f0",
+            "fa9eaa83-823c-4447-8184-6effb33995d3",
+            "97bb66ef-3bc1-41c6-81bf-1ad1e76647ed",
+            "a0754c9f-0f57-46ed-9ced-835712a60624",
+            {
+              "name": "ball_right",
+              "origin": [
+                0,
+                24,
+                0
+              ],
+              "color": 4,
+              "uuid": "eb8a3ad0-b84a-400f-9662-f67f4a591762",
+              "export": true,
+              "isOpen": true,
+              "children": [
+                "b89b8a64-8bf3-436f-8f3c-617128e54037"
+              ]
+            },
+            {
+              "name": "ball_left",
+              "origin": [
+                0,
+                24,
+                0
+              ],
+              "color": 4,
+              "uuid": "90b2271e-233c-4e54-9093-ec52ee69a7f9",
+              "export": true,
+              "isOpen": true,
+              "children": [
+                "96c485d2-cfb0-4970-96e2-79d08e303db9"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "path": "gyros_holster.png",
+      "name": "gyros_holster.png",
+      "folder": "",
+      "namespace": "rotp_spin",
+      "id": "0",
+      "particle": false,
+      "render_mode": "default",
+      "render_sides": "auto",
+      "frame_time": 1,
+      "frame_order_type": "loop",
+      "frame_order": "",
+      "frame_interpolate": false,
+      "visible": true,
+      "internal": false,
+      "saved": true,
+      "uuid": "baa652d6-faac-4736-8932-f4dea7b85ea8",
+      "source": "gyros_holster.png"
+    }
+  ]
+}

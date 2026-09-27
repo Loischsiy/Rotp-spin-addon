@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "lil",
+    "l l"
+  ],
+  "key": {
+    "l": {
+      "item": "minecraft:leather"
+    },
+    "i": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "rotp_spin:gyros_holster"
+  }
+}

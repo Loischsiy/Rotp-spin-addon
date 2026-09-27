@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.loischsiy.rotpspin.holster.HolsterNbtTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-09-26T03:00:33" hostname="db61b35c4d15" time="0.033">
+  <properties/>
+  <testcase name="popIsLastInFirstOutAndKeepsBallData()" classname="com.loischsiy.rotpspin.holster.HolsterNbtTest" time="0.032"/>
+  <testcase name="emptyOrMissingTagHasNoBalls()" classname="com.loischsiy.rotpspin.holster.HolsterNbtTest" time="0.0"/>
+  <testcase name="pushRespectsCapacity()" classname="com.loischsiy.rotpspin.holster.HolsterNbtTest" time="0.0"/>
+  <testcase name="emptiedHolsterDropsTheListKey()" classname="com.loischsiy.rotpspin.holster.HolsterNbtTest" time="0.0"/>
+  <testcase name="loweredCapacityBlocksPushButKeepsBalls()" classname="com.loischsiy.rotpspin.holster.HolsterNbtTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
