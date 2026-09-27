@@ -125,3 +125,7 @@ git clone --depth 1 https://github.com/StandoByte/RotP-Addon-example.git .refs/a
 ГРАНИЦЫ:       <какие файлы можно трогать>
 ГОТОВО КОГДА:  <критерий приёмки>
 ```
+
+## Headless-тестирование клиента
+
+Используй `mcx` (см. /srv/minecraft-agent/MCX.md): `mcx start`, `mcx launch ./gradlew runClient --offline`, `mcx wait-window`, `mcx fit`, `mcx newworld`, `mcx key/hold/type/click/clickr`, `mcx shot`, `mcx rec`, `mcx stop`. Не запускай Xvfb вручную и не используй `pkill -f` (вместо него `mcx kill`).

@@ -1,3 +1,20 @@
+# Gradle caches and outputs
+.gradle/
+build/
+
+# Local JDK 8 bundle (see AGENTS.md)
+openjdk8/
+
+# Read-only reference checkouts (see AGENTS.md)
+.refs/
+
+# Dev-run world, configs and logs
+run/
+logs/
+
+# macOS
+.DS_Store
+
 # Compiled class file
 *.class
 
