@@ -135,8 +135,9 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
   (`ActionsOverlayGui#getCurrentPower`). Чтобы прыжок Спина работал при закрытом HUD и в режиме стенда,
   `client.SpinLeapInput` (приоритет LOWEST, после RotP) повторяет тот же путь: `MCUtil.leap` +
   `ClOnLeapPacket(NON_STAND)`. Серверную проверку, списание энергии и кулдаун делает RotP.
-- Падение: RotP (`GameplayEventHandler#onLivingFall`, HIGHEST) прощает любой силе с прыжком
-  `(leapStrength + 5) * 3` блоков (у Спина ≈ 19). `power.SpinFallHandler` (LOW) убирает этот бонус
+- Падение: RotP (`GameplayEventHandler#onLivingFall`, LOW) прощает любой силе с прыжком
+  `(leapStrength + 5) * 3` блоков (у Спина ≈ 19). `power.SpinFallHandler` (LOWEST, строго после RotP)
+  убирает этот бонус
   для Спина и ставит `spin_leap.fallDistanceReduction` (по умолчанию 0); бонус прыгающего стенда
   и изменения других модов сохраняются. Исходная высота — `entity.fallDistance` (обнуляется после события).
 

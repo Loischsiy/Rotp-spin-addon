@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Test;
 import net.minecraft.util.math.vector.Vector3d;
 
 class SpinRicochetTest {
-    private static final double EPS = 1e-9;
+    // Vector3d in 1.16.5 rounds through float in some ops: 1e-9 is too strict (see SpinSteerTest).
+    private static final double EPS = 1e-6;
 
     @Test
     void floorFlipsVerticalOnly() {

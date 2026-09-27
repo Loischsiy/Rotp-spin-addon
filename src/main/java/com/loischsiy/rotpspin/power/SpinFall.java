@@ -3,7 +3,7 @@ package com.loischsiy.rotpspin.power;
 /**
  * Fall distance correction for Spin users. Pure math, no World access.
  * <p>
- * RotP ({@code GameplayEventHandler#onLivingFall}, HIGHEST) gives everyone whose power has a leap
+ * RotP ({@code GameplayEventHandler#onLivingFall}, LOW) gives everyone whose power has a leap
  * {@code (leapStrength + 5) * 3} blocks of free fall, about 19 blocks for the Spin leap. Spin is a
  * technique of a human body, not a superhuman one, so for a Spin user that RotP bonus is replaced by
  * the configured reduction. A Stand's own leap bonus (if the Stand leaps) is kept, and so is anything

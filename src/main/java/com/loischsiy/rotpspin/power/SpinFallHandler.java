@@ -12,11 +12,11 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
-/** Runs after RotP's fall handler (HIGHEST) and undoes its leap bonus for Spin, see {@link SpinFall}. */
+/** Runs after RotP's fall handler (LOW) and undoes its leap bonus for Spin, see {@link SpinFall}. */
 @EventBusSubscriber(modid = AddonMain.MOD_ID)
 public class SpinFallHandler {
 
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onLivingFall(LivingFallEvent event) {
         LivingEntity entity = event.getEntityLiving();
         INonStandPower.getNonStandPowerOptional(entity).ifPresent(power -> {
