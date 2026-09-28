@@ -36,6 +36,11 @@ public class SpinConfig {
     public static final ForgeConfigSpec.DoubleValue ITEM_SPIN_DAMAGE;
     public static final ForgeConfigSpec.DoubleValue ITEM_SPIN_VELOCITY;
     public static final ForgeConfigSpec.IntValue ITEM_SPIN_COOLDOWN_TICKS;
+    public static final ForgeConfigSpec.DoubleValue BLOCK_SPIN_ENERGY_COST;
+    public static final ForgeConfigSpec.DoubleValue BLOCK_SPIN_DAMAGE;
+    public static final ForgeConfigSpec.DoubleValue BLOCK_SPIN_VELOCITY;
+    public static final ForgeConfigSpec.IntValue BLOCK_SPIN_COOLDOWN_TICKS;
+    public static final ForgeConfigSpec.DoubleValue BLOCK_SPIN_REACH;
 
     // Lesson progression
     public static final ForgeConfigSpec.BooleanValue LESSONS_ENABLED;
@@ -143,6 +148,19 @@ public class SpinConfig {
                 .defineInRange("velocity", 1.4, 0.1, 10.0);
         ITEM_SPIN_COOLDOWN_TICKS = b.comment("Cooldown of the technique, in ticks.")
                 .defineInRange("cooldownTicks", 20, 0, 1200);
+        b.pop();
+
+        b.push("block_spin");
+        BLOCK_SPIN_ENERGY_COST = b.comment("Lesson 3 \"Believe in the rotation\" for blocks: Spin energy consumed by ripping out and throwing the aimed block.")
+                .defineInRange("energyCost", 15.0, 0.0, 10000.0);
+        BLOCK_SPIN_DAMAGE = b.comment("Base damage of a spinning block (multiplied by its velocity, like an arrow). Crude matter gets no Golden bonus.")
+                .defineInRange("damage", 3.0, 0.0, 1000.0);
+        BLOCK_SPIN_VELOCITY = b.comment("Launch velocity of a spinning block (blocks per tick).")
+                .defineInRange("velocity", 1.4, 0.1, 10.0);
+        BLOCK_SPIN_COOLDOWN_TICKS = b.comment("Cooldown of the technique, in ticks.")
+                .defineInRange("cooldownTicks", 20, 0, 1200);
+        BLOCK_SPIN_REACH = b.comment("How far (blocks) the aimed block may be to be ripped out.")
+                .defineInRange("reach", 6.0, 1.0, 32.0);
         b.pop();
 
         b.push("lessons");

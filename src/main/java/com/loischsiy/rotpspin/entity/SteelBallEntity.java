@@ -5,7 +5,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.github.standobyte.jojo.entity.itemprojectile.ItemNbtProjectileEntity;
-import com.github.standobyte.jojo.entity.stand.StandEntity;
 import com.loischsiy.rotpspin.config.SpinConfig;
 import com.loischsiy.rotpspin.holster.IHolsterAccess;
 import com.loischsiy.rotpspin.init.InitEntities;
@@ -19,7 +18,6 @@ import com.loischsiy.rotpspin.power.SpinSteer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ItemStack;
@@ -222,12 +220,8 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     @Override
     protected boolean hurtTarget(Entity target, Entity thrower) {
         boolean hurt = super.hurtTarget(target, thrower);
-        if (hurt && !level.isClientSide() && isSpinning() && thrower instanceof LivingEntity
-                && target instanceof LivingEntity && !(target instanceof ArmorStandEntity) && !(target instanceof StandEntity)) {
-            SpinData.of((LivingEntity) thrower).ifPresent(data -> {
-                data.onSpinBallHit();
-                data.onGoldenHit();
-            });
+        if (hurt && !level.isClientSide() && isSpinning() && thrower instanceof LivingEntity) {
+            SpinData.practiceHit((LivingEntity) thrower, target);
         }
         return hurt;
     }

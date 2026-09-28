@@ -7,6 +7,7 @@ import com.github.standobyte.jojo.power.impl.nonstand.type.NonStandPowerType;
 import com.loischsiy.rotpspin.AddonMain;
 import com.loischsiy.rotpspin.action.SpinBallSteer;
 import com.loischsiy.rotpspin.action.SpinBallThrow;
+import com.loischsiy.rotpspin.action.SpinBlockThrow;
 import com.loischsiy.rotpspin.action.SpinHealing;
 import com.loischsiy.rotpspin.action.SpinItemThrow;
 import com.loischsiy.rotpspin.action.SpinMuscleHijack;
@@ -32,6 +33,9 @@ public class InitPowers {
     public static final RegistryObject<SpinItemThrow> SPIN_ITEM_THROW = InitStands.ACTIONS.register("spin_item_throw",
             () -> new SpinItemThrow(new NonStandAction.Builder()));
 
+    public static final RegistryObject<SpinBlockThrow> SPIN_BLOCK_THROW = InitStands.ACTIONS.register("spin_block_throw",
+            () -> new SpinBlockThrow(new NonStandAction.Builder()));
+
     public static final RegistryObject<SpinBallSteer> SPIN_BALL_STEER = InitStands.ACTIONS.register("spin_ball_steer",
             () -> new SpinBallSteer(new NonStandAction.Builder().holdType()));
 
@@ -45,7 +49,8 @@ public class InitPowers {
                     (Action<INonStandPower>[]) new Action<?>[] {
                             SPIN_BALL_THROW.get(),
                             SPIN_MUSCLE_HIJACK.get(),
-                            SPIN_ITEM_THROW.get() },
+                            SPIN_ITEM_THROW.get(),
+                            SPIN_BLOCK_THROW.get() },
                     (Action<INonStandPower>[]) new Action<?>[] {
                             SPIN_BALL_STEER.get(),
                             SPIN_HEALING.get() },

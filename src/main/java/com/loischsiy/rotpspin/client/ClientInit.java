@@ -1,6 +1,7 @@
 package com.loischsiy.rotpspin.client;
 
 import com.loischsiy.rotpspin.AddonMain;
+import com.loischsiy.rotpspin.client.render.SpunBlockRenderer;
 import com.loischsiy.rotpspin.client.render.SpunItemRenderer;
 import com.loischsiy.rotpspin.client.render.SteelBallRenderer;
 import com.loischsiy.rotpspin.init.InitEntities;
@@ -21,6 +22,7 @@ public class ClientInit {
         // and the entity has no renderer (NPE in EntityRendererManager.render). Same as RotP's ClientSetup.
         RenderingRegistry.registerEntityRenderingHandler(InitEntities.STEEL_BALL.get(), SteelBallRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(InitEntities.SPUN_ITEM.get(), SpunItemRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(InitEntities.SPUN_BLOCK.get(), SpunBlockRenderer::new);
         // Key bindings are not thread-safe (they edit GameSettings.keyMappings): deferred, as RotP's ClientSetup does.
         event.enqueueWork(SpinKeys::register);
     }

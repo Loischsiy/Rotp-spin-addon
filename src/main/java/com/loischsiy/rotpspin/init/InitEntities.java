@@ -1,6 +1,7 @@
 package com.loischsiy.rotpspin.init;
 
 import com.loischsiy.rotpspin.AddonMain;
+import com.loischsiy.rotpspin.entity.SpunBlockEntity;
 import com.loischsiy.rotpspin.entity.SpunItemEntity;
 import com.loischsiy.rotpspin.entity.SteelBallEntity;
 
@@ -27,4 +28,11 @@ public class InitEntities {
             .clientTrackingRange(4)
             .updateInterval(20)
             .build(AddonMain.MOD_ID + ":spun_item"));
+
+    public static final RegistryObject<EntityType<SpunBlockEntity>> SPUN_BLOCK = ENTITIES.register("spun_block",
+            () -> EntityType.Builder.<SpunBlockEntity>of(SpunBlockEntity::new, EntityClassification.MISC)
+            .sized(0.98F, 0.98F)
+            .clientTrackingRange(4)
+            .updateInterval(20)
+            .build(AddonMain.MOD_ID + ":spun_block"));
 }

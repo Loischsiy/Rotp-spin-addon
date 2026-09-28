@@ -40,7 +40,8 @@ public class SpinData extends TypeSpecificData {
         if (action == InitPowers.SPIN_MUSCLE_HIJACK.get() || action == InitPowers.SPIN_HEALING.get()) {
             return 2;
         }
-        if (action == InitPowers.SPIN_ITEM_THROW.get() || action == InitPowers.SPIN_BALL_STEER.get()) {
+        if (action == InitPowers.SPIN_ITEM_THROW.get() || action == InitPowers.SPIN_BALL_STEER.get()
+                || action == InitPowers.SPIN_BLOCK_THROW.get()) {
             return 3;
         }
         return 1;
@@ -72,6 +73,18 @@ public class SpinData extends TypeSpecificData {
 
     private int effectiveLesson() {
         return SpinConfig.LESSONS_ENABLED.get() ? lesson : SpinLessons.MAX;
+    }
+
+    /** Server: a spinning projectile of this user hit a creature (practice for lessons 2-5). */
+    public static void practiceHit(LivingEntity thrower, net.minecraft.entity.Entity target) {
+        if (target instanceof LivingEntity
+                && !(target instanceof net.minecraft.entity.item.ArmorStandEntity)
+                && !(target instanceof com.github.standobyte.jojo.entity.stand.StandEntity)) {
+            of(thrower).ifPresent(data -> {
+                data.onSpinBallHit();
+                data.onGoldenHit();
+            });
+        }
     }
 
     /** Server: a spinning steel ball of this user hit a creature (practice for lesson 2). */

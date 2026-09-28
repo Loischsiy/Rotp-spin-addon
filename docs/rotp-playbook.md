@@ -111,7 +111,9 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
   `InitStands.ACTIONS`, в хотбар — через массивы `attacks`/`abilities` конструктора `SpinPowerType`
   (раскладка в `InitPowers`, образец — `ModZombieActions`). Урок 1 — встроенный прыжок RotP `isLeapUnlocked`.
   - ЛКМ: `spin_ball_throw` (урок 1; также быстрый доступ, средняя кнопка), `spin_muscle_hijack` (урок 2),
-    `spin_item_throw` (урок 3, сущность `entity.SpunItemEntity`).
+    `spin_item_throw` (урок 3, сущность `entity.SpunItemEntity`), `spin_block_throw` (урок 3:
+    вырывает целевой блок и бросает как грубый шар, сущность `entity.SpunBlockEntity`, правил
+    выбора — `entity.SpinBlock`, JUnit; возврат и Golden-бонус только у идеальной сферы).
   - ПКМ (удержание): `spin_ball_steer` (урок 3), `spin_healing` (урок 2).
 - Уроки: `power.SpinData` хранит урок и счётчики практики (NBT `Lesson`, `BallHits`, `Hijacks`, `GoldenHits`),
   `SpinData#isActionUnlocked` (хук RotP `TypeSpecificData`) закрывает действия старших уроков;
