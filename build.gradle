@@ -42,6 +42,12 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
+            // Required for third-party mixin refmaps (player-animator, bendy-lib):
+            // remaps SRG-named injection targets to our official mappings at runtime.
+            // Same properties as RotP itself uses in its build.gradle.
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
+
             // Recommended logging data for a userdev environment
             // The markers can be changed as needed.
             // "SCAN": For mods scan.
@@ -63,6 +69,10 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
+
+            // Same mixin refmap remapping as in client (see above).
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
 
             // Recommended logging data for a userdev environment
             // The markers can be changed as needed.
@@ -122,6 +132,10 @@ repositories {
         name "Curios" // optional integration, see docs/integrations.md
         url 'https://maven.theillusivec4.top/'
     }
+    maven {
+        name "KosmX" // RotP dev-run requirements: player animation libs (same repo as RotP itself uses)
+        url 'https://maven.kosmx.dev/'
+    }
     mavenCentral() // JUnit / Mockito
 }
 
@@ -155,6 +169,12 @@ dependencies {
 	// Optional Curios integration: API only at compile time (never implementation), full mod only in dev runs
 	compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 	runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+
+	// RotP dev-run requirements (toast "playerAnimator/bendy-lib not found" without them).
+	// runtimeOnly: our code never touches their API (RotP does), and they must not leak into our jar.
+	// Versions — gradle.properties/playeranim_version, bendylib_version.
+	runtimeOnly fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${playeranim_version}")
+	runtimeOnly fg.deobf("io.github.kosmx.bendy-lib:bendy-lib-forge:${bendylib_version}")
 
 	// Tests: JUnit 5.8.2 + Mockito 4.11.0 (Mockito 5 requires Java 11)
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
