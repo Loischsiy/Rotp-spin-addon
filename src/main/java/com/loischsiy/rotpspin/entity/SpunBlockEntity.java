@@ -24,9 +24,9 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 
 /**
- * Lesson 3 "Believe in the rotation" for blocks: a block ripped out by SpinThrow and thrown
- * like a crude steel ball. No return (only the perfect sphere comes back); on a hit the block
- * drops as resources where it landed.
+ * Lesson 3 "Believe in the rotation" for blocks: a block ripped out by SpinThrow or thrown
+ * from the hand (sneak + right click) flies like a crude steel ball. No return (only the perfect
+ * sphere comes back): the crude matter is spent on the first hit and drops as resources there.
  */
 public class SpunBlockEntity extends ItemNbtProjectileEntity {
     private static final DataParameter<Optional<BlockState>> BLOCK =
@@ -59,6 +59,15 @@ public class SpunBlockEntity extends ItemNbtProjectileEntity {
             SpinData.practiceHit((LivingEntity) thrower, target);
         }
         return hurt;
+    }
+
+    @Override
+    protected void changeMovementAfterHit() {
+        // Crude matter is spent on the first hit: it drops as resources where it struck.
+        if (!level.isClientSide()) {
+            Block.dropResources(getBlockState(), level, blockPosition());
+            remove();
+        }
     }
 
     @Override

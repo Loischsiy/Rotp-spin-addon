@@ -53,6 +53,7 @@ public class SpinConfig {
     public static final ForgeConfigSpec.DoubleValue GOLDEN_MULT_4;
     public static final ForgeConfigSpec.DoubleValue GOLDEN_MULT_5;
     public static final ForgeConfigSpec.DoubleValue GOLDEN_CHIPPED_RETENTION;
+    public static final ForgeConfigSpec.DoubleValue GOLDEN_HORSE_GALLOP_SPEED;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> GOLDEN_DEAD_CATEGORIES;
 
     public static final ForgeConfigSpec.DoubleValue HEALING_ENERGY_PER_TICK;
@@ -96,6 +97,9 @@ public class SpinConfig {
 
     // Optional integrations
     public static final ForgeConfigSpec.BooleanValue COMPAT_CURIOS_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue COMPAT_TUSK_ENABLED;
+    public static final ForgeConfigSpec.IntValue COMPAT_TUSK_CHARGE_4;
+    public static final ForgeConfigSpec.IntValue COMPAT_TUSK_CHARGE_5;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -194,6 +198,8 @@ public class SpinConfig {
                 .defineInRange("multiplier5", 2.0, 1.0, 100.0);
         GOLDEN_CHIPPED_RETENTION = b.comment("A chipped (imperfect) ball keeps only this share of the Golden bonus above x1 (Ball Breaker was incomplete with a damaged ball).")
                 .defineInRange("chippedRetention", 0.5, 0.0, 1.0);
+        GOLDEN_HORSE_GALLOP_SPEED = b.comment("Lesson 5 \"The shortest route is the detour\": a ridden horse moving at least this fast (blocks per tick, horizontal) gives Super Spin without calibration, from lesson 4.")
+                .defineInRange("horseGallopSpeed", 0.25, 0.0, 5.0);
         GOLDEN_DEAD_CATEGORIES = b.comment("Biome categories with no natural golden-ratio markers (frozen strait, desert, void): Golden Spin needs the calibration buckle there. Names of Biome.Category.")
                 .defineList("deadBiomeCategories", Arrays.asList("NETHER", "THEEND", "ICY", "DESERT", "NONE"),
                         entry -> entry instanceof String);
@@ -279,7 +285,16 @@ public class SpinConfig {
         b.push("curios");
         COMPAT_CURIOS_ENABLED = b.comment("If Curios is installed, a holster worn in the belt slot is used first. No effect without Curios.")
                 .define("enabled", true);
-        b.pop(2);
+        b.pop();
+        b.push("tusk");
+        COMPAT_TUSK_ENABLED = b.comment("If the Tusk stand addon (rotp_t) is installed, a calibrated Golden Spin charges the nails with rotation. No effect without rotp_t.")
+                .define("enabled", true);
+        COMPAT_TUSK_CHARGE_4 = b.comment("Lesson 4 Golden Spin: spin charge added to Tusk nails (+damage, opens Tusk's own wormhole on break).")
+                .defineInRange("charge4", 2, 0, 20);
+        COMPAT_TUSK_CHARGE_5 = b.comment("Lesson 5 Super Spin: spin charge added to Tusk nails.")
+                .defineInRange("charge5", 4, 0, 20);
+        b.pop();
+        b.pop();
 
         SPEC = b.build();
     }

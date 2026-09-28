@@ -40,4 +40,13 @@ public final class SpinGolden {
     public static double applyChipped(double multiplier, double chippedRetention) {
         return 1.0 + (multiplier - 1.0) * chippedRetention;
     }
+
+    /**
+     * Super Spin from the saddle (lesson 5 "The shortest route is the detour"): a horse at its
+     * natural gallop generates the golden rectangle energy itself, so the rider's throw is golden
+     * without calibration. Needs the lesson (skill) and the speed, not the biome.
+     */
+    public static boolean isGallopSuperSpin(int lesson, double horseSpeed, double minGallopSpeed) {
+        return lesson >= 4 && horseSpeed >= minGallopSpeed;
+    }
 }

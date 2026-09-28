@@ -53,4 +53,14 @@ class SpinGoldenTest {
         assertEquals(1.0, SpinGolden.applyChipped(1.0, 0.5), EPS);
         assertEquals(1.5, SpinGolden.applyChipped(1.5, 1.0), EPS);
     }
+
+    @Test
+    void gallopGivesSuperSpinFromLessonFour() {
+        assertTrue(SpinGolden.isGallopSuperSpin(4, 0.3, 0.25));
+        assertTrue(SpinGolden.isGallopSuperSpin(5, 0.3, 0.25));
+        assertFalse(SpinGolden.isGallopSuperSpin(4, 0.2, 0.25));
+        assertFalse(SpinGolden.isGallopSuperSpin(4, 0.0, 0.25));
+        // No skill, no detour: walking the horse is not a gallop.
+        assertFalse(SpinGolden.isGallopSuperSpin(3, 1.0, 0.25));
+    }
 }

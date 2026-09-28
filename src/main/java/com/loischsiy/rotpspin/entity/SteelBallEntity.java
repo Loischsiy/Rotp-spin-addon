@@ -83,25 +83,8 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
 
     /** Lesson 4 Golden Spin / lesson 5 Super Spin bonus of the thrower, 1.0 if not learned or not calibrated. */
     private static double goldenMultiplier(World world, LivingEntity thrower, boolean chipped) {
-        int lesson = SpinData.of(thrower).map(data -> data.getLesson()).orElse(0);
-        if (lesson < 4) {
-            return 1.0;
-        }
-        String category = world.getBiome(thrower.blockPosition()).getBiomeCategory().name();
-        boolean buckle = thrower instanceof PlayerEntity && hasBuckle((PlayerEntity) thrower);
-        boolean calibrated = SpinGolden.isCalibrated(lesson, category, buckle, SpinConfig.GOLDEN_DEAD_CATEGORIES.get());
-        double mult = SpinGolden.multiplier(lesson, calibrated,
-                SpinConfig.GOLDEN_MULT_4.get(), SpinConfig.GOLDEN_MULT_5.get());
+        double mult = SpinData.goldenMultiplier(world, thrower);
         return chipped ? SpinGolden.applyChipped(mult, SpinConfig.GOLDEN_CHIPPED_RETENTION.get()) : mult;
-    }
-
-    private static boolean hasBuckle(PlayerEntity player) {
-        for (int i = 0; i < player.inventory.getContainerSize(); i++) {
-            if (player.inventory.getItem(i).getItem() == InitItems.CALIBRATION_BUCKLE.get()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

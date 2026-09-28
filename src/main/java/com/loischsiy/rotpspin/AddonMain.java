@@ -5,6 +5,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.loischsiy.rotpspin.capability.SpinPowerCapability;
 import com.loischsiy.rotpspin.compat.curios.CuriosCompat;
+import com.loischsiy.rotpspin.compat.tusk.ITuskCompat;
+import com.loischsiy.rotpspin.compat.tusk.TuskCompat;
 import com.loischsiy.rotpspin.config.SpinConfig;
 import com.loischsiy.rotpspin.holster.HolsterAccess;
 import com.loischsiy.rotpspin.init.InitEffects;
@@ -30,6 +32,8 @@ public class AddonMain {
     public static final Logger LOGGER = LogManager.getLogger();
     // Literal on purpose: the core must not touch compat classes before the mod is confirmed.
     private static final String CURIOS_MOD_ID = "curios";
+    private static final String TUSK_MOD_ID = "rotp_t";
+    private static ITuskCompat tuskCompat = ITuskCompat.NOOP;
 
     public AddonMain() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -57,6 +61,9 @@ public class AddonMain {
         if (isCuriosLoaded()) {
             HolsterAccess.set(CuriosCompat.createHolsterAccess());
         }
+        if (isTuskLoaded()) {
+            tuskCompat = new TuskCompat();
+        }
     }
 
     private void enqueueImc(InterModEnqueueEvent event) {
@@ -67,5 +74,13 @@ public class AddonMain {
 
     private static boolean isCuriosLoaded() {
         return ModList.get().isLoaded(CURIOS_MOD_ID);
+    }
+
+    public static ITuskCompat getTuskCompat() {
+        return tuskCompat;
+    }
+
+    private static boolean isTuskLoaded() {
+        return ModList.get().isLoaded(TUSK_MOD_ID);
     }
 }

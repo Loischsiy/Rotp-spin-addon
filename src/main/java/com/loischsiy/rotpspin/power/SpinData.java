@@ -36,6 +36,53 @@ public class SpinData extends TypeSpecificData {
                 .flatMap(power -> power.getTypeSpecificData(InitPowers.SPIN.get()));
     }
 
+    /** Current lesson of the Spin user, 0 without the Spin power. */
+    public static int lessonOf(LivingEntity entity) {
+        return of(entity).map(SpinData::getLesson).orElse(0);
+    }
+
+    /**
+     * Server: Golden Spin / Super Spin damage multiplier of the thrower (1.0 if not learned
+     * or not calibrated). Lesson 5 works everywhere; lesson 4 needs a living biome or the
+     * calibration buckle — or a horse at full gallop (the detour of lesson 5, usable from lesson 4).
+     */
+    public static double goldenMultiplier(net.minecraft.world.World world, LivingEntity thrower) {
+        int lesson = lessonOf(thrower);
+        if (lesson < 4) {
+            return 1.0;
+        }
+        if (SpinGolden.isGallopSuperSpin(lesson, gallopSpeed(thrower),
+                SpinConfig.GOLDEN_HORSE_GALLOP_SPEED.get())) {
+            return SpinConfig.GOLDEN_MULT_5.get();
+        }
+        String category = world.getBiome(thrower.blockPosition()).getBiomeCategory().name();
+        boolean buckle = thrower instanceof net.minecraft.entity.player.PlayerEntity
+                && hasBuckle((net.minecraft.entity.player.PlayerEntity) thrower);
+        boolean calibrated = SpinGolden.isCalibrated(lesson, category, buckle,
+                SpinConfig.GOLDEN_DEAD_CATEGORIES.get());
+        return SpinGolden.multiplier(lesson, calibrated,
+                SpinConfig.GOLDEN_MULT_4.get(), SpinConfig.GOLDEN_MULT_5.get());
+    }
+
+    /** Horizontal speed of the ridden horse, 0 when not on horseback. */
+    static double gallopSpeed(LivingEntity thrower) {
+        net.minecraft.entity.Entity vehicle = thrower.getVehicle();
+        if (!(vehicle instanceof net.minecraft.entity.passive.horse.AbstractHorseEntity)) {
+            return 0.0;
+        }
+        net.minecraft.util.math.vector.Vector3d motion = vehicle.getDeltaMovement();
+        return Math.sqrt(motion.x * motion.x + motion.z * motion.z);
+    }
+
+    static boolean hasBuckle(net.minecraft.entity.player.PlayerEntity player) {
+        for (int i = 0; i < player.inventory.getContainerSize(); i++) {
+            if (player.inventory.getItem(i).getItem() == com.loischsiy.rotpspin.init.InitItems.CALIBRATION_BUCKLE.get()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static int requiredLesson(Action<?> action) {
         if (action == InitPowers.SPIN_MUSCLE_HIJACK.get() || action == InitPowers.SPIN_HEALING.get()) {
             return 2;

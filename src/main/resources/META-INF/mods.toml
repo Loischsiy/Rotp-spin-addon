@@ -69,3 +69,10 @@ Spin (JoJo Part 7/8) for Ripples of the Past: kinetics, rotation, micro-vibratio
     versionRange="[1.16.5-4.0.0.0,)"
     ordering="AFTER"
     side="BOTH"
+# Optional: Golden Spin charges Tusk nails (see docs/integrations.md)
+[[dependencies.rotp_spin]]
+    modId="rotp_t"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"
