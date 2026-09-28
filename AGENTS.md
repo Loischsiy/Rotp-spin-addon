@@ -131,3 +131,31 @@ git clone --depth 1 https://github.com/StandoByte/RotP-Addon-example.git .refs/a
 ## Headless-тестирование клиента
 
 Используй `mcx` (см. /srv/minecraft-agent/MCX.md): `mcx start`, `mcx launch ./gradlew runClient --offline`, `mcx wait-window`, `mcx fit`, `mcx newworld`, `mcx key/hold/type/click/clickr`, `mcx shot`, `mcx rec`, `mcx stop`. Не запускай Xvfb вручную и не используй `pkill -f` (вместо него `mcx kill`).
+
+## Headless-тестирование клиента (mcx)
+
+Для запуска и проверки headless-клиента Minecraft на этом сервере
+используйте `mcx` (см. `/srv/minecraft-agent/MCX.md` или `~/MCX.md`).
+Никогда не запускайте `Xvfb`/`pkill`/`xdotool` напрямую — только через
+`mcx start/stop/restart/kill`.
+
+Важно для сборки: в `~/.gradle/gradle.properties` прописан
+`org.gradle.java.installations.paths` с путём к bundled `openjdk8/`
+этого репозитория + системному Java 21 — это нужно для авто-резолва
+Java 8 тулчейна Gradle/Forge. Если файл потерян/переустановлен —
+восстановите строку:
+```
+org.gradle.java.installations.paths=/srv/minecraft-agent/projects/Rotp-spin-addon/openjdk8,/usr/lib/jvm/java-21-openjdk-amd64
+```
+Первый прогон `./gradlew runClient` лучше делать без `--offline`,
+чтобы прогреть кэш зависимостей.
+
+Пример:
+```
+mcx start
+mcx launch ./gradlew runClient
+mcx wait-window 'Minecraft'
+mcx newworld
+mcx shot
+mcx stop
+```
