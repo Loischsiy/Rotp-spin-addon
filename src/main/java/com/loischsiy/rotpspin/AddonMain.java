@@ -7,6 +7,7 @@ import com.loischsiy.rotpspin.capability.SpinPowerCapability;
 import com.loischsiy.rotpspin.compat.curios.CuriosCompat;
 import com.loischsiy.rotpspin.config.SpinConfig;
 import com.loischsiy.rotpspin.holster.HolsterAccess;
+import com.loischsiy.rotpspin.init.InitEffects;
 import com.loischsiy.rotpspin.init.InitEntities;
 import com.loischsiy.rotpspin.init.InitItems;
 import com.loischsiy.rotpspin.init.InitPowers;
@@ -37,6 +38,7 @@ public class AddonMain {
 
         InitItems.ITEMS.register(modEventBus);
         InitEntities.ENTITIES.register(modEventBus);
+        InitEffects.EFFECTS.register(modEventBus);
         InitStands.ACTIONS.register(modEventBus);
         InitStands.STANDS.register(modEventBus);
         InitPowers.NON_STAND_POWERS.register(modEventBus);

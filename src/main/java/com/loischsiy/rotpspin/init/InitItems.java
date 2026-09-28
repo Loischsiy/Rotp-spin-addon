@@ -4,6 +4,7 @@ import com.github.standobyte.jojo.init.ModItems;
 import com.loischsiy.rotpspin.AddonMain;
 import com.loischsiy.rotpspin.item.GyrosHolsterItem;
 import com.loischsiy.rotpspin.item.SteelBallItem;
+import com.loischsiy.rotpspin.item.WreckingBallItem;
 
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.RegistryObject;
@@ -15,6 +16,9 @@ public class InitItems {
 
     public static final RegistryObject<SteelBallItem> STEEL_BALL = ITEMS.register("steel_ball",
             () -> new SteelBallItem(new Item.Properties().tab(ModItems.MAIN_TAB).stacksTo(1)));
+
+    public static final RegistryObject<WreckingBallItem> WRECKING_BALL = ITEMS.register("wrecking_ball",
+            () -> new WreckingBallItem(new Item.Properties().tab(ModItems.MAIN_TAB).stacksTo(1)));
 
     public static final RegistryObject<GyrosHolsterItem> GYROS_HOLSTER = ITEMS.register("gyros_holster",
             () -> new GyrosHolsterItem(new Item.Properties().tab(ModItems.MAIN_TAB).stacksTo(1)));

@@ -43,5 +43,8 @@
   "rotp_spin.lesson.4": "Отдай дань уважения. Вращай пули по золотому сечению",
   "rotp_spin.lesson.5": "Самый короткий путь — обходной",
   "action.rotp_spin.spin_block_throw": "Бросок блока",
-  "jojo.message.action_condition.rotp_spin.no_block_to_spin": "Нет блока, который можно закрутить"
+  "jojo.message.action_condition.rotp_spin.no_block_to_spin": "Нет блока, который можно закрутить",
+  "item.rotp_spin.wrecking_ball": "Разрушительный шар",
+  "item.rotp_spin.wrecking_ball.desc": "Гвардейская версия: внутри сферы прячутся %s сателлитов; даже промах поднимает оглушающую волну",
+  "effect.rotp_spin.hemispatial_neglect": "Левостороннее игнорирование"
 }

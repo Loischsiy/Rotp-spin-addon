@@ -83,6 +83,17 @@ public class SpinConfig {
     // Gyro's holster
     public static final ForgeConfigSpec.IntValue HOLSTER_CAPACITY;
 
+    // Wrecking Ball (royal guard version of the steel ball)
+    public static final ForgeConfigSpec.IntValue WRECKING_SATELLITES;
+    public static final ForgeConfigSpec.IntValue WRECKING_RELEASE_AFTER_TICKS;
+    public static final ForgeConfigSpec.DoubleValue WRECKING_SATELLITE_DAMAGE;
+    public static final ForgeConfigSpec.DoubleValue WRECKING_SATELLITE_SPEED;
+    public static final ForgeConfigSpec.DoubleValue WRECKING_SATELLITE_RANGE;
+    public static final ForgeConfigSpec.IntValue WRECKING_SATELLITE_LIFETIME;
+    public static final ForgeConfigSpec.DoubleValue WRECKING_SHOCKWAVE_RADIUS;
+    public static final ForgeConfigSpec.DoubleValue WRECKING_SHOCKWAVE_DAMAGE;
+    public static final ForgeConfigSpec.IntValue WRECKING_NEGLECT_DURATION;
+
     // Optional integrations
     public static final ForgeConfigSpec.BooleanValue COMPAT_CURIOS_ENABLED;
 
@@ -241,6 +252,27 @@ public class SpinConfig {
         b.push("holster");
         HOLSTER_CAPACITY = b.comment("How many steel balls the holster holds (Gyro's belt has two side holsters).")
                 .defineInRange("capacity", 2, 1, 16);
+        b.pop();
+
+        b.push("wrecking_ball");
+        WRECKING_SATELLITES = b.comment("How many satellite balls hide inside a Wrecking Ball (the exact number is not given in canon).")
+                .defineInRange("satellites", 5, 0, 12);
+        WRECKING_RELEASE_AFTER_TICKS = b.comment("Ticks of flight before the satellites fly out.")
+                .defineInRange("releaseAfterTicks", 8, 1, 200);
+        WRECKING_SATELLITE_DAMAGE = b.comment("Base damage of one satellite (like an arrow, multiplied by its velocity).")
+                .defineInRange("satelliteDamage", 2.0, 0.0, 1000.0);
+        WRECKING_SATELLITE_SPEED = b.comment("Launch velocity of a satellite (blocks per tick).")
+                .defineInRange("satelliteSpeed", 1.2, 0.1, 10.0);
+        WRECKING_SATELLITE_RANGE = b.comment("The satellites aim at the nearest living victim within this distance; with none near, they fan out.")
+                .defineInRange("satelliteRange", 8.0, 1.0, 64.0);
+        WRECKING_SATELLITE_LIFETIME = b.comment("Ticks before a spent satellite discards itself.")
+                .defineInRange("satelliteLifetime", 60, 10, 1200);
+        WRECKING_SHOCKWAVE_RADIUS = b.comment("Even a miss raises a shockwave: living victims within this radius are wounded and disoriented.")
+                .defineInRange("shockwaveRadius", 4.0, 0.0, 32.0);
+        WRECKING_SHOCKWAVE_DAMAGE = b.comment("Base damage of the miss shockwave.")
+                .defineInRange("shockwaveDamage", 3.0, 0.0, 1000.0);
+        WRECKING_NEGLECT_DURATION = b.comment("How long (ticks) the shockwave's hemispatial neglect lasts: victims ignore their left side.")
+                .defineInRange("neglectDurationTicks", 100, 10, 6000);
         b.pop();
 
         b.push("compat");

@@ -1,0 +1,37 @@
+# ТЗ: Разрушительный шар (`rotp_spin:wrecking_ball`)
+
+Лор: ✅ Wrecking Ball — версия Стального шара королевской гвардии Неаполя:
+внутри основной сферы сидят шары-сателлиты (`docs/spin-lore.md` → «Стальной шар и Wrecking Ball»).
+Число сателлитов в каноне не названо (⚠️ допущение: 5 по умолчанию, ключ `wrecking_ball.satellites`).
+
+Палитра (hex) — как у стального шара + гвардейская латунь:
+| Материал | База | Тень | Блик |
+|---|---|---|---|
+| Сталь сферы | `#8a949e` | `#4a5058` | `#d8dde2` |
+| Латунь (обод, заклёпки) | `#b8860b` | `#7a5a08` | `#e0b84a` |
+| Контур | `#1e140b` | — | — |
+
+PNG: 32-bit RGBA, без потерь, прозрачный фон, без сглаживания и полупрозрачных краёв,
+2–3 оттенка на материал. Свет — сверху-слева, как у ванильных предметов.
+
+## Иконка предмета
+- Файл: `src/main/resources/assets/rotp_spin/textures/item/wrecking_ball.png`
+- Размер: **16×16** (как `steel_ball.png` — сателлиты рисуются той же иконкой в полёте).
+- Силуэт: стальная сфера крупнее обычной, по экватору латунный обод с 4 заклёпками;
+  в верхней половине — тонкая гравировка спирали (1 px тенью). Шар должен читаться как
+  «тот же стальной шар, но гвардейский и с секретом внутри».
+- Отличие от `steel_ball.png`: обод + заклёпки; форму и блик не менять, чтобы в полёте
+  сателлиты выглядели родными.
+
+Промпт для nano banana:
+```
+Pixel art Minecraft item icon, 16x16 pixels, transparent background, no anti-aliasing,
+dark outline #1e140b, light from top-left. A polished steel ball, slightly larger than
+a regular steel ball sprite: steel colors #8a949e base, #d8dde2 highlight dot top-left,
+#4a5058 shadow bottom-right. Around its equator a thin brass band with 4 tiny rivets
+(brass #b8860b, highlight #e0b84a, shadow #7a5a08). On the upper half a thin 1-pixel
+spiral engraving in shadow color. Royal guard, Steel Ball Run style. Flat sprite,
+no text, no background.
+```
+После генерации: уменьшить до 16×16 методом **Nearest Neighbor**, убрать фон в настоящую
+альфу, подогнать цвета к палитре.
