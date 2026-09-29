@@ -26,6 +26,11 @@ public class BallBreakerSenescence extends StandEntityAction {
     }
 
     @Override
+    public float getStaminaCost(IStandPower stand) {
+        return SpinConfig.BALL_BREAKER_TOUCH_STAMINA.get().floatValue();
+    }
+
+    @Override
     public void standPerform(World world, StandEntity standEntity, IStandPower userPower, StandEntityTask task) {
         if (world.isClientSide()) {
             return;

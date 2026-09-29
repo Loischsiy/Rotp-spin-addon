@@ -15,7 +15,6 @@ import com.github.standobyte.jojo.power.impl.stand.type.EntityStandType;
 import com.github.standobyte.jojo.power.impl.stand.type.StandType;
 import com.loischsiy.rotpspin.AddonMain;
 import com.loischsiy.rotpspin.action.BallBreakerSenescence;
-import com.loischsiy.rotpspin.config.SpinConfig;
 import com.loischsiy.rotpspin.entity.BallBreakerEntity;
 
 import net.minecraftforge.fml.RegistryObject;
@@ -47,7 +46,6 @@ public class InitStands {
     public static final RegistryObject<BallBreakerSenescence> BALL_BREAKER_SENESCENCE = ACTIONS.register("ball_breaker_senescence",
             () -> new BallBreakerSenescence(new StandEntityAction.Builder()
                     .standPose(BallBreakerSenescence.SENESCENCE_POSE)
-                    .staminaCost(SpinConfig.BALL_BREAKER_TOUCH_STAMINA.get().floatValue())
                     .partsRequired(StandPart.ARMS)));
 
     public static final EntityStandRegistryObject<EntityStandType<StandStats>, StandEntityType<BallBreakerEntity>> STAND_BALL_BREAKER =
