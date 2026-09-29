@@ -18,7 +18,7 @@
 | `textures/item/calibration_buckle.png` | 16×16 | [calibration_buckle.md](calibration_buckle.md) | ✅ есть |
 | `textures/item/wrecking_ball.png` | 16×16 | [wrecking_ball.md](wrecking_ball.md) | ❌ нужно сгенерировать |
 | `textures/entity/ball_breaker.png` | 128×128 | [ball_breaker.md](ball_breaker.md) | ❌ нужна geo-модель + текстура |
-| `textures/entity/gyro_teacher.png` | 64×64 (скин) | [gyro_teacher.md](gyro_teacher.md) | ❌ нужно сгенерировать |
+| `textures/entity/gyro_teacher.png` | 64×64 (скин) | [gyro_teacher.md](gyro_teacher.md) | ✅ есть (AI-сгенерирована по ТЗ, проверить в игре) |
 
 Вращающийся предмет (`rotp_spin:spun_item`) рисуется иконкой самого брошенного предмета — своей текстуры
 не нужно.
