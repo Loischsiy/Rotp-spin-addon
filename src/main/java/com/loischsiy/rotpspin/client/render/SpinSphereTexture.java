@@ -3,11 +3,11 @@ package com.loischsiy.rotpspin.client.render;
 import net.minecraft.client.renderer.texture.NativeImage;
 
 /**
- * Procedural wraparound skins for the math spheres (no PNG artist needed): brushed steel with a
- * sine engraving that makes the rotation visible; the Wrecking Ball's dark copper body with bright
- * orange curved grooves; gold satellites and the dark sockets they leave behind (references in
- * docs/art/wrecking_ball.md). Deterministic pixel math, not eyeballed art; a painted PNG can
- * replace any of them with a one-line change in the renderer. Pure pixels, no GL calls.
+ * Procedural wraparound skins for the math spheres (no PNG artist needed): the Wrecking Ball's dark
+ * copper body with bright orange curved grooves; gold satellites and the dark sockets they leave
+ * behind (references in docs/art/wrecking_ball.md). The green Steel Ball is NOT here: its wrap is a
+ * PNG generated from the same geometry as its icon by docs/art/tools/gen_steel_ball.py.
+ * Deterministic pixel math, not eyeballed art; a painted PNG can replace any of them with a one-line change in the renderer. Pure pixels, no GL calls.
  */
 public final class SpinSphereTexture {
     public static final int WIDTH = 64;
@@ -19,18 +19,6 @@ public final class SpinSphereTexture {
     static final int GROOVES = 6;
 
     private SpinSphereTexture() {}
-
-    public static NativeImage steelBall() {
-        NativeImage image = new NativeImage(WIDTH, HEIGHT, false);
-        for (int y = 0; y < HEIGHT; y++) {
-            double v = (double) y / (HEIGHT - 1);
-            double shade = shade(v);
-            for (int x = 0; x < WIDTH; x++) {
-                image.setPixelRGBA(x, y, steel((double) x / WIDTH, v, shade));
-            }
-        }
-        return image;
-    }
 
     /** Dark copper sphere with orange grooves, as in the anime/manga colour references. */
     public static NativeImage wreckingBall() {
@@ -76,20 +64,6 @@ public final class SpinSphereTexture {
     /** Poles darker, equator lit (fake studio light from the top-left comes from normals). */
     private static double shade(double v) {
         return 0.45 + 0.55 * Math.sin(Math.PI * v);
-    }
-
-    private static int steel(double u, double v, double shade) {
-        // Spiral engraving: varies with longitude so the spin reads in flight.
-        double groove = frac(u * 4.0 + v * 1.5);
-        double dark = groove < 0.05 ? 0.55 : 1.0;
-        int base = (int) (148 * shade * dark);
-        int light = (int) (222 * shade * dark);
-        // Brushed bands along latitude.
-        int band = (int) (8 * Math.sin(v * Math.PI * 24));
-        return rgba(255,
-                clamp(base + band + (u < 0.25 ? (light - base) / 2 : 0)),
-                clamp(base + band + 6),
-                clamp(light + band - 40));
     }
 
     private static int copper(double u, double v, double shade) {

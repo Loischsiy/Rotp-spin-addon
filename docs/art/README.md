@@ -5,7 +5,8 @@
 
 | Текстура (`src/main/resources/assets/rotp_spin/…`) | Размер | ТЗ | Статус |
 |---|---|---|---|
-| `textures/item/steel_ball.png` | 16×16 | — (сделана до ТЗ) | ✅ есть |
+| `textures/item/steel_ball.png` | 16×16 | [steel_ball.md](steel_ball.md) | ✅ есть (по референсам: зелёный металл + шестиугольная пластина + прорези; генерируется `tools/gen_steel_ball.py`) |
+| `textures/entity/steel_ball_wrapped.png` (3D-шар в полёте) | 256×128 | [steel_ball.md](steel_ball.md) | ✅ есть (тот же скрипт, проверить в игре) |
 | `textures/item/gyros_holster.png` | 32×32 | [gyros_holster.md](gyros_holster.md) §1 | ✅ есть |
 | `textures/entity/gyros_holster.png` (модель на игроке) | 64×64 | [gyros_holster.md](gyros_holster.md) §2, этап 3 | ✅ есть, ждёт проверки в игре |
 | `textures/power/spin.png` | 32×32 | [spin_power_icon.md](spin_power_icon.md) | ✅ есть |
