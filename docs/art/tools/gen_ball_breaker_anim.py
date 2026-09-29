@@ -363,6 +363,39 @@ ANIMS = [IDLE, make_summon(), make_dissipate(), make_punch_light(), make_punch_h
          make_senescence_touch()]
 
 
+# ------------------------------------------------------------------ neck follow
+# `head` is a child of `root` (like example_stand), NOT of `upperPart`/`body`, so it does not follow the torso
+# when the torso bends or twists. We add a `head` position track that carries the neck point along with the
+# torso chain (upperPart -> body). Head ROTATION stays free (head_rot looks at the target).
+def neck_offset(anim, t):
+    n = np.array(gen.BONES['head']['origin'], float)
+    p = n.copy()
+    for b in ('upperPart', 'body'):
+        bd = gen.BONES[b]
+        o = np.array(bd['origin'], float)
+        rot = np.array(bd['rot'] or [0, 0, 0], float) + np.array(sample(anim, b, 'rot', t, DEFAULTS['rot']), float)
+        pos = np.array(sample(anim, b, 'pos', t, DEFAULTS['pos']), float)
+        p = o + gen.rotM(rot) @ (p - o) + pos
+    return p - n
+
+
+def follow_neck(anim, step=0.05):
+    times = {0.0, round(anim.length, 4)}
+    k = 1
+    while k * step < anim.length - 1e-6:
+        times.add(round(k * step, 4)); k += 1
+    for b in ('upperPart', 'body'):
+        for ch in ('rot', 'pos'):
+            times.update(kf[0] for kf in anim.tracks.get((b, ch), []))
+    anim.tracks[('head', 'pos')] = [(t, list(neck_offset(anim, t)), None) for t in sorted(times)]
+    for i, (t, v, e) in enumerate(anim.tracks[('head', 'pos')]):
+        anim.tracks[('head', 'pos')][i] = (t, [round(float(x), 4) + 0.0 for x in v], e)
+
+
+for _a in ANIMS:
+    follow_neck(_a, 0.1 if _a.name == 'idle' else 0.05)
+
+
 # ------------------------------------------------------------------ export (Blockbench space -> Bedrock/GeckoLib)
 def conv(ch, v):
     if ch == 'rot':
