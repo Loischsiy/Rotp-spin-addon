@@ -18,7 +18,7 @@
 | `textures/item/calibration_buckle.png` | 16×16 | [calibration_buckle.md](calibration_buckle.md) | ✅ есть |
 | `textures/item/wrecking_ball.png` | 16×16 | [wrecking_ball.md](wrecking_ball.md) | ❌ нужно сгенерировать |
 | `textures/entity/ball_breaker.png` | 128×128 | [ball_breaker.md](ball_breaker.md) | 🟡 модель по референсам (52 куба) собрана, ждёт проверки в Blockbench; текстура — плейсхолдер `ball_breaker_placeholder.png`, финал рисует художник |
-| `textures/entity/gyro_teacher.png` | 64×64 (скин) | [gyro_teacher.md](gyro_teacher.md) | ✅ есть (AI-сгенерирована по ТЗ, проверить в игре) |
+| `textures/entity/gyro_teacher.png` | 64×64 (скин) | [gyro_teacher.md](gyro_teacher.md) | ✅ есть (переделан по референсам: аниме-наряд SBR; генерируется `tools/gen_gyro_teacher_skin.py`, проверить в игре) |
 
 Вращающийся предмет (`rotp_spin:spun_item`) рисуется иконкой самого брошенного предмета — своей текстуры
 не нужно.
