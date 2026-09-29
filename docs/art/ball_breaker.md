@@ -70,6 +70,19 @@ gold #b8860b highlight #e0b84a. Flat sprite, no text, no background.
 ```
 После генерации: Nearest Neighbor, настоящая альфа, цвета по палитре.
 
+## Иконка эффекта Senescence
+- Файл: `src/main/resources/assets/rotp_spin/textures/mob_effect/senescence.png`
+- Размер: **18×18** (иначе ERROR атласа в логе).
+- Что нарисовать: песочные часы серо-фиолетовые с трещинами.
+
+Промпт для nano banana:
+```
+Pixel art Minecraft mob effect icon, 18x18 pixels, transparent background,
+no anti-aliasing, dark outline #1e140b. A cracked hourglass: gray-violet glass
+(#7a7a8a, highlight #b8b8c8), dark sand (#3a3a44) in the bottom bulb, 2 crack
+lines across the glass. Aging, decay. Flat sprite, no text, no background.
+```
+
 ## Что сделаю я (после получения модели)
 - Стенд `rotp_spin:ball_breaker` через API RotP (lor: проявляется у мастера с уроком 5
   при броске идеальным шаром с калибровкой; сколотый шар — штраф к сенесценции).

@@ -54,3 +54,19 @@ PNG: 32-bit RGBA, без потерь, прозрачный фон, без сг�
 высоты) вместо процедурных: `wrecking_ball_wrapped.png` 64×32 (медь + борозды),
 `wrecking_satellite_wrapped.png` 32×16 (золото). Подключаются одной строкой в
 `SteelBallRenderer.texture`/`satelliteTexture`. Пока их нет — работает процедурная версия.
+
+---
+
+## Иконка эффекта Hemispatial Neglect
+- Файл: `src/main/resources/assets/rotp_spin/textures/mob_effect/hemispatial_neglect.png`
+- Размер: **18×18** (ванильный формат иконок эффектов, иначе в логе ERROR атласа).
+- Что нарисовать: голова моба в профиль, левая половина стёрта/пустая, справа 2 глаза-точки.
+
+Промпт для nano banana:
+```
+Pixel art Minecraft mob effect icon, 18x18 pixels, transparent background,
+no anti-aliasing, dark outline #1e140b. A head in profile facing right: the right
+half solid steel-purple (#8a7bd8, shadow #5a4f96), the left half erased to
+transparent (hemispatial neglect). Two white pixel eyes on the right side.
+Flat sprite, no text, no background.
+```

@@ -19,6 +19,8 @@
 | `textures/item/calibration_buckle.png` | 16×16 | [calibration_buckle.md](calibration_buckle.md) | ✅ есть |
 | `textures/item/wrecking_ball.png` | 16×16 | [wrecking_ball.md](wrecking_ball.md) | ✅ есть (по референсам: медь + оранжевые борозды + золотые сателлиты; генерируется `tools/gen_wrecking_ball_icon.py`) |
 | `textures/entity/stand/ball_breaker.png` | 128×128 | [ball_breaker.md](ball_breaker.md) | ❌ НЕТ — код стенда подключён (ожидает этот путь), без файла будет чёрно-фиолетовым; + 5 иконок (там же § «Иконки») |
+| `textures/mob_effect/hemispatial_neglect.png` | 18×18 | [wrecking_ball.md](wrecking_ball.md) § конец | ❌ НЕТ — ERROR в логе атласа, эффект работает |
+| `textures/mob_effect/senescence.png` | 18×18 | [ball_breaker.md](ball_breaker.md) § конец | ❌ НЕТ — ERROR в логе атласа, эффект работает |
 | `textures/entity/gyro_teacher.png` | 64×64 (скин) | [gyro_teacher.md](gyro_teacher.md) | ✅ есть (переделан по референсам: аниме-наряд SBR; генерируется `tools/gen_gyro_teacher_skin.py`, проверить в игре) |
 
 Вращающийся предмет (`rotp_spin:spun_item`) рисуется иконкой самого брошенного предмета — своей текстуры
