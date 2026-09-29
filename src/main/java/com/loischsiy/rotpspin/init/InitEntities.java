@@ -1,6 +1,7 @@
 package com.loischsiy.rotpspin.init;
 
 import com.loischsiy.rotpspin.AddonMain;
+import com.loischsiy.rotpspin.entity.GyroTeacherEntity;
 import com.loischsiy.rotpspin.entity.SpunBlockEntity;
 import com.loischsiy.rotpspin.entity.SpunItemEntity;
 import com.loischsiy.rotpspin.entity.SteelBallEntity;
@@ -35,4 +36,11 @@ public class InitEntities {
             .clientTrackingRange(4)
             .updateInterval(20)
             .build(AddonMain.MOD_ID + ":spun_block"));
+
+    public static final RegistryObject<EntityType<GyroTeacherEntity>> GYRO_TEACHER = ENTITIES.register("gyro_teacher",
+            () -> EntityType.Builder.<GyroTeacherEntity>of(GyroTeacherEntity::new, EntityClassification.CREATURE)
+            .sized(0.6F, 1.95F)
+            .clientTrackingRange(8)
+            .updateInterval(3)
+            .build(AddonMain.MOD_ID + ":gyro_teacher"));
 }

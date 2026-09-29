@@ -84,6 +84,14 @@ public class SpinConfig {
     // Gyro's holster
     public static final ForgeConfigSpec.IntValue HOLSTER_CAPACITY;
 
+    // Ball Breaker (the ultimate throw's visualization)
+    public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_TOUCH_DAMAGE;
+    public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_TOUCH_RANGE;
+    public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_TOUCH_STAMINA;
+    public static final ForgeConfigSpec.IntValue BALL_BREAKER_SENESCENCE_DURATION;
+    public static final ForgeConfigSpec.IntValue BALL_BREAKER_SENESCENCE_INTERVAL;
+    public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_SENESCENCE_DAMAGE;
+
     // Wrecking Ball (royal guard version of the steel ball)
     public static final ForgeConfigSpec.IntValue WRECKING_SATELLITES;
     public static final ForgeConfigSpec.IntValue WRECKING_RELEASE_AFTER_TICKS;
@@ -258,6 +266,21 @@ public class SpinConfig {
         b.push("holster");
         HOLSTER_CAPACITY = b.comment("How many steel balls the holster holds (Gyro's belt has two side holsters).")
                 .defineInRange("capacity", 2, 1, 16);
+        b.pop();
+
+        b.push("ball_breaker");
+        BALL_BREAKER_TOUCH_DAMAGE = b.comment("Senescence Touch: direct armor-piercing damage in the touched zone.")
+                .defineInRange("touchDamage", 6.0, 0.0, 1000.0);
+        BALL_BREAKER_TOUCH_RANGE = b.comment("Senescence Touch: radius around the Stand in which everything ages.")
+                .defineInRange("touchRange", 3.0, 0.5, 16.0);
+        BALL_BREAKER_TOUCH_STAMINA = b.comment("Senescence Touch: stamina cost.")
+                .defineInRange("touchStamina", 30.0, 0.0, 1000.0);
+        BALL_BREAKER_SENESCENCE_DURATION = b.comment("How long (ticks) the aging lasts after a touch.")
+                .defineInRange("senescenceDurationTicks", 120, 10, 6000);
+        BALL_BREAKER_SENESCENCE_INTERVAL = b.comment("Aging wounds once per this many ticks.")
+                .defineInRange("senescenceIntervalTicks", 20, 1, 1200);
+        BALL_BREAKER_SENESCENCE_DAMAGE = b.comment("Aging damage per interval (ignores armor, like the canon bypass).")
+                .defineInRange("senescenceDamage", 1.0, 0.0, 100.0);
         b.pop();
 
         b.push("wrecking_ball");

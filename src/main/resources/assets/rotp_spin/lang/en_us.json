@@ -45,6 +45,18 @@
   "action.rotp_spin.spin_block_throw": "Block Spin Throw",
   "jojo.message.action_condition.rotp_spin.no_block_to_spin": "No throwable block in sight",
   "item.rotp_spin.wrecking_ball": "Wrecking Ball",
-  "item.rotp_spin.wrecking_ball.desc": "Royal guard version: %s gold satellites are set into the sphere; even a miss raises a stunning shockwave",
-  "effect.rotp_spin.hemispatial_neglect": "Hemispatial Neglect"
+  "item.rotp_spin.wrecking_ball.desc": "Royal guard version: %s satellites hide inside the sphere; even a miss raises a stunning shockwave",
+  "effect.rotp_spin.hemispatial_neglect": "Hemispatial Neglect",
+  "entity.rotp_spin.ball_breaker": "Ball Breaker",
+  "stand.rotp_spin.ball_breaker": "Ball Breaker",
+  "action.rotp_spin.ball_breaker_punch": "Spin Punch",
+  "action.rotp_spin.ball_breaker_heavy_punch": "Golden Punch",
+  "action.rotp_spin.ball_breaker_block": "Spin Guard",
+  "action.rotp_spin.ball_breaker_senescence": "Senescence Touch",
+  "effect.rotp_spin.senescence": "Senescence",
+  "entity.rotp_spin.gyro_teacher": "Gyro Zeppeli",
+  "item.rotp_spin.gyro_teacher_egg": "Gyro Zeppeli Spawn Egg",
+  "rotp_spin.message.gyro_spin_given": "Gyro nods. \"Lesson 1 — If there is a will, do it. Your Spin is yours now.\"",
+  "rotp_spin.message.gyro_has_other": "Gyro shakes his head. \"You already walk another path — I cannot teach you Spin.\"",
+  "rotp_spin.message.gyro_status": "Lesson %s \"%s\" — steel hits %s, hijacks %s, golden hits %s"
 }

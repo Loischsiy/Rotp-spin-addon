@@ -1,10 +1,13 @@
 package com.loischsiy.rotpspin.client;
 
 import com.loischsiy.rotpspin.AddonMain;
+import com.loischsiy.rotpspin.client.render.BallBreakerRenderer;
+import com.loischsiy.rotpspin.client.render.GyroTeacherRenderer;
 import com.loischsiy.rotpspin.client.render.SpunBlockRenderer;
 import com.loischsiy.rotpspin.client.render.SpunItemRenderer;
 import com.loischsiy.rotpspin.client.render.SteelBallRenderer;
 import com.loischsiy.rotpspin.init.InitEntities;
+import com.loischsiy.rotpspin.init.InitStands;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -23,6 +26,8 @@ public class ClientInit {
         RenderingRegistry.registerEntityRenderingHandler(InitEntities.STEEL_BALL.get(), SteelBallRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(InitEntities.SPUN_ITEM.get(), SpunItemRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(InitEntities.SPUN_BLOCK.get(), SpunBlockRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(InitStands.STAND_BALL_BREAKER.getEntityType(), BallBreakerRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(InitEntities.GYRO_TEACHER.get(), GyroTeacherRenderer::new);
         // Key bindings are not thread-safe (they edit GameSettings.keyMappings): deferred, as RotP's ClientSetup does.
         event.enqueueWork(SpinKeys::register);
     }

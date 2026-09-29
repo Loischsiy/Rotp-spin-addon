@@ -52,6 +52,24 @@
 3. `assets/rotp_spin/textures/entity/ball_breaker.png` **128×128**, 32-bit RGBA.
 4. Скриншоты каждого этапа (Blockbench спереди/сбоку + из игры).
 
+## Иконки (нужны для хотбара и меню, все 32×32, стиль как остальные action-иконки)
+| Файл | Что нарисовать |
+|---|---|
+| `textures/power/ball_breaker.png` | Морда стенда: лаймовый круг с розовыми точками-«глазами» и золотой дугой обода |
+| `textures/action/ball_breaker_punch.png` | Лаймовый кулак с розовыми костяшками, скоростные линии |
+| `textures/action/ball_breaker_heavy_punch.png` | Тот же кулак + золотая спираль вокруг |
+| `textures/action/ball_breaker_block.png` | Скрещенные лаймовые предплечья, розовые точки |
+| `textures/action/ball_breaker_senescence.png` | Ладонь + серые «трещины старения»/песочные часы, фиолетовый фон |
+
+Промпт-шаблон для nano banana (подставь строку из таблицы):
+```
+Pixel art Minecraft GUI icon, 32x32 pixels, transparent background, no anti-aliasing,
+dark outline #1e140b, light from top-left, JoJo Steel Ball Run style. <ЧТО>.
+Palette: lime #7ac74f shadow #4a7a2e highlight #b8e69a; dark #3f4a44; pink #e060a8;
+gold #b8860b highlight #e0b84a. Flat sprite, no text, no background.
+```
+После генерации: Nearest Neighbor, настоящая альфа, цвета по палитре.
+
 ## Что сделаю я (после получения модели)
 - Стенд `rotp_spin:ball_breaker` через API RotP (lor: проявляется у мастера с уроком 5
   при броске идеальным шаром с калибровкой; сколотый шар — штраф к сенесценции).

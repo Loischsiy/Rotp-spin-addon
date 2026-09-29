@@ -8,6 +8,7 @@ import com.loischsiy.rotpspin.compat.curios.CuriosCompat;
 import com.loischsiy.rotpspin.compat.tusk.ITuskCompat;
 import com.loischsiy.rotpspin.compat.tusk.TuskCompat;
 import com.loischsiy.rotpspin.config.SpinConfig;
+import com.loischsiy.rotpspin.entity.GyroTeacherEntity;
 import com.loischsiy.rotpspin.holster.HolsterAccess;
 import com.loischsiy.rotpspin.init.InitEffects;
 import com.loischsiy.rotpspin.init.InitEntities;
@@ -16,6 +17,7 @@ import com.loischsiy.rotpspin.init.InitPowers;
 import com.loischsiy.rotpspin.init.InitStands;
 import com.loischsiy.rotpspin.network.AddonPackets;
 
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -49,6 +51,7 @@ public class AddonMain {
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::enqueueImc);
+        modEventBus.addListener(this::entityAttributes);
         if (isCuriosLoaded()) {
             CuriosCompat.init();
         }
@@ -64,6 +67,10 @@ public class AddonMain {
         if (isTuskLoaded()) {
             tuskCompat = new TuskCompat();
         }
+    }
+
+    private void entityAttributes(EntityAttributeCreationEvent event) {
+        event.put(InitEntities.GYRO_TEACHER.get(), GyroTeacherEntity.createAttributes().build());
     }
 
     private void enqueueImc(InterModEnqueueEvent event) {

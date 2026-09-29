@@ -2,6 +2,7 @@ package com.loischsiy.rotpspin.init;
 
 import com.loischsiy.rotpspin.AddonMain;
 import com.loischsiy.rotpspin.effect.HemispatialNeglectEffect;
+import com.loischsiy.rotpspin.effect.SenescenceEffect;
 
 import net.minecraft.potion.Effect;
 import net.minecraftforge.fml.RegistryObject;
@@ -14,4 +15,7 @@ public class InitEffects {
 
     public static final RegistryObject<HemispatialNeglectEffect> NEGLECT = EFFECTS.register("hemispatial_neglect",
             HemispatialNeglectEffect::new);
+
+    public static final RegistryObject<SenescenceEffect> SENESCENCE = EFFECTS.register("senescence",
+            SenescenceEffect::new);
 }
