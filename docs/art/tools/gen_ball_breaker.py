@@ -9,7 +9,7 @@ branch new-model-anim-import); only pivots are moved to the new proportions.
 Front of the model is -Z (like the template: the pickaxe extends to -Z).
 
 Usage (from the project root):
-    python3 docs/art/tools/gen_ball_breaker.py            # writes .bbmodel + placeholder PNG
+    python3 docs/art/tools/gen_ball_breaker.py            # writes .bbmodel + placeholder PNG + geo.json
     python3 docs/art/tools/gen_ball_breaker.py --preview  # + .agent/preview/*.png (self-check renders)
 
 The PNG is only a PLACEHOLDER for checking the model in Blockbench (flat colours + studs).
@@ -25,6 +25,7 @@ PROJECT = os.path.dirname(os.path.dirname(ART))
 OUT_MODEL = os.path.join(ART, 'ball_breaker.bbmodel')
 OUT_PNG = os.path.join(ART, 'ball_breaker_placeholder.png')
 PREVIEW_DIR = os.path.join(PROJECT, '.agent', 'preview')
+OUT_GEO = os.path.join(PROJECT, 'src', 'main', 'resources', 'assets', 'rotp_spin', 'geo', 'ball_breaker.geo.json')
 TEX = 128
 FACES = ['north', 'east', 'south', 'west', 'up', 'down']
 
@@ -494,6 +495,53 @@ def checks():
     print('body height (without ears):', tops)
 
 
+def num(v):
+    v = round(float(v), 4)
+    return int(v) if v == int(v) else v
+
+
+def export_geo():
+    """Same conversion as Blockbench's Bedrock/GeckoLib exporter: X is negated, rotation = [-rx, -ry, rz]."""
+    bones = []
+
+    def walk(name):
+        b = BONES[name]
+        e = {'name': name}
+        if b['parent']:
+            e['parent'] = b['parent']
+        e['pivot'] = [num(-b['origin'][0]), num(b['origin'][1]), num(b['origin'][2])]
+        if b['rot']:
+            e['rotation'] = [num(-b['rot'][0]), num(-b['rot'][1]), num(b['rot'][2])]
+        cubes = []
+        for c in ALL:
+            if c['bone'] != name:
+                continue
+            w, h, d = size_of(c)
+            cube = {'origin': [num(-c['b'][0]), num(c['a'][1]), num(c['a'][2])], 'size': [w, h, d]}
+            if c['rot']:
+                cube['pivot'] = [num(-c['org'][0]), num(c['org'][1]), num(c['org'][2])]
+                cube['rotation'] = [num(-c['rot'][0]), num(-c['rot'][1]), num(c['rot'][2])]
+            cube['uv'] = c['uv']
+            cubes.append(cube)
+        if cubes:
+            e['cubes'] = cubes
+        bones.append(e)
+        for m in ORDER:
+            if BONES[m]['parent'] == name:
+                walk(m)
+
+    walk('stand_pos')
+    geo = {'format_version': '1.12.0', 'minecraft:geometry': [{
+        'description': {'identifier': 'geometry.BallBreakerModelBlockbench', 'texture_width': TEX,
+                        'texture_height': TEX, 'visible_bounds_width': 4, 'visible_bounds_height': 4.5,
+                        'visible_bounds_offset': [0, 1.75, 0]},
+        'bones': bones}]}
+    os.makedirs(os.path.dirname(OUT_GEO), exist_ok=True)
+    with open(OUT_GEO, 'w') as fh:
+        json.dump(geo, fh, indent=2)
+    print('geo ->', OUT_GEO, '(%d bones, %d cubes)' % (len(bones), sum(len(b.get('cubes', [])) for b in bones)))
+
+
 if __name__ == '__main__':
     used = pack()
     print('texture rows used: %d / %d' % (used, TEX))
@@ -502,6 +550,7 @@ if __name__ == '__main__':
     with open(OUT_MODEL, 'w') as fh:
         json.dump(build_bbmodel(tex), fh, indent=1)
     checks()
+    export_geo()
     print('written', OUT_MODEL)
     if '--preview' in sys.argv:
         preview()
