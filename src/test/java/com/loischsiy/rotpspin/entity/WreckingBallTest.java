@@ -72,4 +72,37 @@ class WreckingBallTest {
         boolean b = WreckingBall.isOnLeftSide(look, new Vector3d(1, 0, -1));
         assertTrue(a != b);
     }
+
+    @Test
+    void canonHasFourteenSatellites() {
+        assertEquals(14, WreckingBall.SATELLITE_COUNT);
+    }
+
+    @Test
+    void socketsAreUnitVectorsSpreadEvenly() {
+        List<Vector3d> sockets = WreckingBall.socketDirections(WreckingBall.SATELLITE_COUNT);
+        assertEquals(14, sockets.size());
+        for (Vector3d s : sockets) {
+            assertEquals(1.0, s.length(), EPS);
+        }
+        // Satellites (radius 0.055) sit on a 0.19 sphere: neighbours must not overlap.
+        double minChord = Double.MAX_VALUE;
+        for (int i = 0; i < sockets.size(); i++) {
+            for (int j = i + 1; j < sockets.size(); j++) {
+                minChord = Math.min(minChord, sockets.get(i).distanceTo(sockets.get(j)) * 0.19);
+            }
+        }
+        assertTrue(minChord > 2 * 0.055, "sockets overlap: " + minChord);
+        // Even coverage: the lattice is balanced around the centre.
+        Vector3d sum = Vector3d.ZERO;
+        for (Vector3d s : sockets) {
+            sum = sum.add(s);
+        }
+        assertTrue(sum.length() < 1.5);
+    }
+
+    @Test
+    void noSocketsForNonPositiveCount() {
+        assertTrue(WreckingBall.socketDirections(0).isEmpty());
+    }
 }

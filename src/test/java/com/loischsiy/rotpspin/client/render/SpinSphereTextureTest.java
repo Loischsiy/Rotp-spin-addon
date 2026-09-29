@@ -28,20 +28,52 @@ class SpinSphereTextureTest {
     }
 
     @Test
-    void wreckingBandIsBrassAtEquator() {
-        NativeImage image = SpinSphereTexture.wreckingBall();
-        int rgba = image.getPixelRGBA(4, SpinSphereTexture.HEIGHT / 2);
-        int r = NativeImage.getR(rgba);
-        int g = NativeImage.getG(rgba);
-        int b = NativeImage.getB(rgba);
-        // Brass: strong red, medium green, almost no blue.
-        assertTrue(r > 100 && g > 50 && g < r && b < 60);
-        // Same texel on plain steel is grayish, not brass.
+    void steelIsGrayish() {
         NativeImage steel = SpinSphereTexture.steelBall();
         int s = steel.getPixelRGBA(4, SpinSphereTexture.HEIGHT / 2);
         assertTrue(Math.abs(NativeImage.getR(s) - NativeImage.getB(s)) < 60);
-        image.close();
         steel.close();
+    }
+
+    @Test
+    void wreckingBodyIsCopperWithOrangeGrooves() {
+        NativeImage image = SpinSphereTexture.wreckingBall();
+        int row = SpinSphereTexture.HEIGHT / 2;
+        // Body between grooves: dark copper, red > green > blue.
+        int body = image.getPixelRGBA(SpinSphereTexture.WIDTH / 2 - 3, row);
+        assertTrue(NativeImage.getR(body) > 100 && NativeImage.getR(body) > NativeImage.getG(body)
+                && NativeImage.getG(body) > NativeImage.getB(body));
+        // The hottest pixel of the row is an orange groove: strong red, medium green, little blue.
+        int hottest = 0;
+        int hottestScore = -1;
+        for (int x = 0; x < SpinSphereTexture.WIDTH; x++) {
+            int rgba = image.getPixelRGBA(x, row);
+            int score = NativeImage.getR(rgba) - NativeImage.getB(rgba);
+            if (score > hottestScore) {
+                hottestScore = score;
+                hottest = rgba;
+            }
+        }
+        assertTrue(NativeImage.getR(hottest) > 200 && NativeImage.getG(hottest) > 80 && NativeImage.getB(hottest) < 130);
+        image.close();
+    }
+
+    @Test
+    void satelliteIsGold() {
+        NativeImage image = SpinSphereTexture.satelliteBall();
+        assertEquals(SpinSphereTexture.SMALL_WIDTH, image.getWidth());
+        int rgba = image.getPixelRGBA(20, SpinSphereTexture.SMALL_HEIGHT / 2);
+        assertTrue(NativeImage.getR(rgba) > 200 && NativeImage.getG(rgba) > 150 && NativeImage.getB(rgba) < 100);
+        image.close();
+    }
+
+    @Test
+    void emptySocketIsDark() {
+        NativeImage image = SpinSphereTexture.emptySocket();
+        int rgba = image.getPixelRGBA(3, 3);
+        assertTrue(brightness(rgba) < 150);
+        assertEquals(255, NativeImage.getA(rgba));
+        image.close();
     }
 
     private static int brightness(int rgba) {

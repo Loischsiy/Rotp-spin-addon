@@ -261,12 +261,12 @@ public class SpinConfig {
         b.pop();
 
         b.push("wrecking_ball");
-        WRECKING_SATELLITES = b.comment("How many satellite balls hide inside a Wrecking Ball (the exact number is not given in canon).")
-                .defineInRange("satellites", 5, 0, 12);
+        WRECKING_SATELLITES = b.comment("How many satellite balls a Wrecking Ball carries (canon: 14; the model always shows 14 sockets).")
+                .defineInRange("satellites", 14, 0, 14);
         WRECKING_RELEASE_AFTER_TICKS = b.comment("Ticks of flight before the satellites fly out.")
                 .defineInRange("releaseAfterTicks", 8, 1, 200);
         WRECKING_SATELLITE_DAMAGE = b.comment("Base damage of one satellite (like an arrow, multiplied by its velocity).")
-                .defineInRange("satelliteDamage", 2.0, 0.0, 1000.0);
+                .defineInRange("satelliteDamage", 1.0, 0.0, 1000.0);
         WRECKING_SATELLITE_SPEED = b.comment("Launch velocity of a satellite (blocks per tick).")
                 .defineInRange("satelliteSpeed", 1.2, 0.1, 10.0);
         WRECKING_SATELLITE_RANGE = b.comment("The satellites aim at the nearest living victim within this distance; with none near, they fan out.")

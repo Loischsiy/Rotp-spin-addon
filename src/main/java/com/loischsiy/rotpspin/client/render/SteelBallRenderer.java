@@ -1,7 +1,10 @@
 package com.loischsiy.rotpspin.client.render;
 
+import java.util.List;
+
 import com.loischsiy.rotpspin.AddonMain;
 import com.loischsiy.rotpspin.entity.SteelBallEntity;
+import com.loischsiy.rotpspin.entity.WreckingBall;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -21,18 +24,30 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 
 /**
- * A spinning ball is an exact math sphere with a procedural wraparound skin (steel engraving,
- * brass band on the guard version), rotating around the axis perpendicular to the flight —
- * like a rolling wheel. No billboard sprite: the rotation reads from every camera angle.
+ * A spinning ball is an exact math sphere with a procedural wraparound skin, rotating around the
+ * axis perpendicular to the flight — like a rolling wheel. No billboard sprite: the rotation reads
+ * from every camera angle. The Wrecking Ball is a dark copper sphere with orange grooves and 14
+ * gold satellites seated on a golden-angle lattice; once they fly out only dark sockets remain.
  */
 public class SteelBallRenderer extends EntityRenderer<SteelBallEntity> {
+    private static final float RADIUS = 0.19F;
     // Visual only, not gameplay: the sphere reads better slightly bigger than the hitbox.
-    private static final SpinSphere MESH = SpinSphere.build(0.19F, 24, 16);
-    private static final float SATELLITE_SCALE = 0.55F;
+    private static final SpinSphere MESH = SpinSphere.build(RADIUS, 24, 16);
+    // A satellite in flight is the seated ball scaled up a little, so it stays readable at speed.
+    private static final float SATELLITE_RADIUS = 0.055F;
+    private static final float SATELLITE_SCALE = 0.4F;
+    private static final SpinSphere SATELLITE_MESH = SpinSphere.build(SATELLITE_RADIUS, 12, 8);
+    // Where the satellite centres sit, as a fraction of the body radius: a gold dome above the
+    // surface; the empty socket is a dark dent slightly sunk into it.
+    private static final float SEATED_DEPTH = 0.98F;
+    private static final float EMPTY_DEPTH = 0.96F;
+    private static final List<Vector3d> SOCKETS = WreckingBall.socketDirections(WreckingBall.SATELLITE_COUNT);
     private static final float DEGREES_PER_TICK = 40.0F;
 
     private ResourceLocation steelTexture;
     private ResourceLocation wreckingTexture;
+    private ResourceLocation satelliteTexture;
+    private ResourceLocation socketTexture;
 
     public SteelBallRenderer(EntityRendererManager manager) {
         super(manager);
@@ -41,18 +56,37 @@ public class SteelBallRenderer extends EntityRenderer<SteelBallEntity> {
     @Override
     public void render(SteelBallEntity entity, float yaw, float partialTicks, MatrixStack matrixStack,
             IRenderTypeBuffer buffer, int packedLight) {
+        boolean satellite = entity.isSatellite();
         matrixStack.pushPose();
-        float scale = entity.isSatellite() ? SATELLITE_SCALE : 1.0F;
+        float scale = satellite ? SATELLITE_SCALE : 1.0F;
         matrixStack.scale(scale, scale, scale);
         matrixStack.mulPose(spinRotation(entity, partialTicks));
 
-        IVertexBuilder builder = buffer.getBuffer(RenderType.entityCutoutNoCull(texture(entity)));
+        drawMesh(buffer, texture(entity), matrixStack, MESH, packedLight);
+        if (entity.isWrecking() && !satellite) {
+            boolean empty = entity.areSatellitesReleased();
+            ResourceLocation seatTexture = empty ? socketTexture() : satelliteTexture();
+            float depth = RADIUS * (empty ? EMPTY_DEPTH : SEATED_DEPTH);
+            for (Vector3d direction : SOCKETS) {
+                matrixStack.pushPose();
+                matrixStack.translate(direction.x * depth, direction.y * depth, direction.z * depth);
+                drawMesh(buffer, seatTexture, matrixStack, SATELLITE_MESH, packedLight);
+                matrixStack.popPose();
+            }
+        }
+        matrixStack.popPose();
+        super.render(entity, yaw, partialTicks, matrixStack, buffer, packedLight);
+    }
+
+    private static void drawMesh(IRenderTypeBuffer buffer, ResourceLocation texture, MatrixStack matrixStack,
+            SpinSphere mesh, int packedLight) {
+        IVertexBuilder builder = buffer.getBuffer(RenderType.entityCutoutNoCull(texture));
         Matrix4f pose = matrixStack.last().pose();
         Matrix3f normal = matrixStack.last().normal();
-        int[] indices = MESH.indices;
-        float[] positions = MESH.positions;
-        float[] normals = MESH.normals;
-        float[] uvs = MESH.uvs;
+        int[] indices = mesh.indices;
+        float[] positions = mesh.positions;
+        float[] normals = mesh.normals;
+        float[] uvs = mesh.uvs;
         for (int i = 0; i < indices.length; i++) {
             int v = indices[i];
             builder.vertex(pose, positions[v * 3], positions[v * 3 + 1], positions[v * 3 + 2])
@@ -63,8 +97,6 @@ public class SteelBallRenderer extends EntityRenderer<SteelBallEntity> {
                     .normal(normal, normals[v * 3], normals[v * 3 + 1], normals[v * 3 + 2])
                     .endVertex();
         }
-        matrixStack.popPose();
-        super.render(entity, yaw, partialTicks, matrixStack, buffer, packedLight);
     }
 
     /** Spin around the axis perpendicular to the velocity, like a rolling wheel. */
@@ -89,6 +121,9 @@ public class SteelBallRenderer extends EntityRenderer<SteelBallEntity> {
     }
 
     private ResourceLocation texture(SteelBallEntity entity) {
+        if (entity.isSatellite()) {
+            return satelliteTexture();
+        }
         if (entity.isWrecking()) {
             if (wreckingTexture == null) {
                 wreckingTexture = register("wrecking_ball_sphere", SpinSphereTexture.wreckingBall());
@@ -99,6 +134,20 @@ public class SteelBallRenderer extends EntityRenderer<SteelBallEntity> {
             steelTexture = register("steel_ball_sphere", SpinSphereTexture.steelBall());
         }
         return steelTexture;
+    }
+
+    private ResourceLocation satelliteTexture() {
+        if (satelliteTexture == null) {
+            satelliteTexture = register("wrecking_satellite_sphere", SpinSphereTexture.satelliteBall());
+        }
+        return satelliteTexture;
+    }
+
+    private ResourceLocation socketTexture() {
+        if (socketTexture == null) {
+            socketTexture = register("wrecking_socket_sphere", SpinSphereTexture.emptySocket());
+        }
+        return socketTexture;
     }
 
     private static ResourceLocation register(String name, NativeImage image) {

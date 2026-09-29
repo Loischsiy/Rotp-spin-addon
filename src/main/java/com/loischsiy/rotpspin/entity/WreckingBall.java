@@ -6,16 +6,35 @@ import java.util.List;
 import net.minecraft.util.math.vector.Vector3d;
 
 /**
- * Wrecking Ball (royal guard version of the steel ball): satellite balls hidden inside
- * the main sphere fly out mid-flight and strike from unexpected angles; even a miss
+ * Wrecking Ball (royal guard version of the steel ball): 14 satellite balls are set into
+ * the main sphere; mid-flight they fly out and strike from unexpected angles, and even a miss
  * raises a shockwave that causes hemispatial neglect. Pure math, no World access.
  */
 public final class WreckingBall {
 
     private WreckingBall() {}
 
+    /** Canon: the sphere carries 14 small parts called satellites (docs/spin-lore.md). */
+    public static final int SATELLITE_COUNT = 14;
+
     /** Golden angle: consecutive satellites fan out without ever lining up (docs/spin-lore.md). */
     public static final double GOLDEN_ANGLE = Math.PI * (3.0 - Math.sqrt(5.0));
+
+    /**
+     * Unit directions from the sphere centre to the sockets of {@code count} satellites: an even
+     * Fibonacci lattice on the sphere (golden-angle steps), the same spacing rule as the flight fan.
+     * Used by the renderer to seat the satellites; empty list for {@code count <= 0}.
+     */
+    public static List<Vector3d> socketDirections(int count) {
+        List<Vector3d> directions = new ArrayList<>(Math.max(count, 0));
+        for (int i = 0; i < count; i++) {
+            double y = 1.0 - 2.0 * (i + 0.5) / count;
+            double ring = Math.sqrt(1.0 - y * y);
+            double angle = GOLDEN_ANGLE * i;
+            directions.add(new Vector3d(ring * Math.cos(angle), y, ring * Math.sin(angle)));
+        }
+        return directions;
+    }
 
     /**
      * Velocity of satellite {@code index} (0-based): the aim direction rotated around Y

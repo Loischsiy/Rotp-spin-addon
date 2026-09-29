@@ -45,6 +45,8 @@ import net.minecraft.world.World;
 public class SteelBallEntity extends ItemNbtProjectileEntity {
     private static final DataParameter<Boolean> SPINNING = EntityDataManager.defineId(SteelBallEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> RETURNING = EntityDataManager.defineId(SteelBallEntity.class, DataSerializers.BOOLEAN);
+    // Wrecking Ball: satellites have flown out (client draws empty sockets instead of gold balls)
+    private static final DataParameter<Boolean> SATELLITES_RELEASED = EntityDataManager.defineId(SteelBallEntity.class, DataSerializers.BOOLEAN);
 
     private int returnTicks;
     // Ticks of flight spent under the thrower's control; they do not count towards the return timer.
@@ -92,6 +94,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         super.defineSynchedData();
         entityData.define(SPINNING, false);
         entityData.define(RETURNING, false);
+        entityData.define(SATELLITES_RELEASED, false);
     }
 
     @Override
@@ -105,6 +108,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         if (!level.isClientSide() && wrecking && !satellite && isSpinning() && !isReturning() && !satellitesReleased
                 && tickCount - steeredTicks >= SpinConfig.WRECKING_RELEASE_AFTER_TICKS.get()) {
             satellitesReleased = true;
+            entityData.set(SATELLITES_RELEASED, true);
             releaseSatellites();
         }
 
@@ -351,15 +355,21 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         return entityData.get(SPINNING);
     }
 
-    /** Royal guard version: the renderer draws the brass band. */
+    /** Royal guard version: the renderer draws the copper body with gold satellites. */
     public boolean isWrecking() {
         return wrecking;
     }
 
-    /** A spent satellite: the renderer draws it smaller. */
+    /** A spent satellite: the renderer draws it as a small gold ball. */
     public boolean isSatellite() {
         return satellite;
     }
+
+    /** Wrecking Ball whose satellites have already flown out (synced to the client). */
+    public boolean areSatellitesReleased() {
+        return entityData.get(SATELLITES_RELEASED);
+    }
+
     private void setSpinning(boolean spinning) {
         entityData.set(SPINNING, spinning);
     }
@@ -383,6 +393,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         wrecking = compound.getBoolean("Wrecking");
         satellite = compound.getBoolean("Satellite");
         satellitesReleased = compound.getBoolean("SatellitesReleased");
+        entityData.set(SATELLITES_RELEASED, satellitesReleased);
         shockwaveDone = compound.getBoolean("ShockwaveDone");
     }
 
