@@ -17,12 +17,13 @@
 | `textures/action/spin_block_throw.png` | 32×32 | [action_spin_block_throw.md](action_spin_block_throw.md) | ✅ есть |
 | `textures/item/calibration_buckle.png` | 16×16 | [calibration_buckle.md](calibration_buckle.md) | ✅ есть |
 | `textures/item/wrecking_ball.png` | 16×16 | [wrecking_ball.md](wrecking_ball.md) | ❌ нужно сгенерировать |
-| `textures/entity/ball_breaker.png` | 128×128 | [ball_breaker.md](ball_breaker.md) | ❌ нужна geo-модель + текстура |
+| `textures/entity/ball_breaker.png` | 128×128 | [ball_breaker.md](ball_breaker.md) | 🟡 модель по референсам (52 куба) собрана, ждёт проверки в Blockbench; текстура — плейсхолдер `ball_breaker_placeholder.png`, финал рисует художник |
 | `textures/entity/gyro_teacher.png` | 64×64 (скин) | [gyro_teacher.md](gyro_teacher.md) | ✅ есть (AI-сгенерирована по ТЗ, проверить в игре) |
 
 Вращающийся предмет (`rotp_spin:spun_item`) рисуется иконкой самого брошенного предмета — своей текстуры
 не нужно.
 
-Исходники моделей (в jar не попадают): `gyros_holster.bbmodel`. Геометрия в коде
+Исходники моделей (в jar не попадают): `gyros_holster.bbmodel`, `ball_breaker.bbmodel`
+(генерируется скриптом `tools/gen_ball_breaker.py`: правки геометрии вносим в скрипт и перегенерируем). Геометрия в коде
 (`client/render/GyrosHolsterModel`) снята с `.bbmodel`, а не с `GyrosHolsterModel.java.txt`:
 в `.txt` ремень и кобуры смещены на 2 px вниз относительно `.bbmodel`.
