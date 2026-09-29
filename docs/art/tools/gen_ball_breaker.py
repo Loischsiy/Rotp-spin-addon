@@ -9,11 +9,11 @@ branch new-model-anim-import); only pivots are moved to the new proportions.
 Front of the model is -Z (like the template: the pickaxe extends to -Z).
 
 Usage (from the project root):
-    python3 docs/art/tools/gen_ball_breaker.py            # writes .bbmodel + placeholder PNG + geo.json
+    python3 docs/art/tools/gen_ball_breaker.py            # writes .bbmodel + texture PNG + geo.json
     python3 docs/art/tools/gen_ball_breaker.py --preview  # + .agent/preview/*.png (self-check renders)
 
-The PNG is only a PLACEHOLDER for checking the model in Blockbench (flat colours + studs).
-The final texture is drawn by the artist (see ball_breaker.md).
+The texture (128x128) is painted pixel by pixel by gen_ball_breaker_texture.py (installed below, replaces the
+flat placeholder painters in this file) and written straight to the resources; it is also embedded in the .bbmodel.
 """
 import base64, io, json, math, os, sys, uuid
 import numpy as np
@@ -23,7 +23,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ART = os.path.dirname(HERE)
 PROJECT = os.path.dirname(os.path.dirname(ART))
 OUT_MODEL = os.path.join(ART, 'ball_breaker.bbmodel')
-OUT_PNG = os.path.join(ART, 'ball_breaker_placeholder.png')
+OUT_PNG = os.path.join(PROJECT, 'src', 'main', 'resources', 'assets', 'rotp_spin', 'textures', 'entity', 'stand',
+                       'ball_breaker.png')
 PREVIEW_DIR = os.path.join(PROJECT, '.agent', 'preview')
 OUT_GEO = os.path.join(PROJECT, 'src', 'main', 'resources', 'assets', 'rotp_spin', 'geo', 'ball_breaker.geo.json')
 TEX = 128
@@ -70,7 +71,7 @@ for side, sx in (('left', -1), ('right', 1)):
     bone(side + 'LegJoint', side + 'Leg', [2.5 * sx, 9, 0])
     bone(side + 'LowerLeg', side + 'Leg', [2.5 * sx, 9, 0])
 
-# ---------------------------------------------------------------- painters (placeholder texture)
+# ---------------------------------------------------------------- painters (flat placeholder; replaced by gen_ball_breaker_texture)
 
 
 def new(w, h, c):
@@ -354,7 +355,7 @@ def build_bbmodel(tex):
 
     outliner = [group('stand_pos')]
     texture = {
-        'path': '', 'name': 'ball_breaker_placeholder.png', 'folder': '', 'namespace': '', 'id': '0',
+        'path': '', 'name': 'ball_breaker.png', 'folder': '', 'namespace': '', 'id': '0',
         'width': TEX, 'height': TEX, 'uv_width': TEX, 'uv_height': TEX, 'particle': False,
         'use_as_default': False, 'layers_enabled': False, 'sync_to_project': '', 'render_mode': 'default',
         'render_sides': 'auto', 'frame_time': 1, 'frame_order_type': 'loop', 'frame_order': '',
@@ -544,10 +545,15 @@ def export_geo():
     print('geo ->', OUT_GEO, '(%d bones, %d cubes)' % (len(bones), sum(len(b.get('cubes', [])) for b in bones)))
 
 
+import gen_ball_breaker_texture as _final_texture  # noqa: E402
+_final_texture.install(sys.modules[__name__])
+
+
 if __name__ == '__main__':
     used = pack()
     print('texture rows used: %d / %d' % (used, TEX))
     tex = build_texture()
+    os.makedirs(os.path.dirname(OUT_PNG), exist_ok=True)
     tex.save(OUT_PNG)
     with open(OUT_MODEL, 'w') as fh:
         json.dump(build_bbmodel(tex), fh, indent=1)

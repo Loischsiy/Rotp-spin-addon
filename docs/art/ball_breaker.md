@@ -49,7 +49,7 @@
 ## Что передать мне
 1. `ball_breaker.bbmodel` (исходник, в `docs/art/`, в jar не идёт).
 2. `assets/rotp_spin/geo/ball_breaker.geo.json` + `assets/rotp_spin/animations/ball_breaker.animation.json`.
-3. `assets/rotp_spin/textures/entity/ball_breaker.png` **128×128**, 32-bit RGBA.
+3. `assets/rotp_spin/textures/entity/stand/ball_breaker.png` **128×128**, 32-bit RGBA.
 4. Скриншоты каждого этапа (Blockbench спереди/сбоку + из игры).
 
 ## Иконки (нужны для хотбара и меню, все 32×32, стиль как остальные action-иконки)
@@ -120,3 +120,14 @@ lines across the glass. Aging, decay. Flat sprite, no text, no background.
 Кость `head` (как в `example_stand`) — потомок `root`, а не `upperPart`, поэтому во всех анимациях у неё есть position-трек «следования за шеей»: голова едет за наклоном/скруткой торса, вращением управляет `head_rot`.
 Значения и знаки поворотов проверены только софт-превью (`gen_ball_breaker_anim.py --preview`), в игре не проверялись.
 Имена анимаций взяты из ТЗ (в шаблоне `example_stand` бой называется `attack1`), при подключении в Java сопоставить.
+
+## Текстура и иконки (этап 3, готово)
+
+Аниме-версии Ball Breaker ещё нет (SBR-аниме не дошло до него), поэтому референсы — цветная манга (JoJo Wiki, Infobox/Appearance) и Ground for ASB.
+Канон: глянцевый лаймовый корпус, тёмно-серые «чешуйчатые» боковины конечностей, розовые овальные «шляпки», розовые зигзаги на груди и линии на предплечьях, уши-диски, 6 розовых бугорков на лице, крупные кисти, ботинки-«ракеты».
+
+- Текстура 128×128 красится попиксельно по кубам модели: `tools/gen_ball_breaker_texture.py` (подключается из `gen_ball_breaker.py`, тот же запуск пишет PNG в ресурсы и встраивает его в `.bbmodel`).
+- Иконки (5 шт. 32×32 + 2 эффекта 18×18): `python3 docs/art/tools/gen_ball_breaker_icons.py [--sheet]` (`--sheet` — лист предпросмотра в `.agent/preview`).
+- Иконка лица: золотая дуга из ТЗ сохранена, хотя по референсам у стенда уши-диски.
+- Палитра: лайм `#78c850`-семейство, розовый акцент, золото для дуги, серо-фиолетовый для старения, контур `#1e140b`.
+
