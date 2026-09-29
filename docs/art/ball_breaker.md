@@ -80,5 +80,11 @@
 | `summon` | 1.2 с | hold | свёрнутый малыш (scale 0.2) вращается и раскрывается (руки в стороны, уши вверх), последний кадр == `idle` t=0 |
 | `dissipate` | 1.2 с | hold | первый кадр == `idle` t=0; руки вверх, вращение 1.5 оборота, сжатие до scale 0.01 и подъём |
 
-Голова смотрит по `query.head_x_rotation` / `query.head_y_rotation` (как в шаблоне). Следующая часть:
-`punch_light`, `punch_heavy`, `block`, `senescence_touch`.
+| `punch_light` | 0.8 с | hold | правый джеб: WINDUP 0.0 → PERFORM 0.12 → RECOVERY 0.3, возврат в позу `idle` t=0 |
+| `punch_heavy` | 1.4 с | hold | замах-скрутка корпуса, мощный удар: WINDUP 0.0 → PERFORM 0.6 → RECOVERY 0.85 |
+| `block` | 0.25 с | hold | скрещённые предплечья, уши прижаты; старт от `idle` t=0, последняя поза удерживается |
+| `senescence_touch` | 1.7 с | hold | вытянутая правая рука, дрожь ладони и ушей: WINDUP 0.0 → PERFORM 0.45 → RECOVERY 1.2, возврат в `idle` |
+
+Голова смотрит по `query.head_x_rotation` / `query.head_y_rotation` (как в шаблоне).
+Значения и знаки поворотов проверены только софт-превью (`gen_ball_breaker_anim.py --preview`), в игре не проверялись.
+Имена анимаций взяты из ТЗ (в шаблоне `example_stand` бой называется `attack1`), при подключении в Java сопоставить.

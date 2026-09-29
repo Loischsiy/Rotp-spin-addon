@@ -215,7 +215,152 @@ def make_dissipate():
     return a
 
 
-ANIMS = [IDLE, make_summon(), make_dissipate()]
+# ------------------------------------------------------------------ combat helpers
+def start_on_idle(a):
+    """t=0 of every touched/idle channel == idle t=0 (no pop when switching from idle)"""
+    for (bone, ch) in list(a.tracks) + list(IDLE.tracks):
+        kfs = a.tracks.setdefault((bone, ch), [])
+        kfs[:] = [k for k in kfs if k[0] > 1e-6]
+        kfs.insert(0, (0.0, idle0(bone, ch), None))
+
+
+def end_on_idle(a, ease='easeInOutSine'):
+    """last frame of every touched/idle channel == idle t=0 (seamless return)"""
+    for (bone, ch) in list(a.tracks) + list(IDLE.tracks):
+        kfs = a.tracks.setdefault((bone, ch), [])
+        kfs[:] = [k for k in kfs if k[0] < a.length - 1e-6]
+        kfs.append((a.length, idle0(bone, ch), ease))
+
+
+def guard_left(a, times, vec_arm=(40, 0, 15), vec_fore=(100, 0, 0)):
+    for t in times:
+        a.key('leftArm', 'rot', t, list(vec_arm), 'easeOutSine')
+        a.key('leftForeArm', 'rot', t, list(vec_fore), 'easeOutSine')
+
+
+# punch_light: fast right jab (WINDUP 0.0 -> PERFORM 0.12 -> RECOVERY 0.3)
+def make_punch_light():
+    a = Anim('punch_light', 0.8, 'hold_on_last_frame',
+             {'0.0': 'phase = WINDUP;', '0.12': 'phase = PERFORM;', '0.3': 'phase = RECOVERY;'})
+    for t, (by, ux, ra, rf, rz, lz, pz, ep) in {
+        0.12: (-20, -14, -18, 110, 14, -14, 0.0, 0),    # coil: right side back, fist at the chest
+        0.2: (26, -20, 88, 4, 6, 4, -4.0, 14),          # jab: shoulder through, lunge forward
+        0.3: (26, -20, 88, 4, 6, 4, -4.0, 14),
+    }.items():
+        e = 'easeOutSine'
+        a.key('body', 'rot', t, [0, by, 0], e)
+        a.key('upperPart', 'rot', t, [ux, 0, 0], e)
+        a.key('rightArm', 'rot', t, [ra, 0, rz], e)
+        a.key('rightForeArm', 'rot', t, [rf, 0, 0], e)
+        a.key('root', 'pos', t, [0, 0, pz], e)
+        a.key('rightEar', 'rot', t, [ep, 0, 0], e)
+        a.key('leftEar', 'rot', t, [ep, 0, 0], e)
+    guard_left(a, (0.12, 0.2, 0.3))
+    a.key('rightLeg', 'rot', 0.12, [-6, 0, 0], 'easeOutSine'); a.key('rightLeg', 'rot', 0.2, [-14, 0, 0], 'easeOutSine')
+    a.key('leftLeg', 'rot', 0.12, [10, 0, 0], 'easeOutSine'); a.key('leftLeg', 'rot', 0.2, [22, 0, 0], 'easeOutSine')
+    a.key('leftLowerLeg', 'rot', 0.2, [-26, 0, 0], 'easeOutSine')
+    start_on_idle(a); end_on_idle(a)
+    return a
+
+
+# punch_heavy: big coil, then a full-body right hook-straight (WINDUP 0.0 -> PERFORM 0.6 -> RECOVERY 0.85)
+def make_punch_heavy():
+    a = Anim('punch_heavy', 1.4, 'hold_on_last_frame',
+             {'0.0': 'phase = WINDUP;', '0.6': 'phase = PERFORM;', '0.85': 'phase = RECOVERY;'})
+    # coil (0.0 -> 0.55): slow, low, right fist pulled all the way back
+    a.key('body', 'rot', 0.55, [0, -38, 0], 'easeInOutSine')
+    a.key('upperPart', 'rot', 0.55, [6, 0, 0], 'easeInOutSine')
+    a.key('head', 'rot', 0.55, [-4, 0, 0], 'easeInOutSine')
+    a.key('rightArm', 'rot', 0.55, [-45, 0, 22], 'easeInOutSine')
+    a.key('rightForeArm', 'rot', 0.55, [115, 0, 0], 'easeInOutSine')
+    guard_left(a, (0.55,), (55, 0, 25), (95, 0, 0))
+    a.both('Leg', 'rot', 0.55, [26, 0, 0], 'easeInOutSine')
+    a.both('LowerLeg', 'rot', 0.55, [-50, 0, 0], 'easeInOutSine')
+    a.key('root', 'pos', 0.55, [0, -2.5, 1.5], 'easeInOutSine')
+    a.key('rightEar', 'rot', 0.55, [0, 0, -12], 'easeInOutSine')
+    a.key('leftEar', 'rot', 0.55, [0, 0, 12], 'easeInOutSine')
+    # strike (0.55 -> 0.68): explosive
+    a.key('body', 'rot', 0.68, [0, 34, 0], 'easeOutSine')
+    a.key('upperPart', 'rot', 0.68, [-26, 0, 0], 'easeOutSine')
+    a.key('head', 'rot', 0.68, [10, 0, 0], 'easeOutSine')
+    a.key('rightArm', 'rot', 0.68, [92, 0, 4], 'easeOutSine')
+    a.key('rightForeArm', 'rot', 0.68, [0, 0, 0], 'easeOutSine')
+    guard_left(a, (0.68,), (-25, 0, 10), (20, 0, 0))
+    a.key('rightLeg', 'rot', 0.68, [-22, 0, 0], 'easeOutSine')
+    a.key('rightLowerLeg', 'rot', 0.68, [-10, 0, 0], 'easeOutSine')
+    a.key('leftLeg', 'rot', 0.68, [34, 0, 0], 'easeOutSine')
+    a.key('leftLowerLeg', 'rot', 0.68, [-40, 0, 0], 'easeOutSine')
+    a.key('root', 'pos', 0.68, [0, 0.5, -6], 'easeOutSine')
+    a.key('rightEar', 'rot', 0.68, [22, 0, 8], 'easeOutSine')
+    a.key('leftEar', 'rot', 0.68, [22, 0, -8], 'easeOutSine')
+    # hold the follow-through until 0.85, then return
+    for ch_bone, vec in (('body', [0, 34, 0]), ('upperPart', [-26, 0, 0]), ('head', [10, 0, 0]),
+                         ('rightArm', [92, 0, 4]), ('rightForeArm', [0, 0, 0]), ('root', [0, 0.5, -6]),
+                         ('rightLeg', [-22, 0, 0]), ('rightLowerLeg', [-10, 0, 0]),
+                         ('leftLeg', [34, 0, 0]), ('leftLowerLeg', [-40, 0, 0]),
+                         ('leftArm', [-25, 0, 10]), ('leftForeArm', [20, 0, 0])):
+        ch = 'pos' if ch_bone == 'root' else 'rot'
+        a.key(ch_bone, ch, 0.85, vec, None)
+    start_on_idle(a); end_on_idle(a)
+    return a
+
+
+# block: both forearms crossed in front of the face; ramp 0.25 s, then hold
+def make_block():
+    a = Anim('block', 0.25, 'hold_on_last_frame')
+    e = 'easeOutSine'
+    a.key('upperPart', 'rot', 0.25, [-12, 0, 0], e)
+    a.key('head', 'rot', 0.25, [12, 0, 0], e)
+    a.both('Arm', 'rot', 0.25, [62, 0, -28], e, mirror=MIRROR_Z)
+    a.both('ForeArm', 'rot', 0.25, [105, 0, 0], e)
+    a.both('Leg', 'rot', 0.25, [12, 0, 6], e, mirror=MIRROR_Z)
+    a.both('LowerLeg', 'rot', 0.25, [-24, 0, 0], e)
+    a.key('root', 'pos', 0.25, [0, -1, 0], e)
+    a.key('rightEar', 'rot', 0.25, [0, 0, -30], e)
+    a.key('leftEar', 'rot', 0.25, [0, 0, 30], e)
+    # cross the wrists: forearms rotate inward a little around the vertical axis
+    a.key('rightForeArm', 'rot', 0.25, [105, -32, 0], e)
+    a.key('leftForeArm', 'rot', 0.25, [105, 32, 0], e)
+    start_on_idle(a)
+    return a
+
+
+# senescence_touch: reach, palm rests on the target (aging), fingers tremble, release
+# WINDUP 0.0 -> PERFORM 0.45 (palm contact) -> RECOVERY 1.2
+def make_senescence_touch():
+    a = Anim('senescence_touch', 1.7, 'hold_on_last_frame',
+             {'0.0': 'phase = WINDUP;', '0.45': 'phase = PERFORM;', '1.2': 'phase = RECOVERY;'})
+    e = 'easeInOutSine'
+    a.key('body', 'rot', 0.45, [0, 14, 0], e)
+    a.key('upperPart', 'rot', 0.45, [-18, 0, 0], e)
+    a.key('head', 'rot', 0.45, [8, 0, 0], e)
+    a.key('rightArm', 'rot', 0.45, [92, 0, 8], e)
+    a.key('rightForeArm', 'rot', 0.45, [6, 0, 0], e)
+    guard_left(a, (0.45,), (-12, 0, 14), (30, 0, 0))
+    a.key('root', 'pos', 0.45, [0, 0.4, -3], e)
+    a.key('leftLeg', 'rot', 0.45, [22, 0, 0], e)
+    a.key('leftLowerLeg', 'rot', 0.45, [-30, 0, 0], e)
+    a.key('rightLeg', 'rot', 0.45, [-8, 0, 0], e)
+    a.key('rightEar', 'rot', 0.45, [10, 0, 6], e)
+    a.key('leftEar', 'rot', 0.45, [10, 0, -6], e)
+    # contact: hand keeps pressure and trembles, ears buzz (stored rotation discharges)
+    tremble = [(0.6, 1), (0.75, -1), (0.9, 1), (1.05, -1), (1.2, 0)]
+    for t, s_ in tremble:
+        a.key('rightForeArm', 'rot', t, [6 + 4 * s_, 0, 2 * s_], 'linear')
+        a.key('rightArm', 'rot', t, [92, 0, 8 + 1.5 * s_], 'linear')
+        a.key('rightEar', 'rot', t, [10, 0, 6 + 8 * s_], 'linear')
+        a.key('leftEar', 'rot', t, [10, 0, -6 - 8 * s_], 'linear')
+        for bone, vec, ch in (('body', [0, 14, 0], 'rot'), ('upperPart', [-18, 0, 0], 'rot'), ('head', [8, 0, 0], 'rot'),
+                              ('root', [0, 0.4, -3], 'pos'), ('leftLeg', [22, 0, 0], 'rot'),
+                              ('leftLowerLeg', [-30, 0, 0], 'rot'), ('rightLeg', [-8, 0, 0], 'rot'),
+                              ('leftArm', [-12, 0, 14], 'rot'), ('leftForeArm', [30, 0, 0], 'rot')):
+            a.key(bone, ch, t, vec, None)
+    start_on_idle(a); end_on_idle(a)
+    return a
+
+
+ANIMS = [IDLE, make_summon(), make_dissipate(), make_punch_light(), make_punch_heavy(), make_block(),
+         make_senescence_touch()]
 
 
 # ------------------------------------------------------------------ export (Blockbench space -> Bedrock/GeckoLib)
@@ -290,7 +435,9 @@ def preview():
     S = 6
     bounds = (-18, 18, -3, 54)
     cols = {'idle': [0, 0.8, 1.6, 2.4], 'summon': [0, 0.2, 0.4, 0.55, 0.85, 1.2],
-            'dissipate': [0, 0.3, 0.6, 0.9, 1.1, 1.2]}
+            'dissipate': [0, 0.3, 0.6, 0.9, 1.1, 1.2],
+            'punch_light': [0, 0.06, 0.12, 0.2, 0.4, 0.8], 'punch_heavy': [0, 0.3, 0.55, 0.68, 1.0, 1.4],
+            'block': [0, 0.12, 0.25], 'senescence_touch': [0, 0.25, 0.45, 0.75, 1.2, 1.7]}
     os.makedirs(gen.PREVIEW_DIR, exist_ok=True)
     rows = []
     for a in ANIMS:
