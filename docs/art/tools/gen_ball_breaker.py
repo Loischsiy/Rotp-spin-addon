@@ -412,7 +412,7 @@ def face_corners(c, f):
     return [to_world(p, c) for p in tbl[f]]
 
 
-def render(yaw, elev, S=16):
+def render(yaw, elev, S=16, bounds=None):
     cy, sy = math.cos(math.radians(yaw)), math.sin(math.radians(yaw))
     Ry = np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]])
     e = math.radians(-elev)
@@ -437,6 +437,8 @@ def render(yaw, elev, S=16):
             allpts += [TL, TR, BL, TR + BL - TL]
     xs = [-p[0] for p in allpts]; ys = [p[1] for p in allpts]
     minx, maxx, miny, maxy = min(xs), max(xs), min(ys), max(ys)
+    if bounds:
+        minx, maxx, miny, maxy = bounds
     W = int((maxx - minx) * S) + 40; H = int((maxy - miny) * S) + 40
     canvas = Image.new('RGBA', (W, H), (24, 26, 30, 255))
     sc = lambda p: np.array([(-p[0] - minx) * S + 20, (maxy - p[1]) * S + 20])
