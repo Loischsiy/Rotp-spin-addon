@@ -351,6 +351,15 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         return entityData.get(SPINNING);
     }
 
+    /** Royal guard version: the renderer draws the brass band. */
+    public boolean isWrecking() {
+        return wrecking;
+    }
+
+    /** A spent satellite: the renderer draws it smaller. */
+    public boolean isSatellite() {
+        return satellite;
+    }
     private void setSpinning(boolean spinning) {
         entityData.set(SPINNING, spinning);
     }
