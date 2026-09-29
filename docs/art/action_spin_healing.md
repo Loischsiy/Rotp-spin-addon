@@ -10,19 +10,19 @@
 - Стиль: плоский пиксель-арт в духе иконок RotP, свет сверху-слева, 2–3 оттенка на материал,
   контур `#1e140b`.
 
-Силуэт и детали: Стальной шар ≈10×10 px по центру; вокруг него золотая спираль; поверх шара — светло-зелёный крест 6×6 px. Читается как «вращение + лечение».
+Силуэт и детали: Зелёный Стальной шар ≈13×13 px по центру (без шестиугольника — сверху крест); вокруг него золотая спираль; поверх шара — светлый (почти белый) крест 6×6 px с тёмно-зелёной обводкой: зелёный крест на зелёном шаре не читается. Читается как «вращение + лечение».
 
 Палитра (hex):
 | Материал | База | Тень | Блик |
 |---|---|---|---|
-| Сталь шара | `#8a949e` | `#4a5058` | `#d8dde2` |
+| Зелёный металл шара (как `steel_ball.md`) | `#33b12a` | `#1c8a1c`, глубокая тень `#0f5a12`, контур/прорези `#06240a` | `#72d944`, зеркальный `#cdf99a` |
 | Золото Спина | `#d4a017` | `#8a6a0e` | `#f2d36b` |
-| Лечение (крест) | `#6fcf5a` | `#3f8f35` | — |
+| Лечение (крест) | `#f2ffe6` | `#b8e6a0` | — |
 
 Промпт для nano banana:
 ```
 Pixel art game ability icon, 32x32 pixels, transparent background, no anti-aliasing,
-dark outline #1e140b, light from top-left. A steel ball about 10x10 pixels in the center wrapped by a golden spiral, with a light green 6x6 pixel medical cross over the ball. steel #8a949e, shadow #4a5058, highlight #d8dde2; Gold #d4a017, shadow #8a6a0e, highlight #f2d36b; cross #6fcf5a, shadow #3f8f35;
+dark outline #1e140b, light from top-left. A plain emerald-green metallic steel ball about 13x13 pixels in the center wrapped by a golden spiral, with a near-white 6x6 pixel medical cross with a dark green outline over the ball. emerald green metal #33b12a, shadow #1c8a1c, deep shadow #0f5a12, highlight #72d944, specular #cdf99a, dark slits #06240a; Gold #d4a017, shadow #8a6a0e, highlight #f2d36b; cross #f2ffe6, shadow #b8e6a0;
 Clean flat sprite, bold readable silhouette, no text, no background, JoJo Steel Ball Run theme.
 ```
 После генерации: уменьшить до 32×32 методом **Nearest Neighbor**, фон — в настоящую альфу,

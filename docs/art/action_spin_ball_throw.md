@@ -10,18 +10,18 @@
 - Стиль: плоский пиксель-арт в духе иконок RotP, свет сверху-слева, 2–3 оттенка на материал,
   контур `#1e140b`.
 
-Силуэт и детали: Стальной шар ≈12×12 px в правой половине кадра; за ним 3 тонкие (1 px) золотые дуги-«следа» вращения, закрученные по спирали влево. Шар — главный элемент, дуги вторичны.
+Силуэт и детали: Зелёный Стальной шар ≈14×14 px, с шестиугольной пластиной и прорезями (как на `steel_ball.md`) в правой половине кадра; за ним 3 тонкие (1 px) золотые дуги-«следа» вращения, закрученные по спирали влево. Шар — главный элемент, дуги вторичны.
 
 Палитра (hex):
 | Материал | База | Тень | Блик |
 |---|---|---|---|
-| Сталь шара | `#8a949e` | `#4a5058` | `#d8dde2` |
+| Зелёный металл шара (как `steel_ball.md`) | `#33b12a` | `#1c8a1c`, глубокая тень `#0f5a12`, контур/прорези `#06240a` | `#72d944`, зеркальный `#cdf99a` |
 | Золото Спина | `#d4a017` | `#8a6a0e` | `#f2d36b` |
 
 Промпт для nano banana:
 ```
 Pixel art game ability icon, 32x32 pixels, transparent background, no anti-aliasing,
-dark outline #1e140b, light from top-left. A polished steel ball about 12x12 pixels on the right side, with three thin 1-pixel golden motion arcs curling behind it in a spiral. steel #8a949e, shadow #4a5058, highlight #d8dde2; Gold #d4a017, shadow #8a6a0e, highlight #f2d36b;
+dark outline #1e140b, light from top-left. A polished emerald-green metallic steel ball about 14x14 pixels with a hexagonal plate and short curved slits on the right side, with three thin 1-pixel golden motion arcs curling behind it in a spiral. emerald green metal #33b12a, shadow #1c8a1c, deep shadow #0f5a12, highlight #72d944, specular #cdf99a, dark slits #06240a; Gold #d4a017, shadow #8a6a0e, highlight #f2d36b;
 Clean flat sprite, bold readable silhouette, no text, no background, JoJo Steel Ball Run theme.
 ```
 После генерации: уменьшить до 32×32 методом **Nearest Neighbor**, фон — в настоящую альфу,

@@ -9,11 +9,11 @@
 | `textures/entity/steel_ball_wrapped.png` (3D-шар в полёте) | 256×128 | [steel_ball.md](steel_ball.md) | ✅ есть (тот же скрипт, проверить в игре) |
 | `textures/item/gyros_holster.png` | 32×32 | [gyros_holster.md](gyros_holster.md) §1 | ✅ есть |
 | `textures/entity/gyros_holster.png` (модель на игроке) | 64×64 | [gyros_holster.md](gyros_holster.md) §2, этап 3 | ✅ есть, ждёт проверки в игре |
-| `textures/power/spin.png` | 32×32 | [spin_power_icon.md](spin_power_icon.md) | ✅ есть |
-| `textures/action/spin_ball_throw.png` | 32×32 | [action_spin_ball_throw.md](action_spin_ball_throw.md) | ✅ есть |
+| `textures/power/spin.png` | 32×32 | [spin_power_icon.md](spin_power_icon.md) | ✅ есть (шар зелёный по лору; `tools/gen_spin_icons.py`) |
+| `textures/action/spin_ball_throw.png` | 32×32 | [action_spin_ball_throw.md](action_spin_ball_throw.md) | ✅ есть (шар зелёный по лору; `tools/gen_spin_icons.py`) |
 | `textures/action/spin_muscle_hijack.png` | 32×32 | [action_spin_muscle_hijack.md](action_spin_muscle_hijack.md) | ✅ есть |
-| `textures/action/spin_ball_steer.png` | 32×32 | [action_spin_ball_steer.md](action_spin_ball_steer.md) | ✅ есть |
-| `textures/action/spin_healing.png` | 32×32 | [action_spin_healing.md](action_spin_healing.md) | ✅ есть |
+| `textures/action/spin_ball_steer.png` | 32×32 | [action_spin_ball_steer.md](action_spin_ball_steer.md) | ✅ есть (шар зелёный по лору; `tools/gen_spin_icons.py`) |
+| `textures/action/spin_healing.png` | 32×32 | [action_spin_healing.md](action_spin_healing.md) | ✅ есть (шар зелёный по лору; `tools/gen_spin_icons.py`, крест светлый) |
 | `textures/action/spin_item_throw.png` | 32×32 | [action_spin_item_throw.md](action_spin_item_throw.md) | ✅ есть |
 | `textures/action/spin_block_throw.png` | 32×32 | [action_spin_block_throw.md](action_spin_block_throw.md) | ✅ есть |
 | `textures/item/calibration_buckle.png` | 16×16 | [calibration_buckle.md](calibration_buckle.md) | ✅ есть |

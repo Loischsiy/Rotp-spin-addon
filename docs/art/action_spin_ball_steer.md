@@ -15,13 +15,13 @@
 Палитра (hex):
 | Материал | База | Тень | Блик |
 |---|---|---|---|
-| Сталь шара | `#8a949e` | `#4a5058` | `#d8dde2` |
+| Зелёный металл шара (как `steel_ball.md`) | `#33b12a` | `#1c8a1c`, глубокая тень `#0f5a12`, контур/прорези `#06240a` | `#72d944`, зеркальный `#cdf99a` |
 | Золото Спина | `#d4a017` | `#8a6a0e` | `#f2d36b` |
 
 Промпт для nano banana:
 ```
 Pixel art game ability icon, 32x32 pixels, transparent background, no anti-aliasing,
-dark outline #1e140b, light from top-left. A small steel ball about 8x8 pixels riding a dashed golden S-shaped trajectory from the bottom-left corner to the top-right corner, ending with a small arrow head. steel #8a949e, shadow #4a5058, highlight #d8dde2; Gold #d4a017, shadow #8a6a0e, highlight #f2d36b;
+dark outline #1e140b, light from top-left. A small emerald-green metallic steel ball about 11x11 pixels riding a dashed golden S-shaped trajectory from the bottom-left corner to the top-right corner, ending with a small arrow head. emerald green metal #33b12a, shadow #1c8a1c, deep shadow #0f5a12, highlight #72d944, specular #cdf99a, dark slits #06240a; Gold #d4a017, shadow #8a6a0e, highlight #f2d36b;
 Clean flat sprite, bold readable silhouette, no text, no background, JoJo Steel Ball Run theme.
 ```
 После генерации: уменьшить до 32×32 методом **Nearest Neighbor**, фон — в настоящую альфу,
