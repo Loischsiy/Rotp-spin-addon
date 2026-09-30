@@ -141,6 +141,18 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         return isAlive() && isSpinning() && !isReturning() && !inGround && !satellite;
     }
 
+    /** A ball of the thrower that lost its rotation (parry, missed return, plain throw): lies waiting for a re-spin. */
+    public boolean canBeRecalled() {
+        return isAlive() && !satellite && !isSpinning() && !isReturning();
+    }
+
+    /** Server side: re-spin a dropped ball and send it back to the thrower (as the initial throw, same cost). */
+    public void respinAndReturn() {
+        setSpinning(true);
+        startReturning();
+        hurtMarked = true;
+    }
+
     /**
      * Server side, once per tick of the "Steel Ball Control" ability: re-aims the flight towards
      * {@code aimPoint} and postpones the return while the ball is held.
@@ -163,6 +175,24 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         List<SteelBallEntity> balls = user.level.getEntitiesOfClass(SteelBallEntity.class,
                 user.getBoundingBox().inflate(range),
                 ball -> ball.canBeSteered() && ball.getOwner() != null && ball.getOwner().getUUID().equals(user.getUUID()));
+        SteelBallEntity closest = null;
+        double closestDistSq = Double.MAX_VALUE;
+        for (SteelBallEntity ball : balls) {
+            double distSq = ball.distanceToSqr(user);
+            if (distSq < closestDistSq) {
+                closest = ball;
+                closestDistSq = distSq;
+            }
+        }
+        return closest;
+    }
+
+    /** The user's own dropped (de-spun) ball closest to them within {@code range}, or null. Works on both sides. */
+    @Nullable
+    public static SteelBallEntity findRecallable(LivingEntity user, double range) {
+        List<SteelBallEntity> balls = user.level.getEntitiesOfClass(SteelBallEntity.class,
+                user.getBoundingBox().inflate(range),
+                ball -> ball.canBeRecalled() && ball.getOwner() != null && ball.getOwner().getUUID().equals(user.getUUID()));
         SteelBallEntity closest = null;
         double closestDistSq = Double.MAX_VALUE;
         for (SteelBallEntity ball : balls) {

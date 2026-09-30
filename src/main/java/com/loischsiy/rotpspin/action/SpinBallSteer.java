@@ -15,6 +15,8 @@ import net.minecraft.world.World;
  * Ability (hold): "Steel Ball Control". While held, the user's own spinning ball in flight turns
  * towards the point they look at and does not start returning; costs energy every tick.
  * Releasing the key (or running out of energy) lets the ball return as usual.
+ * A dropped ball (parried, missed return, plain throw) is re-spun on hold for one throw cost
+ * and comes back the same way.
  */
 public class SpinBallSteer extends NonStandAction {
 
@@ -29,7 +31,9 @@ public class SpinBallSteer extends NonStandAction {
 
     @Override
     protected ActionConditionResult checkSpecificConditions(LivingEntity user, INonStandPower power, ActionTarget target) {
-        if (SteelBallEntity.findSteerable(user, SpinConfig.STEER_SEARCH_RANGE.get()) == null) {
+        double range = SpinConfig.STEER_SEARCH_RANGE.get();
+        if (SteelBallEntity.findSteerable(user, range) == null
+                && SteelBallEntity.findRecallable(user, range) == null) {
             return conditionMessage("rotp_spin.no_ball_in_flight");
         }
         return ActionConditionResult.POSITIVE;
@@ -41,10 +45,16 @@ public class SpinBallSteer extends NonStandAction {
         if (world.isClientSide() || !requirementsFulfilled) {
             return;
         }
-        SteelBallEntity ball = SteelBallEntity.findSteerable(user, SpinConfig.STEER_SEARCH_RANGE.get());
+        double range = SpinConfig.STEER_SEARCH_RANGE.get();
+        SteelBallEntity ball = SteelBallEntity.findSteerable(user, range);
         if (ball != null) {
             Vector3d aimPoint = user.getEyePosition(1.0F).add(user.getLookAngle().scale(SpinConfig.STEER_AIM_DISTANCE.get()));
             ball.steerTowards(aimPoint);
+            return;
+        }
+        SteelBallEntity dropped = SteelBallEntity.findRecallable(user, range);
+        if (dropped != null && power.consumeEnergy(SpinConfig.BALL_SPIN_COST.get().floatValue())) {
+            dropped.respinAndReturn();
         }
     }
 }
