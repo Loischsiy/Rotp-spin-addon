@@ -53,4 +53,14 @@ class SpinBraceTest {
         assertEquals(0, SpinBrace.absorbed(0, 0.6F, 100, 4), EPS);
         assertEquals(0, SpinBrace.absorbed(10, 0, 100, 4), EPS);
     }
+
+    @Test
+    void energyCostNeverExceedsEnergy() {
+        assertEquals(8F, SpinBrace.energyCost(2F, 4F, 100F), EPS);
+        float energy = 1F;
+        float absorbed = SpinBrace.absorbed(10F, 0.7F, energy, 3F);
+        assertTrue(SpinBrace.energyCost(absorbed, 3F, energy) <= energy);
+        assertEquals(0F, SpinBrace.energyCost(2F, 0F, 100F), EPS);
+        assertEquals(0F, SpinBrace.energyCost(0F, 4F, 100F), EPS);
+    }
 }

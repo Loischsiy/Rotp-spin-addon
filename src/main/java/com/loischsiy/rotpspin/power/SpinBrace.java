@@ -46,4 +46,16 @@ public final class SpinBrace {
         }
         return Math.max(0, Math.min(wanted, energy / energyPerDamage));
     }
+
+    /**
+     * Energy to pay for an absorbed amount. {@link #absorbed} already limits the amount by the energy,
+     * so the cost is clamped to the energy left: float rounding at the boundary must not make the
+     * payment fail and the whole blow go through.
+     */
+    public static float energyCost(float absorbed, float energyPerDamage, float energy) {
+        if (absorbed <= 0 || energyPerDamage <= 0) {
+            return 0;
+        }
+        return Math.max(0, Math.min(absorbed * energyPerDamage, energy));
+    }
 }

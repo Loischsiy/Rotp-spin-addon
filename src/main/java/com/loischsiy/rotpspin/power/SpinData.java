@@ -34,6 +34,8 @@ public class SpinData extends TypeSpecificData {
     private long handFrameUntil;
     // Super Spin, not saved: a relog is a stop, the gallop starts over.
     private int gallopTicks;
+    private int slowTicks;
+    private double horseSpeed;
     private boolean hasLastHorsePos;
     private double lastHorseX;
     private double lastHorseZ;
@@ -106,7 +108,8 @@ public class SpinData extends TypeSpecificData {
 
     /**
      * Server, every tick of the rider: the natural gallop of a healthy horse builds Super Spin
-     * (from lesson 4); a collision or a hit on the horse or the rider breaks it completely.
+     * (from lesson 4); a crash or a hit on the horse or the rider breaks it completely, while brief
+     * slow-downs on rough ground are tolerated (SpinSuperSpin).
      * Speed is measured from the horse's position between ticks: a player-ridden horse is moved
      * by the client, so its server-side motion vector stays near zero.
      */
@@ -115,22 +118,29 @@ public class SpinData extends TypeSpecificData {
         boolean wasReady = isGallopReady();
         if (lesson < 4 || !(vehicle instanceof net.minecraft.entity.passive.horse.AbstractHorseEntity)) {
             gallopTicks = 0;
+            slowTicks = 0;
+            horseSpeed = 0;
             hasLastHorsePos = false;
         } else {
             net.minecraft.entity.passive.horse.AbstractHorseEntity horse =
                     (net.minecraft.entity.passive.horse.AbstractHorseEntity) vehicle;
-            double speed = 0.0;
+            double raw = 0.0;
             if (hasLastHorsePos) {
                 double dx = horse.getX() - lastHorseX;
                 double dz = horse.getZ() - lastHorseZ;
-                speed = Math.sqrt(dx * dx + dz * dz);
+                raw = Math.sqrt(dx * dx + dz * dz);
             }
             lastHorseX = horse.getX();
             lastHorseZ = horse.getZ();
             hasLastHorsePos = true;
-            boolean galloping = SpinGolden.isGallopSuperSpin(lesson, speed, SpinConfig.GOLDEN_HORSE_GALLOP_SPEED.get());
-            boolean disturbed = horse.horizontalCollision || horse.hurtTime > 0 || rider.hurtTime > 0;
-            gallopTicks = SpinSuperSpin.nextGallopTicks(gallopTicks, galloping, disturbed, isHealthy(horse));
+            boolean crash = SpinSuperSpin.isCrash(horse.horizontalCollision, raw, horseSpeed,
+                    SpinConfig.SUPER_SPIN_CRASH_STOP_FRACTION.get());
+            horseSpeed = SpinSuperSpin.smoothSpeed(horseSpeed, raw);
+            boolean galloping = SpinGolden.isGallopSuperSpin(lesson, horseSpeed, SpinConfig.GOLDEN_HORSE_GALLOP_SPEED.get());
+            slowTicks = SpinSuperSpin.nextSlowTicks(slowTicks, galloping);
+            boolean broken = crash || isAttacked(horse) || isAttacked(rider);
+            gallopTicks = SpinSuperSpin.nextGallopTicks(gallopTicks, galloping, slowTicks,
+                    SpinConfig.SUPER_SPIN_GRACE_TICKS.get(), broken, isHealthy(horse));
         }
         boolean ready = isGallopReady();
         if (ready != wasReady) {
@@ -138,6 +148,18 @@ public class SpinData extends TypeSpecificData {
                     ready ? "rotp_spin.message.super_spin_ready" : "rotp_spin.message.super_spin_broken")
                     .withStyle(ready ? TextFormatting.GOLD : TextFormatting.GRAY), true));
         }
+    }
+
+    /**
+     * A blow that disturbs the gallop. A landing after a jump off a hill (fall damage, which the horse
+     * also passes to the rider) is part of riding over rough ground, not an attack.
+     */
+    private static boolean isAttacked(LivingEntity entity) {
+        if (entity.hurtTime <= 0) {
+            return false;
+        }
+        net.minecraft.util.DamageSource last = entity.getLastDamageSource();
+        return last != net.minecraft.util.DamageSource.FALL;
     }
 
     private boolean isGallopReady() {

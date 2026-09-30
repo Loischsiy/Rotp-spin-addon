@@ -121,13 +121,18 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
     Снегопад над бросающим тоже калибрует (`golden_spin.snowfallCalibrates`).
     `spin_body_brace` (урок 1, Спин на своём теле): после `body_brace.windupTicks` тело жёсткое —
     `power.SpinBraceHandler` (`LivingHurtEvent`) снимает долю кинетического удара (снаряд, взрыв, ближний
-    бой; не огонь/магия/bypassArmor) за энергию и отбрасывает атакующего в упор; математика —
+    бой; не огонь/магия/bypassArmor) за энергию и отбрасывает атакующего в упор; `LivingKnockBackEvent`
+    отменяет отбрасывание самого пользователя в стойке (`noOwnKnockback`); поглощение видно и слышно
+    (`SHIELD_BLOCK`, CRIT/ENCHANTED_HIT, action bar `rotp_spin.message.brace_absorbed`); математика —
     `power.SpinBrace` (JUnit, потолок 0.95: не неуязвимость). Цена — энергия за тик, за поглощённый
     урон и замедление; удар стойку не срывает.
     Super Spin (`power.SpinSuperSpin`, JUnit): `power.SuperSpinHandler` (`PlayerTickEvent`, сервер) копит
     `golden_spin.super_spin.gallopTicks` непрерывного галопа здоровой лошади (урок 4+); скорость — по
-    смещению лошади между тиками (серверный motion у ведомой игроком лошади ≈ 0); столкновение или
-    удар по лошади/всаднику обнуляет. Обходной путь урока 5: `SteelBallEntity#hurtTarget` → `SpinData#tryDetour`
+    смещению лошади между тиками (серверный motion у ведомой игроком лошади ≈ 0), сглажено EMA
+    (`SPEED_SMOOTHING`, пакеты клиента приходят рывками). Рельеф прощается: замедление (холм, поворот, прыжок)
+    до `graceTicks` держит счётчик без роста; урон от падения не ломает. Обнуляет: остановка дольше grace,
+    врезание (`horizontalCollision` и скорость < `crashStopFraction` от сглаженной; скольжение вдоль стены — нет),
+    удар по лошади/всаднику, раненая лошадь. Обходной путь урока 5: `SteelBallEntity#hurtTarget` → `SpinData#tryDetour`
     (шар по своей лошади → лягает владельца, Super Spin на `detourDurationTicks`). Щербатый шар — без Super Spin.
     Трение: `SteelBallEntity#stripBark` (сервер, `onHitBlock`) — вращающийся шар обдирает кору с бревна
     через `AxeItem.getAxeStrippingState`, только у игрока с правом `mayUseItemAt`; пороги — `steel_ball.friction`.

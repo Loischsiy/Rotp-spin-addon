@@ -25,6 +25,7 @@ public class SpinConfig {
     public static final ForgeConfigSpec.DoubleValue BRACE_DAMAGE_REDUCTION;
     public static final ForgeConfigSpec.DoubleValue BRACE_ENERGY_PER_DAMAGE;
     public static final ForgeConfigSpec.DoubleValue BRACE_ATTACKER_KNOCKBACK;
+    public static final ForgeConfigSpec.BooleanValue BRACE_NO_KNOCKBACK;
     public static final ForgeConfigSpec.IntValue BRACE_SLOWNESS_AMPLIFIER;
     public static final ForgeConfigSpec.IntValue BRACE_COOLDOWN_TICKS;
 
@@ -71,6 +72,8 @@ public class SpinConfig {
     public static final ForgeConfigSpec.IntValue HAND_FRAME_COOLDOWN_TICKS;
     public static final ForgeConfigSpec.DoubleValue SUPER_SPIN_MULT;
     public static final ForgeConfigSpec.IntValue SUPER_SPIN_GALLOP_TICKS;
+    public static final ForgeConfigSpec.IntValue SUPER_SPIN_GRACE_TICKS;
+    public static final ForgeConfigSpec.DoubleValue SUPER_SPIN_CRASH_STOP_FRACTION;
     public static final ForgeConfigSpec.DoubleValue SUPER_SPIN_HORSE_MIN_HEALTH;
     public static final ForgeConfigSpec.BooleanValue SUPER_SPIN_DETOUR_ENABLED;
     public static final ForgeConfigSpec.DoubleValue SUPER_SPIN_DETOUR_RANGE;
@@ -165,11 +168,13 @@ public class SpinConfig {
         BRACE_ENERGY_PER_TICK = b.comment("Spin energy consumed per tick while holding the stance.")
                 .defineInRange("energyPerTick", 0.4, 0.0, 1000.0);
         BRACE_DAMAGE_REDUCTION = b.comment("Share of a kinetic blow (projectile, explosion, melee) the rigid body passes on. Capped at 0.95 in code: temporary toughness, not invulnerability.")
-                .defineInRange("damageReduction", 0.6, 0.0, 0.95);
+                .defineInRange("damageReduction", 0.7, 0.0, 0.95);
         BRACE_ENERGY_PER_DAMAGE = b.comment("Spin energy spent per absorbed damage point; with too little energy only part of the blow is absorbed.")
                 .defineInRange("energyPerAbsorbedDamage", 4.0, 0.0, 1000.0);
         BRACE_ATTACKER_KNOCKBACK = b.comment("Knockback strength a melee attacker receives: the energy of the blow is passed back (Wekapipo, ch. 54). 0 disables.")
-                .defineInRange("attackerKnockback", 0.6, 0.0, 5.0);
+                .defineInRange("attackerKnockback", 1.0, 0.0, 5.0);
+        BRACE_NO_KNOCKBACK = b.comment("The rigid body is not knocked back while the stance is held (Gyro stood his ground against a bullet and a blast).")
+                .define("noOwnKnockback", true);
         BRACE_SLOWNESS_AMPLIFIER = b.comment("Slowness amplifier while the body is rigid (-1 disables).")
                 .defineInRange("slownessAmplifier", 1, -1, 5);
         BRACE_COOLDOWN_TICKS = b.comment("Cooldown after releasing a completed stance, in ticks.")
@@ -250,8 +255,8 @@ public class SpinConfig {
                 .defineInRange("multiplier5", 2.0, 1.0, 100.0);
         GOLDEN_CHIPPED_RETENTION = b.comment("A chipped (imperfect) ball keeps only this share of the Golden bonus above x1 (Ball Breaker was incomplete with a damaged ball).")
                 .defineInRange("chippedRetention", 0.5, 0.0, 1.0);
-        GOLDEN_HORSE_GALLOP_SPEED = b.comment("Lesson 5 \"The shortest route is the detour\": a ridden horse moving at least this fast (blocks per tick, horizontal) gives Super Spin without calibration, from lesson 4.")
-                .defineInRange("horseGallopSpeed", 0.25, 0.0, 5.0);
+        GOLDEN_HORSE_GALLOP_SPEED = b.comment("Lesson 5 \"The shortest route is the detour\": a ridden horse moving at least this fast (blocks per tick, horizontal, smoothed over a few ticks) gives Super Spin without calibration, from lesson 4.")
+                .defineInRange("horseGallopSpeed", 0.2, 0.0, 5.0);
         GOLDEN_DEAD_CATEGORIES = b.comment("Biome categories with no natural golden-ratio markers (frozen strait, desert, void): Golden Spin needs the calibration buckle there. Names of Biome.Category.")
                 .defineList("deadBiomeCategories", Arrays.asList("NETHER", "THEEND", "ICY", "DESERT", "NONE"),
                         entry -> entry instanceof String);
@@ -270,8 +275,12 @@ public class SpinConfig {
         b.push("super_spin");
         SUPER_SPIN_MULT = b.comment("Super Spin (natural gallop or the lesson 5 detour): damage multiplier of a spinning steel ball. Never lowers the multiplier the user already has.")
                 .defineInRange("multiplier", 3.0, 1.0, 100.0);
-        SUPER_SPIN_GALLOP_TICKS = b.comment("Ticks of uninterrupted gallop (see horseGallopSpeed) before the horse's energy flows into the throw. A collision, a hit on the horse or on the rider resets it (SBR ch. 80, 85).")
+        SUPER_SPIN_GALLOP_TICKS = b.comment("Ticks of gallop (see horseGallopSpeed) before the horse's energy flows into the throw. A crash into an obstacle, a hit on the horse or on the rider resets it (SBR ch. 80, 85); fall damage from rough ground does not.")
                 .defineInRange("gallopTicks", 60, 1, 12000);
+        SUPER_SPIN_GRACE_TICKS = b.comment("The horse may drop below gallop speed for this many ticks in a row (a hill, a turn, a jump, a lag spike) without losing the build-up. It does not grow meanwhile.")
+                .defineInRange("graceTicks", 20, 0, 1200);
+        SUPER_SPIN_CRASH_STOP_FRACTION = b.comment("A collision is a crash only if the horse's speed in that tick falls below this share of its gallop speed (a real stop against an obstacle). Sliding along a wall or stepping up a block is not a crash. 0 disables crashes.")
+                .defineInRange("crashStopFraction", 0.35, 0.0, 1.0);
         SUPER_SPIN_HORSE_MIN_HEALTH = b.comment("The horse must be healthy: its health share must be at least this.")
                 .defineInRange("horseMinHealth", 0.5, 0.0, 1.0);
         SUPER_SPIN_DETOUR_ENABLED = b.comment("Lesson 5 \"The shortest route is the detour\" (SBR ch. 85): a spinning ball hitting your own horse makes it kick you and hands over Super Spin. A chipped ball fails.")
