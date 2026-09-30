@@ -32,6 +32,12 @@ public class SpinData extends TypeSpecificData {
     private int goldenHits;
     /** Game time until which the golden rectangle framed by hands calibrates Golden Spin. */
     private long handFrameUntil;
+    // Super Spin, not saved: a relog is a stop, the gallop starts over.
+    private int gallopTicks;
+    private boolean hasLastHorsePos;
+    private double lastHorseX;
+    private double lastHorseZ;
+    private long detourUntil;
 
     public static Optional<SpinData> of(LivingEntity entity) {
         return INonStandPower.getNonStandPowerOptional(entity).resolve()
@@ -49,14 +55,24 @@ public class SpinData extends TypeSpecificData {
      * calibration buckle — or a horse at full gallop (the detour of lesson 5, usable from lesson 4).
      */
     public static double goldenMultiplier(net.minecraft.world.World world, LivingEntity thrower) {
+        return goldenMultiplier(world, thrower, false);
+    }
+
+    /**
+     * Same, for a ball that may be chipped: an imperfect sphere cannot take Super Spin (SBR ch. 84)
+     * and falls back to the ordinary Golden Spin of the lesson.
+     */
+    public static double goldenMultiplier(net.minecraft.world.World world, LivingEntity thrower, boolean chipped) {
         int lesson = lessonOf(thrower);
         if (lesson < 4) {
             return 1.0;
         }
-        if (SpinGolden.isGallopSuperSpin(lesson, gallopSpeed(thrower),
-                SpinConfig.GOLDEN_HORSE_GALLOP_SPEED.get())) {
-            return SpinConfig.GOLDEN_MULT_5.get();
-        }
+        double base = calibratedMultiplier(world, thrower, lesson);
+        boolean superSpin = !chipped && of(thrower).map(data -> data.hasSuperSpin(world.getGameTime())).orElse(false);
+        return SpinSuperSpin.multiplier(superSpin, base, SpinConfig.SUPER_SPIN_MULT.get());
+    }
+
+    private static double calibratedMultiplier(net.minecraft.world.World world, LivingEntity thrower, int lesson) {
         String category = world.getBiome(thrower.blockPosition()).getBiomeCategory().name();
         boolean buckle = thrower instanceof net.minecraft.entity.player.PlayerEntity
                 && hasBuckle((net.minecraft.entity.player.PlayerEntity) thrower);
@@ -88,14 +104,88 @@ public class SpinData extends TypeSpecificData {
                 && biome.getTemperature(head) < SNOW_TEMPERATURE;
     }
 
-    /** Horizontal speed of the ridden horse, 0 when not on horseback. */
-    static double gallopSpeed(LivingEntity thrower) {
-        net.minecraft.entity.Entity vehicle = thrower.getVehicle();
-        if (!(vehicle instanceof net.minecraft.entity.passive.horse.AbstractHorseEntity)) {
-            return 0.0;
+    /**
+     * Server, every tick of the rider: the natural gallop of a healthy horse builds Super Spin
+     * (from lesson 4); a collision or a hit on the horse or the rider breaks it completely.
+     * Speed is measured from the horse's position between ticks: a player-ridden horse is moved
+     * by the client, so its server-side motion vector stays near zero.
+     */
+    public void tickHorseback(LivingEntity rider) {
+        net.minecraft.entity.Entity vehicle = rider.getVehicle();
+        boolean wasReady = isGallopReady();
+        if (lesson < 4 || !(vehicle instanceof net.minecraft.entity.passive.horse.AbstractHorseEntity)) {
+            gallopTicks = 0;
+            hasLastHorsePos = false;
+        } else {
+            net.minecraft.entity.passive.horse.AbstractHorseEntity horse =
+                    (net.minecraft.entity.passive.horse.AbstractHorseEntity) vehicle;
+            double speed = 0.0;
+            if (hasLastHorsePos) {
+                double dx = horse.getX() - lastHorseX;
+                double dz = horse.getZ() - lastHorseZ;
+                speed = Math.sqrt(dx * dx + dz * dz);
+            }
+            lastHorseX = horse.getX();
+            lastHorseZ = horse.getZ();
+            hasLastHorsePos = true;
+            boolean galloping = SpinGolden.isGallopSuperSpin(lesson, speed, SpinConfig.GOLDEN_HORSE_GALLOP_SPEED.get());
+            boolean disturbed = horse.horizontalCollision || horse.hurtTime > 0 || rider.hurtTime > 0;
+            gallopTicks = SpinSuperSpin.nextGallopTicks(gallopTicks, galloping, disturbed, isHealthy(horse));
         }
-        net.minecraft.util.math.vector.Vector3d motion = vehicle.getDeltaMovement();
-        return Math.sqrt(motion.x * motion.x + motion.z * motion.z);
+        boolean ready = isGallopReady();
+        if (ready != wasReady) {
+            serverPlayer.ifPresent(player -> player.displayClientMessage(new TranslationTextComponent(
+                    ready ? "rotp_spin.message.super_spin_ready" : "rotp_spin.message.super_spin_broken")
+                    .withStyle(ready ? TextFormatting.GOLD : TextFormatting.GRAY), true));
+        }
+    }
+
+    private boolean isGallopReady() {
+        return SpinSuperSpin.isGallopReady(gallopTicks, SpinConfig.SUPER_SPIN_GALLOP_TICKS.get());
+    }
+
+    /** Super Spin from the gallop or from the detour kick is in the user now. */
+    public boolean hasSuperSpin(long gameTime) {
+        return (lesson >= 4 && isGallopReady()) || gameTime < detourUntil;
+    }
+
+    static boolean isHealthy(net.minecraft.entity.passive.horse.AbstractHorseEntity horse) {
+        return SpinSuperSpin.isHealthy(horse.getHealth(), horse.getMaxHealth(),
+                SpinConfig.SUPER_SPIN_HORSE_MIN_HEALTH.get());
+    }
+
+    /**
+     * Server: the lesson 5 detour (SBR ch. 85). A spinning ball of the user hits the leg of the
+     * user's own horse: the muscles are hijacked (lesson 2), the horse kicks the user and the kick
+     * hands over Super Spin. Returns false (ordinary hit) when the detour does not apply.
+     */
+    public static boolean tryDetour(LivingEntity thrower, net.minecraft.entity.passive.horse.AbstractHorseEntity horse,
+            boolean chipped) {
+        if (!SpinConfig.SUPER_SPIN_DETOUR_ENABLED.get()) {
+            return false;
+        }
+        boolean own = thrower.getVehicle() == horse
+                || (horse.isTamed() && thrower.getUUID().equals(horse.getOwnerUUID()));
+        if (!SpinSuperSpin.canDetour(lessonOf(thrower), chipped, own, isHealthy(horse),
+                horse.distanceToSqr(thrower), SpinConfig.SUPER_SPIN_DETOUR_RANGE.get())) {
+            return false;
+        }
+        Optional<SpinData> data = of(thrower);
+        if (!data.isPresent()) {
+            return false;
+        }
+        long now = thrower.level.getGameTime();
+        int duration = SpinConfig.SUPER_SPIN_DETOUR_DURATION_TICKS.get();
+        data.get().detourUntil = SpinSuperSpin.detourUntil(now, duration);
+        horse.makeMad();
+        horse.playSound(SoundEvents.HORSE_ANGRY, 1.0F, 1.0F);
+        float kick = SpinConfig.SUPER_SPIN_DETOUR_KICK_DAMAGE.get().floatValue();
+        if (kick > 0) {
+            thrower.hurt(net.minecraft.util.DamageSource.mobAttack(horse), kick);
+        }
+        data.get().serverPlayer.ifPresent(player -> player.displayClientMessage(new TranslationTextComponent(
+                "rotp_spin.message.super_spin_detour", duration / 20).withStyle(TextFormatting.GOLD), true));
+        return true;
     }
 
     static boolean hasBuckle(net.minecraft.entity.player.PlayerEntity player) {

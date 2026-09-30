@@ -69,6 +69,13 @@ public class SpinConfig {
     public static final ForgeConfigSpec.IntValue HAND_FRAME_DURATION_TICKS;
     public static final ForgeConfigSpec.DoubleValue HAND_FRAME_ENERGY_PER_TICK;
     public static final ForgeConfigSpec.IntValue HAND_FRAME_COOLDOWN_TICKS;
+    public static final ForgeConfigSpec.DoubleValue SUPER_SPIN_MULT;
+    public static final ForgeConfigSpec.IntValue SUPER_SPIN_GALLOP_TICKS;
+    public static final ForgeConfigSpec.DoubleValue SUPER_SPIN_HORSE_MIN_HEALTH;
+    public static final ForgeConfigSpec.BooleanValue SUPER_SPIN_DETOUR_ENABLED;
+    public static final ForgeConfigSpec.DoubleValue SUPER_SPIN_DETOUR_RANGE;
+    public static final ForgeConfigSpec.IntValue SUPER_SPIN_DETOUR_DURATION_TICKS;
+    public static final ForgeConfigSpec.DoubleValue SUPER_SPIN_DETOUR_KICK_DAMAGE;
 
     public static final ForgeConfigSpec.DoubleValue HEALING_ENERGY_PER_TICK;
     public static final ForgeConfigSpec.IntValue HEALING_INTERVAL_TICKS;
@@ -256,6 +263,22 @@ public class SpinConfig {
                 .defineInRange("energyPerTick", 0.5, 0.0, 1000.0);
         HAND_FRAME_COOLDOWN_TICKS = b.comment("Cooldown after a completed framing, in ticks.")
                 .defineInRange("cooldownTicks", 400, 0, 72000);
+        b.pop();
+        b.push("super_spin");
+        SUPER_SPIN_MULT = b.comment("Super Spin (natural gallop or the lesson 5 detour): damage multiplier of a spinning steel ball. Never lowers the multiplier the user already has.")
+                .defineInRange("multiplier", 3.0, 1.0, 100.0);
+        SUPER_SPIN_GALLOP_TICKS = b.comment("Ticks of uninterrupted gallop (see horseGallopSpeed) before the horse's energy flows into the throw. A collision, a hit on the horse or on the rider resets it (SBR ch. 80, 85).")
+                .defineInRange("gallopTicks", 60, 1, 12000);
+        SUPER_SPIN_HORSE_MIN_HEALTH = b.comment("The horse must be healthy: its health share must be at least this.")
+                .defineInRange("horseMinHealth", 0.5, 0.0, 1.0);
+        SUPER_SPIN_DETOUR_ENABLED = b.comment("Lesson 5 \"The shortest route is the detour\" (SBR ch. 85): a spinning ball hitting your own horse makes it kick you and hands over Super Spin. A chipped ball fails.")
+                .define("detourEnabled", true);
+        SUPER_SPIN_DETOUR_RANGE = b.comment("The user must be this close to the horse (blocks) to be kicked.")
+                .defineInRange("detourRange", 4.0, 0.5, 32.0);
+        SUPER_SPIN_DETOUR_DURATION_TICKS = b.comment("How long the energy of the kick stays in the user, in ticks.")
+                .defineInRange("detourDurationTicks", 200, 1, 72000);
+        SUPER_SPIN_DETOUR_KICK_DAMAGE = b.comment("Damage of the hoof kick to the user.")
+                .defineInRange("detourKickDamage", 2.0, 0.0, 100.0);
         b.pop();
         b.pop();
 

@@ -23,6 +23,7 @@ import com.loischsiy.rotpspin.power.SpinSteer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ItemStack;
@@ -104,7 +105,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     /** Lesson 4 Golden Spin / lesson 5 Super Spin bonus of the thrower, 1.0 if not learned or not calibrated.
      * A summoned Ball Breaker amplifies the Spin itself, but only on top of Golden (SBR ch. 83). */
     private static double goldenMultiplier(World world, LivingEntity thrower, boolean chipped) {
-        double mult = SpinData.goldenMultiplier(world, thrower);
+        double mult = SpinData.goldenMultiplier(world, thrower, chipped);
         if (chipped) {
             mult = SpinGolden.applyChipped(mult, SpinConfig.GOLDEN_CHIPPED_RETENTION.get());
         }
@@ -321,6 +322,13 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     // A Golden throw under the summoned Ball Breaker also ages the victim (senescence, SBR ch. 83-84).
     @Override
     protected boolean hurtTarget(Entity target, Entity thrower) {
+        // Lesson 5 detour: a spinning ball on the leg of your own horse makes it kick you (SBR ch. 85).
+        if (!level.isClientSide() && isSpinning() && !isSatellite() && thrower instanceof LivingEntity
+                && target instanceof AbstractHorseEntity
+                && SpinData.tryDetour((LivingEntity) thrower, (AbstractHorseEntity) target,
+                        SteelBallItem.isChipped(thrownStack))) {
+            return true;
+        }
         boolean hurt = super.hurtTarget(target, thrower);
         if (hurt && !level.isClientSide() && isSpinning() && !isSatellite() && thrower instanceof LivingEntity) {
             SpinData.practiceHit((LivingEntity) thrower, target);
