@@ -129,6 +129,8 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
     смещению лошади между тиками (серверный motion у ведомой игроком лошади ≈ 0); столкновение или
     удар по лошади/всаднику обнуляет. Обходной путь урока 5: `SteelBallEntity#hurtTarget` → `SpinData#tryDetour`
     (шар по своей лошади → лягает владельца, Super Spin на `detourDurationTicks`). Щербатый шар — без Super Spin.
+    Трение: `SteelBallEntity#stripBark` (сервер, `onHitBlock`) — вращающийся шар обдирает кору с бревна
+    через `AxeItem.getAxeStrippingState`, только у игрока с правом `mayUseItemAt`; пороги — `steel_ball.friction`.
 - Уроки: `power.SpinData` хранит урок и счётчики практики (NBT `Lesson`, `BallHits`, `Hijacks`, `GoldenHits`),
   `SpinData#isActionUnlocked` (хук RotP `TypeSpecificData`) закрывает действия старших уроков;
   соответствие действие → урок — `SpinData#requiredLesson` (действия только до урока 3; уроки 4–5 —

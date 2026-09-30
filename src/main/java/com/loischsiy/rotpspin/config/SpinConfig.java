@@ -101,6 +101,9 @@ public class SpinConfig {
     public static final ForgeConfigSpec.IntValue BALL_RICOCHET_MAX_BOUNCES;
     public static final ForgeConfigSpec.DoubleValue BALL_RICOCHET_SPEED_RETENTION;
     public static final ForgeConfigSpec.DoubleValue BALL_RICOCHET_MIN_SPEED;
+    public static final ForgeConfigSpec.BooleanValue FRICTION_BARK_STRIPPING;
+    public static final ForgeConfigSpec.DoubleValue FRICTION_BARK_MIN_SPEED;
+    public static final ForgeConfigSpec.DoubleValue FRICTION_BARK_SPEED_RETENTION;
     public static final ForgeConfigSpec.ConfigValue<String> BALL_REPAIR_MATERIAL;
     public static final ForgeConfigSpec.IntValue BALL_REPAIR_LEVEL_COST;
 
@@ -334,6 +337,14 @@ public class SpinConfig {
                 .define("repairMaterial", "minecraft:iron_ingot");
         BALL_REPAIR_LEVEL_COST = b.comment("Experience levels the anvil repair costs.")
                 .defineInRange("repairLevelCost", 1, 0, 39);
+        b.push("friction");
+        FRICTION_BARK_STRIPPING = b.comment("A spinning steel ball strips the bark off a log it hits, like an axe (SBR ch. 30). Needs the thrower's permission to use items at that spot.")
+                .define("barkStripping", true);
+        FRICTION_BARK_MIN_SPEED = b.comment("Minimum ball speed (blocks per tick) to strip bark.")
+                .defineInRange("barkMinSpeed", 0.8, 0.0, 10.0);
+        FRICTION_BARK_SPEED_RETENTION = b.comment("Share of speed the ball keeps after stripping bark (friction against the trunk).")
+                .defineInRange("barkSpeedRetention", 0.7, 0.0, 1.0);
+        b.pop();
         b.pop();
 
         b.push("holster");

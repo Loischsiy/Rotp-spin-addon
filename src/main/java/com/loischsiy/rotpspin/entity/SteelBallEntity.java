@@ -301,6 +301,9 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
                 emitShockwave();
             }
         }
+        if (!level.isClientSide()) {
+            stripBark(result);
+        }
         if (isSpinning() && !isReturning()) {
             Vector3d normal = Vector3d.atLowerCornerOf(result.getDirection().getNormal());
             Vector3d reflected = SpinRicochet.reflect(getDeltaMovement(), normal, SpinConfig.BALL_RICOCHET_SPEED_RETENTION.get());
@@ -316,6 +319,29 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
             }
         }
         super.onHitBlock(result);
+    }
+
+    /** Server: friction of the rotation strips the bark off a log, like an axe (SBR ch. 30). */
+    private void stripBark(BlockRayTraceResult result) {
+        if (!SpinFriction.canStripBark(SpinConfig.FRICTION_BARK_STRIPPING.get(), isSpinning(), isReturning(),
+                getDeltaMovement().length(), SpinConfig.FRICTION_BARK_MIN_SPEED.get())) {
+            return;
+        }
+        Entity owner = getOwner();
+        net.minecraft.util.math.BlockPos pos = result.getBlockPos();
+        if (!(owner instanceof PlayerEntity) || !level.mayInteract((PlayerEntity) owner, pos)
+                || !((PlayerEntity) owner).mayUseItemAt(pos, result.getDirection(), ItemStack.EMPTY)) {
+            return;
+        }
+        net.minecraft.block.BlockState stripped = net.minecraft.item.AxeItem.getAxeStrippingState(level.getBlockState(pos));
+        if (stripped == null) {
+            return;
+        }
+        level.setBlock(pos, stripped, 11);
+        level.playSound(null, pos, SoundEvents.AXE_STRIP, net.minecraft.util.SoundCategory.BLOCKS, 1.0F, 1.0F);
+        setDeltaMovement(getDeltaMovement().scale(
+                SpinFriction.speedAfterStrip(1.0, SpinConfig.FRICTION_BARK_SPEED_RETENTION.get())));
+        hurtMarked = true;
     }
 
     // A hit on a creature with a spinning ball is practice for lesson 2.
