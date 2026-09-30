@@ -26,6 +26,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -49,6 +50,11 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     private static final DataParameter<Boolean> RETURNING = EntityDataManager.defineId(SteelBallEntity.class, DataSerializers.BOOLEAN);
     // Wrecking Ball: satellites have flown out (client draws empty sockets instead of gold balls)
     private static final DataParameter<Boolean> SATELLITES_RELEASED = EntityDataManager.defineId(SteelBallEntity.class, DataSerializers.BOOLEAN);
+    // Royal guard body (client draws the copper sphere with gold satellites) and
+    // spent satellite ball (client draws a small gold sphere, not a steel ball).
+    // Plain fields stay server-side only, so both flags ride the EntityDataManager.
+    private static final DataParameter<Boolean> WRECKING = EntityDataManager.defineId(SteelBallEntity.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> SATELLITE = EntityDataManager.defineId(SteelBallEntity.class, DataSerializers.BOOLEAN);
 
     private int returnTicks;
     // Ticks of flight spent under the thrower's control; they do not count towards the return timer.
@@ -56,8 +62,6 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     // Ricochets off blocks during this flight
     private int bounces;
     // Wrecking Ball (royal guard version): hidden satellites and a shockwave on a miss
-    private boolean wrecking;
-    private boolean satellite;
     private boolean satellitesReleased;
     private boolean shockwaveDone;
     // Where the ball was thrown from: a holster throw returns to the holster, a hand throw to the hand.
@@ -79,12 +83,16 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
             damage *= goldenMultiplier(world, thrower, chipped);
         }
         setBaseDamage(damage);
-        this.wrecking = thrownStack.getItem() instanceof WreckingBallItem;
+        setWrecking(thrownStack.getItem() instanceof WreckingBallItem);
     }
 
     /** Marks this ball as a satellite: it strikes once and is spent (no return, no steering). */
     void setSatellite() {
-        this.satellite = true;
+        entityData.set(SATELLITE, true);
+    }
+
+    private void setWrecking(boolean wrecking) {
+        entityData.set(WRECKING, wrecking);
     }
 
     /** Marks this ball as thrown straight from the holster: it returns to the holster, not to the hand. */
@@ -104,17 +112,37 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         entityData.define(SPINNING, false);
         entityData.define(RETURNING, false);
         entityData.define(SATELLITES_RELEASED, false);
+        entityData.define(WRECKING, false);
+        entityData.define(SATELLITE, false);
+    }
+
+    @Override
+    public void writeSpawnData(PacketBuffer buffer) {
+        super.writeSpawnData(buffer);
+        // The tracker syncs EntityDataManager only every updateInterval (20 ticks):
+        // a 60-tick satellite would fly a third of its life as a steel ball without this.
+        buffer.writeBoolean(isWrecking());
+        buffer.writeBoolean(isSatellite());
+    }
+
+    @Override
+    public void readSpawnData(PacketBuffer additionalData) {
+        super.readSpawnData(additionalData);
+        setWrecking(additionalData.readBoolean());
+        if (additionalData.readBoolean()) {
+            setSatellite();
+        }
     }
 
     @Override
     public void tick() {
-        if (satellite && (inGround || tickCount > SpinConfig.WRECKING_SATELLITE_LIFETIME.get())) {
+        if (isSatellite() && (inGround || tickCount > SpinConfig.WRECKING_SATELLITE_LIFETIME.get())) {
             if (!level.isClientSide()) {
                 remove();
             }
             return;
         }
-        if (!level.isClientSide() && wrecking && !satellite && isSpinning() && !isReturning() && !satellitesReleased
+        if (!level.isClientSide() && isWrecking() && !isSatellite() && isSpinning() && !isReturning() && !satellitesReleased
                 && tickCount - steeredTicks >= SpinConfig.WRECKING_RELEASE_AFTER_TICKS.get()) {
             satellitesReleased = true;
             entityData.set(SATELLITES_RELEASED, true);
@@ -145,12 +173,12 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
 
     /** A ball that the thrower can still steer: spinning, flying forward, not stuck in a block. */
     public boolean canBeSteered() {
-        return isAlive() && isSpinning() && !isReturning() && !inGround && !satellite;
+        return isAlive() && isSpinning() && !isReturning() && !inGround && !isSatellite();
     }
 
     /** A ball of the thrower that lost its rotation (parry, missed return, plain throw): lies waiting for a re-spin. */
     public boolean canBeRecalled() {
-        return isAlive() && !satellite && !isSpinning() && !isReturning();
+        return isAlive() && !isSatellite() && !isSpinning() && !isReturning();
     }
 
     /** Server side: re-spin a dropped ball and send it back to the thrower (as the initial throw, same cost). */
@@ -234,7 +262,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
 
     @Override
     protected void changeMovementAfterHit() {
-        if (satellite) {
+        if (isSatellite()) {
             // A satellite strikes once and is spent.
             if (!level.isClientSide()) {
                 remove();
@@ -259,7 +287,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
      */
     @Override
     protected void onHitBlock(BlockRayTraceResult result) {
-        if (wrecking && !satellite && isSpinning() && !isReturning() && !shockwaveDone) {
+        if (isWrecking() && !isSatellite() && isSpinning() && !isReturning() && !shockwaveDone) {
             // Even a miss raises a shockwave (docs/spin-lore.md): once per flight.
             shockwaveDone = true;
             if (!level.isClientSide()) {
@@ -287,7 +315,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     @Override
     protected boolean hurtTarget(Entity target, Entity thrower) {
         boolean hurt = super.hurtTarget(target, thrower);
-        if (hurt && !level.isClientSide() && isSpinning() && !satellite && thrower instanceof LivingEntity) {
+        if (hurt && !level.isClientSide() && isSpinning() && !isSatellite() && thrower instanceof LivingEntity) {
             SpinData.practiceHit((LivingEntity) thrower, target);
         }
         return hurt;
@@ -304,10 +332,10 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
             StandEntity stand = (StandEntity) source.getDirectEntity();
             LivingEntity standUser = stand.getUser();
             Entity owner = getOwner();
-            if (shouldDropOnStandParry(isSpinning() || isReturning() || satellite,
+            if (shouldDropOnStandParry(isSpinning() || isReturning() || isSatellite(),
                     owner == null ? null : owner.getUUID(),
                     standUser == null ? null : standUser.getUUID())) {
-                if (satellite) {
+                if (isSatellite()) {
                     // A satellite is spent matter with no pickup: a parry just swats it away.
                     if (!level.isClientSide()) {
                         remove();
@@ -452,12 +480,12 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
 
     /** Royal guard version: the renderer draws the copper body with gold satellites. */
     public boolean isWrecking() {
-        return wrecking;
+        return entityData.get(WRECKING);
     }
 
     /** A spent satellite: the renderer draws it as a small gold ball. */
     public boolean isSatellite() {
-        return satellite;
+        return entityData.get(SATELLITE);
     }
 
     /** Wrecking Ball whose satellites have already flown out (synced to the client). */
@@ -485,8 +513,10 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         returnTicks = compound.getInt("ReturnTicks");
         steeredTicks = compound.getInt("SteeredTicks");
         bounces = compound.getInt("Bounces");
-        wrecking = compound.getBoolean("Wrecking");
-        satellite = compound.getBoolean("Satellite");
+        setWrecking(compound.getBoolean("Wrecking"));
+        if (compound.getBoolean("Satellite")) {
+            setSatellite();
+        }
         satellitesReleased = compound.getBoolean("SatellitesReleased");
         entityData.set(SATELLITES_RELEASED, satellitesReleased);
         shockwaveDone = compound.getBoolean("ShockwaveDone");
@@ -501,8 +531,8 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         compound.putInt("ReturnTicks", returnTicks);
         compound.putInt("SteeredTicks", steeredTicks);
         compound.putInt("Bounces", bounces);
-        compound.putBoolean("Wrecking", wrecking);
-        compound.putBoolean("Satellite", satellite);
+        compound.putBoolean("Wrecking", isWrecking());
+        compound.putBoolean("Satellite", isSatellite());
         compound.putBoolean("SatellitesReleased", satellitesReleased);
         compound.putBoolean("ShockwaveDone", shockwaveDone);
         compound.putBoolean("FromHolster", fromHolster);
