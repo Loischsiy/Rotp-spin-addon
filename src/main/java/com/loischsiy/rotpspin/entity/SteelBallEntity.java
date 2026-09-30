@@ -32,6 +32,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
@@ -40,6 +41,7 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 /**
  * Thrown steel ball. With Spin it returns to the thrower (Zeppeli signature technique);
@@ -57,6 +59,8 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     // Plain fields stay server-side only, so both flags ride the EntityDataManager.
     private static final DataParameter<Boolean> WRECKING = EntityDataManager.defineId(SteelBallEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> SATELLITE = EntityDataManager.defineId(SteelBallEntity.class, DataSerializers.BOOLEAN);
+    // Visual only: polished-gold dust (#ebc731) trailing a satellite and bursting at release.
+    private static final RedstoneParticleData GOLD_DUST = new RedstoneParticleData(0.92F, 0.78F, 0.19F, 1.0F);
 
     private int returnTicks;
     // Ticks of flight spent under the thrower's control; they do not count towards the return timer.
@@ -149,14 +153,16 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
             }
             return;
         }
-        if (!level.isClientSide() && isWrecking() && !isSatellite() && isSpinning() && !isReturning() && !satellitesReleased
-                && tickCount - steeredTicks >= SpinConfig.WRECKING_RELEASE_AFTER_TICKS.get()) {
-            satellitesReleased = true;
-            entityData.set(SATELLITES_RELEASED, true);
-            releaseSatellites();
+        if (isSatellite() && level.isClientSide()) {
+            // A 0.25-block ball at bullet speed is lost against the sky: a gold trail shows its path.
+            level.addParticle(GOLD_DUST, xo, yo, zo, 0.0, 0.0, 0.0);
+        }
+        if (tickCount - steeredTicks >= SpinConfig.WRECKING_RELEASE_AFTER_TICKS.get()) {
+            releaseSatellitesOnce(null);
         }
 
-        if (!level.isClientSide() && isSpinning() && !isReturning()
+        // A satellite is spent matter: it never returns to the thrower.
+        if (!level.isClientSide() && isSpinning() && !isReturning() && !isSatellite()
                 && (tickCount - steeredTicks >= SpinConfig.BALL_RETURN_AFTER_TICKS.get() || inGround)) {
             startReturning();
         }
@@ -279,6 +285,8 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         // Hit an entity: a spinning ball comes back instead of bouncing off.
         if (isSpinning()) {
             if (!level.isClientSide() && !isReturning()) {
+                // A close target is struck before the release timer: the satellites burst out on impact.
+                releaseSatellitesOnce(null);
                 startReturning();
             }
         }
@@ -302,6 +310,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
             }
         }
         if (!level.isClientSide()) {
+            releaseSatellitesOnce(result.getLocation());
             stripBark(result);
         }
         if (isSpinning() && !isReturning()) {
@@ -413,8 +422,31 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         return ownerUuid == null || standUserUuid == null || !ownerUuid.equals(standUserUuid);
     }
 
+    /**
+     * Server side: the satellites fly out once per flight of a spinning Wrecking Ball — on the
+     * release timer or on the first impact, whichever comes first (without the impact trigger a
+     * target closer than the timer distance was hit before anything flew out).
+     * {@code impactPoint}: block hit location, satellites start just off the surface; null — from the centre.
+     */
+    private void releaseSatellitesOnce(@Nullable Vector3d impactPoint) {
+        if (level.isClientSide() || !isWrecking() || isSatellite() || !isSpinning() || isReturning()
+                || satellitesReleased) {
+            return;
+        }
+        satellitesReleased = true;
+        entityData.set(SATELLITES_RELEASED, true);
+        Vector3d from = position();
+        if (impactPoint != null) {
+            // Step back along the flight so the satellites do not spawn inside the block.
+            Vector3d back = getDeltaMovement().lengthSqr() > 1e-6 ? getDeltaMovement().normalize().scale(-0.3) : Vector3d.ZERO;
+            from = impactPoint.add(back);
+        }
+        releaseSatellites(from);
+        ((ServerWorld) level).sendParticles(GOLD_DUST, from.x, from.y, from.z, 24, 0.25, 0.25, 0.25, 0.0);
+    }
+
     /** Server side: the satellites hidden inside the sphere fly out at the nearest victim. */
-    private void releaseSatellites() {
+    private void releaseSatellites(Vector3d from) {
         Entity owner = getOwner();
         if (!(owner instanceof LivingEntity)) {
             return;
@@ -450,7 +482,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
             sat.setSatellite();
             sat.setBaseDamage(damage);
             sat.pickup = AbstractArrowEntity.PickupStatus.DISALLOWED;
-            sat.setPos(getX(), getY(), getZ());
+            sat.setPos(from.x, from.y, from.z);
             sat.shoot(velocity.x, velocity.y, velocity.z, (float) velocity.length(), 0.0F);
             sat.hurtMarked = true;
             level.addFreshEntity(sat);

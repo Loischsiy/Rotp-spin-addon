@@ -34,10 +34,14 @@ public class SteelBallRenderer extends EntityRenderer<SteelBallEntity> {
     private static final float RADIUS = 0.19F;
     // Visual only, not gameplay: the sphere reads better slightly bigger than the hitbox.
     private static final SpinSphere MESH = SpinSphere.build(RADIUS, 24, 16);
-    // A satellite in flight is the seated ball scaled up a little, so it stays readable at speed.
     private static final float SATELLITE_RADIUS = 0.055F;
-    private static final float SATELLITE_SCALE = 0.4F;
     private static final SpinSphere SATELLITE_MESH = SpinSphere.build(SATELLITE_RADIUS, 12, 8);
+    // A satellite in flight is drawn bigger than the seated dome (radius 0.12, the size of its
+    // 0.25 hitbox): the old 0.076 ball (body x 0.4) was a 2-pixel speck at bullet speed.
+    private static final float FLIGHT_RADIUS = 0.12F;
+    private static final SpinSphere FLIGHT_MESH = SpinSphere.build(FLIGHT_RADIUS, 16, 12);
+    // Polished gold in flight catches the light: drawn full-bright (block 15, sky 15) so it reads at dusk too.
+    private static final int FULL_BRIGHT = 0xF000F0;
     // Where the satellite centres sit, as a fraction of the body radius: a gold dome above the
     // surface; the empty socket is a dark dent slightly sunk into it.
     private static final float SEATED_DEPTH = 0.98F;
@@ -61,11 +65,14 @@ public class SteelBallRenderer extends EntityRenderer<SteelBallEntity> {
             IRenderTypeBuffer buffer, int packedLight) {
         boolean satellite = entity.isSatellite();
         matrixStack.pushPose();
-        float scale = satellite ? SATELLITE_SCALE : 1.0F;
-        matrixStack.scale(scale, scale, scale);
         matrixStack.mulPose(spinRotation(entity, partialTicks));
 
-        drawMesh(buffer, texture(entity), matrixStack, MESH, packedLight);
+        if (satellite) {
+            drawMesh(buffer, satelliteTexture(), matrixStack, FLIGHT_MESH, FULL_BRIGHT);
+        }
+        else {
+            drawMesh(buffer, texture(entity), matrixStack, MESH, packedLight);
+        }
         if (entity.isWrecking() && !satellite) {
             boolean empty = entity.areSatellitesReleased();
             ResourceLocation seatTexture = empty ? socketTexture() : satelliteTexture();
