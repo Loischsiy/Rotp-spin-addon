@@ -50,8 +50,13 @@ public class SteelBallItem extends Item {
      * Server side. Launches {@code ballStack} (a single ball) from the player, with Spin if the player
      * has the Spin power and enough energy. Shared by the right click and the holster throw key; the caller removes the ball
      * from where it was taken. The cooldown is synced to the client by the server cooldown tracker.
+     * A ball thrown straight from the holster ({@code fromHolster}) returns to the holster, not to the hand.
      */
     public static void throwBall(World world, PlayerEntity player, ItemStack ballStack) {
+        throwBall(world, player, ballStack, false);
+    }
+
+    public static void throwBall(World world, PlayerEntity player, ItemStack ballStack, boolean fromHolster) {
         float cost = SpinConfig.BALL_SPIN_COST.get().floatValue();
         boolean creative = player.abilities.instabuild;
         // Without the Spin power it is an ordinary throw: visual rotation only, no special effects, no return.
@@ -59,6 +64,7 @@ public class SteelBallItem extends Item {
         boolean spinning = spin != null && (creative || spin.tryConsume(cost));
 
         SteelBallEntity ball = new SteelBallEntity(world, player, ballStack, spinning);
+        ball.setFromHolster(fromHolster);
         float velocity = (spinning ? SpinConfig.BALL_SPIN_VELOCITY.get() : SpinConfig.BALL_PLAIN_VELOCITY.get()).floatValue();
         ball.shootFromRotation(player, velocity, SpinConfig.BALL_INACCURACY.get().floatValue());
         if (creative) {

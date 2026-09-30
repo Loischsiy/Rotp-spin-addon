@@ -98,7 +98,7 @@ public class GyrosHolsterItem extends Item {
             // Creative: the thrown ball is not picked up again (as SteelBallItem#use), so keep it in the holster.
             insertBall(holster, ball.copy());
         }
-        SteelBallItem.throwBall(player.level, player, ball);
+        SteelBallItem.throwBall(player.level, player, ball, true);
     }
 
     public static int capacity() {

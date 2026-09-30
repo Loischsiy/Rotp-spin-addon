@@ -60,6 +60,8 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     private boolean satellite;
     private boolean satellitesReleased;
     private boolean shockwaveDone;
+    // Where the ball was thrown from: a holster throw returns to the holster, a hand throw to the hand.
+    private boolean fromHolster;
 
     public SteelBallEntity(EntityType<? extends SteelBallEntity> type, World world) {
         super(type, world);
@@ -83,6 +85,11 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     /** Marks this ball as a satellite: it strikes once and is spent (no return, no steering). */
     void setSatellite() {
         this.satellite = true;
+    }
+
+    /** Marks this ball as thrown straight from the holster: it returns to the holster, not to the hand. */
+    public void setFromHolster(boolean fromHolster) {
+        this.fromHolster = fromHolster;
     }
 
     /** Lesson 4 Golden Spin / lesson 5 Super Spin bonus of the thrower, 1.0 if not learned or not calibrated. */
@@ -404,7 +411,8 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         }
     }
 
-    // The returning ball goes back into a holster with room first, otherwise into the free main hand.
+    // The returning ball goes back where it was thrown from: a holster throw into a holster with room,
+    // a hand throw into the free main hand. Each falls back to the other place, then to the inventory.
     @Override
     public void playerTouch(PlayerEntity player) {
         if (level.isClientSide() || !isReturning() || getOwner() == null || !getOwner().getUUID().equals(player.getUUID())) {
@@ -414,11 +422,22 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         if (pickup == AbstractArrowEntity.PickupStatus.ALLOWED) {
             ItemStack ball = getPickupItem();
             ItemStack holster = IHolsterAccess.current().findHolster(player, GyrosHolsterItem::hasSpace);
-            if (!holster.isEmpty() && GyrosHolsterItem.insertBall(holster, ball)) {
-                // back in the holster
+            if (fromHolster) {
+                if (!holster.isEmpty() && GyrosHolsterItem.insertBall(holster, ball)) {
+                    // back in the holster
+                }
+                else if (player.getMainHandItem().isEmpty()) {
+                    player.setItemInHand(Hand.MAIN_HAND, ball);
+                }
+                else if (!player.inventory.add(ball)) {
+                    spawnAtLocation(ball);
+                }
             }
             else if (player.getMainHandItem().isEmpty()) {
                 player.setItemInHand(Hand.MAIN_HAND, ball);
+            }
+            else if (!holster.isEmpty() && GyrosHolsterItem.insertBall(holster, ball)) {
+                // hand was busy: back in the holster
             }
             else if (!player.inventory.add(ball)) {
                 spawnAtLocation(ball);
@@ -471,6 +490,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         satellitesReleased = compound.getBoolean("SatellitesReleased");
         entityData.set(SATELLITES_RELEASED, satellitesReleased);
         shockwaveDone = compound.getBoolean("ShockwaveDone");
+        fromHolster = compound.getBoolean("FromHolster");
     }
 
     @Override
@@ -485,5 +505,6 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         compound.putBoolean("Satellite", satellite);
         compound.putBoolean("SatellitesReleased", satellitesReleased);
         compound.putBoolean("ShockwaveDone", shockwaveDone);
+        compound.putBoolean("FromHolster", fromHolster);
     }
 }
