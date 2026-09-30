@@ -1,10 +1,12 @@
 package com.loischsiy.rotpspin.entity;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 import com.github.standobyte.jojo.entity.itemprojectile.ItemNbtProjectileEntity;
+import com.github.standobyte.jojo.entity.stand.StandEntity;
 import com.loischsiy.rotpspin.config.SpinConfig;
 import com.loischsiy.rotpspin.holster.IHolsterAccess;
 import com.loischsiy.rotpspin.init.InitEffects;
@@ -252,6 +254,51 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
             SpinData.practiceHit((LivingEntity) thrower, target);
         }
         return hurt;
+    }
+
+    /**
+     * A parry by another Stand knocks the rotation out of the ball: it loses Spin and drops
+     * where it was hit instead of coming back. The thrower's own Stand lets the ball fly
+     * (as Silver Chariot spares its user's projectiles).
+     */
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (source.getDirectEntity() instanceof StandEntity) {
+            StandEntity stand = (StandEntity) source.getDirectEntity();
+            LivingEntity standUser = stand.getUser();
+            Entity owner = getOwner();
+            if (shouldDropOnStandParry(isSpinning() || isReturning() || satellite,
+                    owner == null ? null : owner.getUUID(),
+                    standUser == null ? null : standUser.getUUID())) {
+                if (satellite) {
+                    // A satellite is spent matter with no pickup: a parry just swats it away.
+                    if (!level.isClientSide()) {
+                        remove();
+                    }
+                    return true;
+                }
+                loseSpin();
+                setDeltaMovement(Vector3d.ZERO);
+                if (!level.isClientSide()) {
+                    // The entity type updates every 20 ticks: force a velocity packet this tick.
+                    hurtMarked = true;
+                }
+                playSound(SoundEvents.ANVIL_LAND, 0.25F, 1.8F);
+                return true;
+            }
+        }
+        return super.hurt(source, amount);
+    }
+
+    /**
+     * Pure rule for a Stand parry: an active ball (flying, returning, or a satellite)
+     * drops when hit by a Stand that is not its thrower's own. No World access.
+     */
+    static boolean shouldDropOnStandParry(boolean ballActive, UUID ownerUuid, UUID standUserUuid) {
+        if (!ballActive) {
+            return false;
+        }
+        return ownerUuid == null || standUserUuid == null || !ownerUuid.equals(standUserUuid);
     }
 
     /** Server side: the satellites hidden inside the sphere fly out at the nearest victim. */
