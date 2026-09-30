@@ -4,12 +4,15 @@ import com.github.standobyte.jojo.action.ActionTarget;
 import com.github.standobyte.jojo.action.non_stand.NonStandAction;
 import com.github.standobyte.jojo.power.impl.nonstand.INonStandPower;
 import com.loischsiy.rotpspin.config.SpinConfig;
+import com.loischsiy.rotpspin.client.anim.SpinPlayerAnimations;
 import com.loischsiy.rotpspin.power.SpinBrace;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -63,6 +66,41 @@ public class SpinBodyBrace extends NonStandAction {
         if (ticksHeld == windupTicks()) {
             ((ServerWorld) world).sendParticles(ParticleTypes.CRIT,
                     user.getX(), user.getY(0.5), user.getZ(), 10, 0.3, 0.5, 0.3, 0.05);
+        }
+    }
+
+    // Client visuals. RotP calls these only on the client (TrHeldActionPacket), for the user and for
+    // players tracking him. The pose is a non-canon adaptation: the manga shows no specific stance.
+
+    @Override
+    public boolean clHeldStartAnim(PlayerEntity user) {
+        return SpinPlayerAnimations.setBodyBrace(user, true);
+    }
+
+    @Override
+    public void clHeldStopAnim(PlayerEntity user) {
+        SpinPlayerAnimations.setBodyBrace(user, false);
+    }
+
+    /**
+     * Two sparks circling the body in a rising spiral: the rotation runs through the whole body.
+     * Works without playerAnimator too.
+     */
+    @Override
+    public void onHoldTickClientEffect(LivingEntity user, INonStandPower power, int ticksHeld,
+            boolean requirementsFulfilled, boolean stateRefreshed) {
+        if (!requirementsFulfilled || !user.level.isClientSide()) {
+            return;
+        }
+        boolean braced = SpinBrace.isBraced(ticksHeld, windupTicks());
+        float angle = ticksHeld * 0.9F;
+        double radius = 0.55;
+        double height = user.getBbHeight() * (0.15 + 0.7 * ((ticksHeld % 12) / 12.0));
+        for (int i = 0; i < 2; i++) {
+            float a = angle + i * (float) Math.PI;
+            user.level.addParticle(braced ? ParticleTypes.ENCHANTED_HIT : ParticleTypes.CRIT,
+                    user.getX() + MathHelper.cos(a) * radius, user.getY() + height,
+                    user.getZ() + MathHelper.sin(a) * radius, 0, 0, 0);
         }
     }
 }

@@ -126,6 +126,12 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
     (`SHIELD_BLOCK`, CRIT/ENCHANTED_HIT, action bar `rotp_spin.message.brace_absorbed`); математика —
     `power.SpinBrace` (JUnit, потолок 0.95: не неуязвимость). Цена — энергия за тик, за поглощённый
     урон и замедление; удар стойку не срывает.
+    Анимация (клиент, не канон — поза в манге не показана): `clHeldStartAnim`/`clHeldStopAnim` →
+    `client.anim.SpinPlayerAnimations` (слой RotP `registerBasicAnimLayer`, приоритет 1, регистрация в
+    `ClientInit` через `enqueueWork`) → `client.anim.KosmXBodyBraceHandler` (грузится по имени только при
+    playerAnimator; `compileOnly` в build.gradle) → `assets/rotp_spin/player_animation/body_brace.json`
+    (стойка за 5 тиков, петля — лёгкое скручивание корпуса; только вращения, без позиций). Без playerAnimator
+    остаётся спираль частиц `onHoldTickClientEffect` (CRIT в разгоне, ENCHANTED_HIT в стойке).
     Super Spin (`power.SpinSuperSpin`, JUnit): `power.SuperSpinHandler` (`PlayerTickEvent`, сервер) копит
     `golden_spin.super_spin.gallopTicks` непрерывного галопа здоровой лошади (урок 4+); скорость — по
     смещению лошади между тиками (серверный motion у ведомой игроком лошади ≈ 0), сглажено EMA

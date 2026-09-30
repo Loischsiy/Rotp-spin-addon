@@ -173,6 +173,8 @@ dependencies {
 	// RotP dev-run requirements (toast "playerAnimator/bendy-lib not found" without them).
 	// runtimeOnly: our code never touches their API (RotP does), and they must not leak into our jar.
 	// Versions — gradle.properties/playeranim_version, bendylib_version.
+	// compileOnly: KosmXBodyBraceHandler extends RotP's KosmX layer handler; it is only loaded when playerAnimator is installed.
+	compileOnly fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${playeranim_version}")
 	runtimeOnly fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${playeranim_version}")
 	runtimeOnly fg.deobf("io.github.kosmx.bendy-lib:bendy-lib-forge:${bendylib_version}")
 

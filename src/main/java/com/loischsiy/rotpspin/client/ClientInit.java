@@ -1,6 +1,7 @@
 package com.loischsiy.rotpspin.client;
 
 import com.loischsiy.rotpspin.AddonMain;
+import com.loischsiy.rotpspin.client.anim.SpinPlayerAnimations;
 import com.loischsiy.rotpspin.client.render.BallBreakerRenderer;
 import com.loischsiy.rotpspin.client.render.GyroTeacherRenderer;
 import com.loischsiy.rotpspin.client.render.SpunBlockRenderer;
@@ -30,5 +31,7 @@ public class ClientInit {
         RenderingRegistry.registerEntityRenderingHandler(InitEntities.GYRO_TEACHER.get(), GyroTeacherRenderer::new);
         // Key bindings are not thread-safe (they edit GameSettings.keyMappings): deferred, as RotP's ClientSetup does.
         event.enqueueWork(SpinKeys::register);
+        // Deferred: RotP builds its player animator in its own (parallel) client setup handler.
+        event.enqueueWork(SpinPlayerAnimations::init);
     }
 }
