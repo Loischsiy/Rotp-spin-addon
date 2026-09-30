@@ -114,7 +114,11 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
     `spin_item_throw` (урок 3, сущность `entity.SpunItemEntity`), `spin_block_throw` (урок 3:
     вырывает целевой блок и бросает как грубый шар, сущность `entity.SpunBlockEntity`, правил
     выбора — `entity.SpinBlock`, JUnit; возврат и Golden-бонус только у идеальной сферы).
-  - ПКМ (удержание): `spin_ball_steer` (урок 3), `spin_healing` (урок 2).
+  - ПКМ (удержание): `spin_ball_steer` (урок 3), `spin_healing` (урок 2; «рентген» — вода в радиусе
+    `zeppeli_healing.xrayWaterRadius` от пациента даёт диагноз и множитель лечения), `spin_golden_frame`
+    (урок 4, пустые руки: сложенный руками золотой прямоугольник калибрует Golden Spin на
+    `golden_spin.hand_frame.durationTicks`, срок — `SpinData` NBT `HandFrameUntil`; удар срывает складывание).
+    Снегопад над бросающим тоже калибрует (`golden_spin.snowfallCalibrates`).
 - Уроки: `power.SpinData` хранит урок и счётчики практики (NBT `Lesson`, `BallHits`, `Hijacks`, `GoldenHits`),
   `SpinData#isActionUnlocked` (хук RotP `TypeSpecificData`) закрывает действия старших уроков;
   соответствие действие → урок — `SpinData#requiredLesson` (действия только до урока 3; уроки 4–5 —

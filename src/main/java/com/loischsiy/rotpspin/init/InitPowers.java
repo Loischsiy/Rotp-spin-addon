@@ -8,6 +8,7 @@ import com.loischsiy.rotpspin.AddonMain;
 import com.loischsiy.rotpspin.action.SpinBallSteer;
 import com.loischsiy.rotpspin.action.SpinBallThrow;
 import com.loischsiy.rotpspin.action.SpinBlockThrow;
+import com.loischsiy.rotpspin.action.SpinGoldenFrame;
 import com.loischsiy.rotpspin.action.SpinHealing;
 import com.loischsiy.rotpspin.action.SpinItemThrow;
 import com.loischsiy.rotpspin.action.SpinMuscleHijack;
@@ -42,6 +43,10 @@ public class InitPowers {
     public static final RegistryObject<SpinHealing> SPIN_HEALING = InitStands.ACTIONS.register("spin_healing",
             () -> new SpinHealing(new NonStandAction.Builder().holdType()));
 
+    // Hold duration is capped here; the framing moment itself is read from SpinConfig at runtime.
+    public static final RegistryObject<SpinGoldenFrame> SPIN_GOLDEN_FRAME = InitStands.ACTIONS.register("spin_golden_frame",
+            () -> new SpinGoldenFrame(new NonStandAction.Builder().holdType(1200)));
+
     // Given with /jojopower give <player> rotp_spin:spin (learning from the Zeppeli family comes later).
     @SuppressWarnings("unchecked")
     public static final RegistryObject<SpinPowerType> SPIN = NON_STAND_POWERS.register("spin",
@@ -53,7 +58,8 @@ public class InitPowers {
                             SPIN_BLOCK_THROW.get() },
                     (Action<INonStandPower>[]) new Action<?>[] {
                             SPIN_BALL_STEER.get(),
-                            SPIN_HEALING.get() },
+                            SPIN_HEALING.get(),
+                            SPIN_GOLDEN_FRAME.get() },
                     SPIN_BALL_THROW.get()
             ).withColor(SpinPowerType.COLOR));
 }

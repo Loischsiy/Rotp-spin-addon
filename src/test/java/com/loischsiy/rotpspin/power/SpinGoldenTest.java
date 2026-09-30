@@ -54,6 +54,19 @@ class SpinGoldenTest {
     }
 
     @Test
+    void handFrameLastsForItsDuration() {
+        long until = SpinGolden.handFrameUntil(1000L, 600);
+        assertEquals(1600L, until);
+        assertTrue(SpinGolden.isHandFrameActive(1000L, until));
+        assertTrue(SpinGolden.isHandFrameActive(1599L, until));
+        assertFalse(SpinGolden.isHandFrameActive(1600L, until));
+        // Never framed: game time 0 is not before "until" 0.
+        assertFalse(SpinGolden.isHandFrameActive(0L, 0L));
+        // Negative duration from a broken config does not extend into the past.
+        assertEquals(1000L, SpinGolden.handFrameUntil(1000L, -5));
+    }
+
+    @Test
     void lessonFiveCalibratedEverywhere() {
         assertTrue(SpinGolden.isCalibrated(5, "NETHER", false, DEAD));
         assertTrue(SpinGolden.isCalibrated(5, "NONE", false, DEAD));

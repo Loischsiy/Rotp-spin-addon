@@ -56,12 +56,18 @@ public class SpinConfig {
     public static final ForgeConfigSpec.DoubleValue GOLDEN_HORSE_GALLOP_SPEED;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> GOLDEN_DEAD_CATEGORIES;
     public static final ForgeConfigSpec.BooleanValue GOLDEN_SNOWFALL_CALIBRATES;
+    public static final ForgeConfigSpec.IntValue HAND_FRAME_HOLD_TICKS;
+    public static final ForgeConfigSpec.IntValue HAND_FRAME_DURATION_TICKS;
+    public static final ForgeConfigSpec.DoubleValue HAND_FRAME_ENERGY_PER_TICK;
+    public static final ForgeConfigSpec.IntValue HAND_FRAME_COOLDOWN_TICKS;
 
     public static final ForgeConfigSpec.DoubleValue HEALING_ENERGY_PER_TICK;
     public static final ForgeConfigSpec.IntValue HEALING_INTERVAL_TICKS;
     public static final ForgeConfigSpec.DoubleValue HEALING_AMOUNT;
     public static final ForgeConfigSpec.DoubleValue HEALING_TARGET_REACH;
     public static final ForgeConfigSpec.BooleanValue HEALING_CURES_HARMFUL;
+    public static final ForgeConfigSpec.IntValue HEALING_XRAY_WATER_RADIUS;
+    public static final ForgeConfigSpec.DoubleValue HEALING_XRAY_AMOUNT_MULT;
 
     // Steel ball
     public static final ForgeConfigSpec.DoubleValue BALL_SPIN_COST;
@@ -215,6 +221,16 @@ public class SpinConfig {
                         entry -> entry instanceof String);
         GOLDEN_SNOWFALL_CALIBRATES = b.comment("Falling snow on the thrower (open sky, snowy weather) is a golden-ratio reference even in a dead biome: snowflakes saved Gyro on the frozen strait (SBR ch. 54).")
                 .define("snowfallCalibrates", true);
+        b.push("hand_frame");
+        HAND_FRAME_HOLD_TICKS = b.comment("Ability \"Golden Rectangle\" (hold, lesson 4, empty hands): ticks of holding needed to frame the golden rectangle with both hands. A hit breaks the framing (Wekapipo struck Gyro's hands, SBR ch. 51-54).")
+                .defineInRange("holdTicks", 30, 1, 1200);
+        HAND_FRAME_DURATION_TICKS = b.comment("How long the framed rectangle calibrates Golden Spin, in ticks (anywhere, including dead biomes).")
+                .defineInRange("durationTicks", 600, 1, 72000);
+        HAND_FRAME_ENERGY_PER_TICK = b.comment("Spin energy consumed per tick while framing.")
+                .defineInRange("energyPerTick", 0.5, 0.0, 1000.0);
+        HAND_FRAME_COOLDOWN_TICKS = b.comment("Cooldown after a completed framing, in ticks.")
+                .defineInRange("cooldownTicks", 400, 0, 72000);
+        b.pop();
         b.pop();
 
         b.push("zeppeli_healing");
@@ -228,6 +244,10 @@ public class SpinConfig {
                 .defineInRange("targetReach", 3.0, 0.5, 16.0);
         HEALING_CURES_HARMFUL = b.comment("Each interval also removes poison, wither and RotP bleeding.")
                 .define("curesHarmfulEffects", true);
+        HEALING_XRAY_WATER_RADIUS = b.comment("\"X-ray\": water (a pool or a filled cauldron) within this many blocks of the patient shows the ripples of the rotation: the healer sees the hidden ailments and the treatment is more precise. 0 disables.")
+                .defineInRange("xrayWaterRadius", 2, 0, 8);
+        HEALING_XRAY_AMOUNT_MULT = b.comment("\"X-ray\": health restored per interval is multiplied by this while the water shows the ripples.")
+                .defineInRange("xrayAmountMultiplier", 1.5, 1.0, 10.0);
         b.pop();
 
         b.push("steel_ball");

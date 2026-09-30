@@ -30,6 +30,8 @@ public class SpinData extends TypeSpecificData {
     private int ballHits;
     private int hijacks;
     private int goldenHits;
+    /** Game time until which the golden rectangle framed by hands calibrates Golden Spin. */
+    private long handFrameUntil;
 
     public static Optional<SpinData> of(LivingEntity entity) {
         return INonStandPower.getNonStandPowerOptional(entity).resolve()
@@ -59,7 +61,8 @@ public class SpinData extends TypeSpecificData {
         boolean buckle = thrower instanceof net.minecraft.entity.player.PlayerEntity
                 && hasBuckle((net.minecraft.entity.player.PlayerEntity) thrower);
         boolean snowfall = SpinConfig.GOLDEN_SNOWFALL_CALIBRATES.get() && isSnowingOn(world, thrower);
-        boolean calibrated = SpinGolden.isCalibrated(lesson, category, buckle, snowfall,
+        boolean handFrame = of(thrower).map(data -> data.hasHandFrame(world.getGameTime())).orElse(false);
+        boolean calibrated = SpinGolden.isCalibrated(lesson, category, buckle, snowfall || handFrame,
                 SpinConfig.GOLDEN_DEAD_CATEGORIES.get());
         return SpinGolden.multiplier(lesson, calibrated,
                 SpinConfig.GOLDEN_MULT_4.get(), SpinConfig.GOLDEN_MULT_5.get());
@@ -112,6 +115,9 @@ public class SpinData extends TypeSpecificData {
                 || action == InitPowers.SPIN_BLOCK_THROW.get()) {
             return 3;
         }
+        if (action == InitPowers.SPIN_GOLDEN_FRAME.get()) {
+            return 4;
+        }
         return 1;
     }
 
@@ -137,6 +143,15 @@ public class SpinData extends TypeSpecificData {
 
     public int getGoldenHits() {
         return goldenHits;
+    }
+
+    /** Server: the golden rectangle is framed by hands now and stays in the eye for {@code durationTicks}. */
+    public void frameGoldenRectangle(long gameTime, int durationTicks) {
+        handFrameUntil = SpinGolden.handFrameUntil(gameTime, durationTicks);
+    }
+
+    public boolean hasHandFrame(long gameTime) {
+        return SpinGolden.isHandFrameActive(gameTime, handFrameUntil);
     }
 
     private int effectiveLesson() {
@@ -234,6 +249,7 @@ public class SpinData extends TypeSpecificData {
         nbt.putInt("BallHits", ballHits);
         nbt.putInt("Hijacks", hijacks);
         nbt.putInt("GoldenHits", goldenHits);
+        nbt.putLong("HandFrameUntil", handFrameUntil);
         return nbt;
     }
 
@@ -243,6 +259,7 @@ public class SpinData extends TypeSpecificData {
         ballHits = nbt.getInt("BallHits");
         hijacks = nbt.getInt("Hijacks");
         goldenHits = nbt.getInt("GoldenHits");
+        handFrameUntil = nbt.getLong("HandFrameUntil");
     }
 
     @Override

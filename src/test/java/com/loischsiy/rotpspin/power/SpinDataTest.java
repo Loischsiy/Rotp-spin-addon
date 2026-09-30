@@ -1,6 +1,8 @@
 package com.loischsiy.rotpspin.power;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import com.github.standobyte.jojo.power.impl.nonstand.INonStandPower;
@@ -110,6 +112,18 @@ class SpinDataTest {
         assertEquals(2, read.getLesson());
         assertEquals(data.getBallHits(), read.getBallHits());
         assertEquals(1, read.getHijacks());
+    }
+
+    @Test
+    void handFrameSurvivesNbtAndExpires() {
+        assertFalse(data.hasHandFrame(0L));
+        data.frameGoldenRectangle(500L, 600);
+        assertTrue(data.hasHandFrame(1099L));
+        SpinData read = new SpinData();
+        read.setPower(mock(INonStandPower.class));
+        read.readNBT(data.writeNBT());
+        assertTrue(read.hasHandFrame(1099L));
+        assertFalse(read.hasHandFrame(1100L));
     }
 
     private void learnLessonTwo() {

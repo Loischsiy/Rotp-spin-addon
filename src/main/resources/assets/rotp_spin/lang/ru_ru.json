@@ -58,5 +58,10 @@
   "item.rotp_spin.gyro_teacher_egg": "Яйцо призыва Джайро Цеппели",
   "rotp_spin.message.gyro_spin_given": "Джайро кивает. «Урок 1 — Если есть воля, сделай это. Твой Спин теперь твой.»",
   "rotp_spin.message.gyro_has_other": "Джайро качает головой. «Ты уже идёшь другим путём — я не могу учить тебя Спину.»",
-  "rotp_spin.message.gyro_status": "Урок %s «%s» — попаданий шаром %s, перехватов %s, золотых %s"
+  "rotp_spin.message.gyro_status": "Урок %s «%s» — попаданий шаром %s, перехватов %s, золотых %s",
+  "action.rotp_spin.spin_golden_frame": "Золотой прямоугольник",
+  "jojo.message.action_condition.rotp_spin.hands_busy": "Чтобы сложить золотой прямоугольник, обе руки должны быть свободны",
+  "rotp_spin.message.golden_frame": "Золотой прямоугольник сложен: Золотой Спин откалиброван на %s с",
+  "rotp_spin.message.xray_diagnosis": "Рябь на воде показывает %s: %s (здоровье %s)",
+  "rotp_spin.message.xray_healthy": "Рябь на воде показывает %s: скрытых недугов нет (здоровье %s)"
 }

@@ -17,19 +17,29 @@ public final class SpinGolden {
     }
 
     /**
-     * Same as {@link #isCalibrated(int, String, boolean, Collection)}, plus falling snow as a
-     * reference: on the frozen strait Gyro won only because a sudden snowfall gave him snowflakes
-     * to see the golden rectangle in (docs/spin-lore.md, "Золотой Спин и среда", ch. 54).
+     * Same as {@link #isCalibrated(int, String, boolean, Collection)}, plus a reference found or made
+     * on the spot (docs/spin-lore.md, "Золотой Спин и среда", ch. 51-54): falling snowflakes, or
+     * the golden rectangle framed by the user's own hands.
      */
     public static boolean isCalibrated(int lesson, String biomeCategory, boolean hasBuckle,
-            boolean snowfall, Collection<? extends String> deadCategories) {
+            boolean reference, Collection<? extends String> deadCategories) {
         if (lesson >= 5) {
             return true; // Super Spin: the detour, golden everywhere without calibration
         }
         if (lesson < 4) {
             return false;
         }
-        return hasBuckle || snowfall || !deadCategories.contains(biomeCategory);
+        return hasBuckle || reference || !deadCategories.contains(biomeCategory);
+    }
+
+    /** The golden rectangle framed by hands stays in the user's eye until {@code until} (game time). */
+    public static boolean isHandFrameActive(long now, long until) {
+        return now < until;
+    }
+
+    /** Game time until which a golden rectangle framed now stays calibrated. */
+    public static long handFrameUntil(long now, int durationTicks) {
+        return now + Math.max(0, durationTicks);
     }
 
     /** Damage multiplier of a spinning steel ball for the given lesson and calibration. */
