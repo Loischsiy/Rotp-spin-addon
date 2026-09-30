@@ -55,6 +55,7 @@ public class SpinConfig {
     public static final ForgeConfigSpec.DoubleValue GOLDEN_CHIPPED_RETENTION;
     public static final ForgeConfigSpec.DoubleValue GOLDEN_HORSE_GALLOP_SPEED;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> GOLDEN_DEAD_CATEGORIES;
+    public static final ForgeConfigSpec.BooleanValue GOLDEN_SNOWFALL_CALIBRATES;
 
     public static final ForgeConfigSpec.DoubleValue HEALING_ENERGY_PER_TICK;
     public static final ForgeConfigSpec.IntValue HEALING_INTERVAL_TICKS;
@@ -201,7 +202,7 @@ public class SpinConfig {
         b.pop();
 
         b.push("golden_spin");
-        GOLDEN_MULT_4 = b.comment("Lesson 4 Golden Spin: damage multiplier of a spinning steel ball while calibrated (living biome or calibration buckle in the inventory).")
+        GOLDEN_MULT_4 = b.comment("Lesson 4 Golden Spin: damage multiplier of a spinning steel ball while calibrated (living biome, falling snow or calibration buckle in the inventory).")
                 .defineInRange("multiplier4", 1.5, 1.0, 100.0);
         GOLDEN_MULT_5 = b.comment("Lesson 5 Super Spin: damage multiplier of a spinning steel ball, everywhere, no calibration needed.")
                 .defineInRange("multiplier5", 2.0, 1.0, 100.0);
@@ -212,6 +213,8 @@ public class SpinConfig {
         GOLDEN_DEAD_CATEGORIES = b.comment("Biome categories with no natural golden-ratio markers (frozen strait, desert, void): Golden Spin needs the calibration buckle there. Names of Biome.Category.")
                 .defineList("deadBiomeCategories", Arrays.asList("NETHER", "THEEND", "ICY", "DESERT", "NONE"),
                         entry -> entry instanceof String);
+        GOLDEN_SNOWFALL_CALIBRATES = b.comment("Falling snow on the thrower (open sky, snowy weather) is a golden-ratio reference even in a dead biome: snowflakes saved Gyro on the frozen strait (SBR ch. 54).")
+                .define("snowfallCalibrates", true);
         b.pop();
 
         b.push("zeppeli_healing");

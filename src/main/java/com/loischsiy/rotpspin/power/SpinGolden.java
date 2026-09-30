@@ -13,13 +13,23 @@ public final class SpinGolden {
     /** Golden ratio markers exist everywhere except the configured dead biome categories. */
     public static boolean isCalibrated(int lesson, String biomeCategory, boolean hasBuckle,
             Collection<? extends String> deadCategories) {
+        return isCalibrated(lesson, biomeCategory, hasBuckle, false, deadCategories);
+    }
+
+    /**
+     * Same as {@link #isCalibrated(int, String, boolean, Collection)}, plus falling snow as a
+     * reference: on the frozen strait Gyro won only because a sudden snowfall gave him snowflakes
+     * to see the golden rectangle in (docs/spin-lore.md, "Золотой Спин и среда", ch. 54).
+     */
+    public static boolean isCalibrated(int lesson, String biomeCategory, boolean hasBuckle,
+            boolean snowfall, Collection<? extends String> deadCategories) {
         if (lesson >= 5) {
             return true; // Super Spin: the detour, golden everywhere without calibration
         }
         if (lesson < 4) {
             return false;
         }
-        return hasBuckle || !deadCategories.contains(biomeCategory);
+        return hasBuckle || snowfall || !deadCategories.contains(biomeCategory);
     }
 
     /** Damage multiplier of a spinning steel ball for the given lesson and calibration. */

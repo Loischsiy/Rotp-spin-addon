@@ -58,10 +58,31 @@ public class SpinData extends TypeSpecificData {
         String category = world.getBiome(thrower.blockPosition()).getBiomeCategory().name();
         boolean buckle = thrower instanceof net.minecraft.entity.player.PlayerEntity
                 && hasBuckle((net.minecraft.entity.player.PlayerEntity) thrower);
-        boolean calibrated = SpinGolden.isCalibrated(lesson, category, buckle,
+        boolean snowfall = SpinConfig.GOLDEN_SNOWFALL_CALIBRATES.get() && isSnowingOn(world, thrower);
+        boolean calibrated = SpinGolden.isCalibrated(lesson, category, buckle, snowfall,
                 SpinConfig.GOLDEN_DEAD_CATEGORIES.get());
         return SpinGolden.multiplier(lesson, calibrated,
                 SpinConfig.GOLDEN_MULT_4.get(), SpinConfig.GOLDEN_MULT_5.get());
+    }
+
+    /** Vanilla snow line: below this biome temperature precipitation falls as snow. */
+    private static final float SNOW_TEMPERATURE = 0.15F;
+
+    /**
+     * Snow is falling on the thrower: the snowy counterpart of vanilla World#isRainingAt
+     * (weather on, open sky above the head, snowy biome cold enough at this height).
+     */
+    static boolean isSnowingOn(net.minecraft.world.World world, LivingEntity thrower) {
+        if (!world.isRaining()) {
+            return false;
+        }
+        net.minecraft.util.math.BlockPos head = thrower.blockPosition().above();
+        if (!world.canSeeSky(head)) {
+            return false;
+        }
+        net.minecraft.world.biome.Biome biome = world.getBiome(head);
+        return biome.getPrecipitation() == net.minecraft.world.biome.Biome.RainType.SNOW
+                && biome.getTemperature(head) < SNOW_TEMPERATURE;
     }
 
     /** Horizontal speed of the ridden horse, 0 when not on horseback. */

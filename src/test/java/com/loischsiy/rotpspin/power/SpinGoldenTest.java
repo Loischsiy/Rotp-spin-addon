@@ -32,6 +32,28 @@ class SpinGoldenTest {
     }
 
     @Test
+    void snowfallCalibratesDeadBiomeAtLessonFour() {
+        // Frozen strait (ch. 54): no markers until the snow starts falling.
+        assertFalse(SpinGolden.isCalibrated(4, "ICY", false, false, DEAD));
+        assertTrue(SpinGolden.isCalibrated(4, "ICY", false, true, DEAD));
+        assertTrue(SpinGolden.isCalibrated(4, "DESERT", false, true, DEAD));
+        // Living biome stays calibrated with or without snow.
+        assertTrue(SpinGolden.isCalibrated(4, "PLAINS", false, false, DEAD));
+    }
+
+    @Test
+    void snowfallDoesNotReplaceTheLesson() {
+        assertFalse(SpinGolden.isCalibrated(3, "ICY", false, true, DEAD));
+        assertFalse(SpinGolden.isCalibrated(1, "PLAINS", true, true, DEAD));
+    }
+
+    @Test
+    void legacyOverloadMeansNoSnow() {
+        assertEquals(SpinGolden.isCalibrated(4, "ICY", false, false, DEAD),
+                SpinGolden.isCalibrated(4, "ICY", false, DEAD));
+    }
+
+    @Test
     void lessonFiveCalibratedEverywhere() {
         assertTrue(SpinGolden.isCalibrated(5, "NETHER", false, DEAD));
         assertTrue(SpinGolden.isCalibrated(5, "NONE", false, DEAD));
