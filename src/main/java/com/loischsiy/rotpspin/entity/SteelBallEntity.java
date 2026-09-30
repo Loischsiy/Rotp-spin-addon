@@ -404,7 +404,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         }
     }
 
-    // The returning ball goes back into the main hand if it is free, otherwise into a holster with room.
+    // The returning ball goes back into a holster with room first, otherwise into the free main hand.
     @Override
     public void playerTouch(PlayerEntity player) {
         if (level.isClientSide() || !isReturning() || getOwner() == null || !getOwner().getUUID().equals(player.getUUID())) {
@@ -413,13 +413,12 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         }
         if (pickup == AbstractArrowEntity.PickupStatus.ALLOWED) {
             ItemStack ball = getPickupItem();
-            ItemStack holster = player.getMainHandItem().isEmpty() ? ItemStack.EMPTY
-                    : IHolsterAccess.current().findHolster(player, GyrosHolsterItem::hasSpace);
-            if (player.getMainHandItem().isEmpty()) {
-                player.setItemInHand(Hand.MAIN_HAND, ball);
-            }
-            else if (!holster.isEmpty() && GyrosHolsterItem.insertBall(holster, ball)) {
+            ItemStack holster = IHolsterAccess.current().findHolster(player, GyrosHolsterItem::hasSpace);
+            if (!holster.isEmpty() && GyrosHolsterItem.insertBall(holster, ball)) {
                 // back in the holster
+            }
+            else if (player.getMainHandItem().isEmpty()) {
+                player.setItemInHand(Hand.MAIN_HAND, ball);
             }
             else if (!player.inventory.add(ball)) {
                 spawnAtLocation(ball);
