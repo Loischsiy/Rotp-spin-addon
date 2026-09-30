@@ -8,7 +8,7 @@
 |---|---|---|---|
 | Кожа | `#5a3f28` | `#3a2817` | `#7a5a3c` |
 | Латунь (заклёпки, пряжка) | `#b8860b` | `#7a5a08` | `#e0b84a` |
-| Сталь шаров | `#8a949e` | `#4a5058` | `#d8dde2` |
+| Стальные шары (зелёный металл, как `steel_ball.md`) | `#33b12a` | `#1c8a1c`, глубокая `#0f5a12` | `#72d944`, зеркальный блик `#cdf99a` |
 | Контур (только иконка) | `#1e140b` | — | — |
 
 Все PNG: 32-bit RGBA, без потерь, прозрачный фон, без сглаживания и полупрозрачных краёв,
@@ -20,7 +20,8 @@
 - Файл: `src/main/resources/assets/rotp_spin/textures/item/gyros_holster.png`
 - Размер: **32×32** (по playbook). Иконка шара — 16×16; если нужен единый стиль, допустимо 16×16.
 - Силуэт: ремень дугой-подковой выпуклостью вниз; по бокам две открытые круглые кобуры-чашки,
-  в каждой видна верхняя половина стального шара; в центре латунная прямоугольная пряжка 1:1.618.
+  в каждой видна верхняя половина стального шара (зелёный металл по лору, не серая сталь);
+  в центре латунная прямоугольная пряжка 1:1.618.
 - Детали: 2–3 заклёпки на кобуре, пунктирная строчка светлой кожей по краю ремня,
   потёртости светлее на сгибах. Стиль — вестерн Steel Ball Run.
 
@@ -29,10 +30,10 @@
 Pixel art Minecraft item icon, 32x32 pixels, transparent background, no anti-aliasing,
 dark outline #1e140b, light from top-left. A heavy worn leather gun belt curved like a
 horseshoe, with two open round cup-shaped holsters on the left and right sides, each
-holding a polished steel ball (only the top half visible). In the center a brass
+holding a polished green metal ball (only the top half visible). In the center a brass
 rectangular buckle with golden ratio proportions 1:1.618. Leather colors #3a2817 and
-#5a3f28, highlight #7a5a3c; brass rivets #b8860b with highlight #e0b84a; steel #8a949e,
-highlight #d8dde2, shadow #4a5058. Stitching along the belt edge, scuffs on bends.
+#5a3f28, highlight #7a5a3c; brass rivets #b8860b with highlight #e0b84a; green ball #33b12a,
+highlight #72d944, glint #cdf99a, shadow #1c8a1c, deep shadow #0f5a12. Stitching along the belt edge, scuffs on bends.
 Wild West, Steel Ball Run style. Flat sprite, no text, no background.
 ```
 После генерации: уменьшить до 32×32 методом **Nearest Neighbor**, убрать фон в настоящую
@@ -77,7 +78,9 @@ Blockbench (спереди, сбоку, сверху) и подтвержден�
 - Размер **64×64** (Box UV, кратно 16, по model-guide), палитра — таблица выше.
 - Ремень: база кожи, строчка пунктиром `#7a5a3c` по верхнему и нижнему краю.
   Кобуры: кожа темнее (`#3a2817` база внутри чашки), 2–3 латунные заклёпки по ободу.
-  Шары: сталь с одним бликом-пикселем сверху-слева; по желанию тонкая гравировка спирали.
+  Шары: зелёный металл, свет сверху-слева, один блик-пиксель `#cdf99a` на верхней грани.
+  ✅ Шары на обеих текстурах перекрашены скриптом (геометрия модели не менялась):
+  `python3 docs/art/tools/gen_holster_green_balls.py --textures src/main/resources/assets/rotp_spin/textures`
   Пряжка: латунь, золотая спираль 1–2 пикселя тенью.
 
 ### Что передать мне
