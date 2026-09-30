@@ -91,6 +91,7 @@ public class SpinConfig {
     public static final ForgeConfigSpec.IntValue BALL_BREAKER_SENESCENCE_DURATION;
     public static final ForgeConfigSpec.IntValue BALL_BREAKER_SENESCENCE_INTERVAL;
     public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_SENESCENCE_DAMAGE;
+    public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_SPIN_DAMAGE_MULT;
 
     // Wrecking Ball (royal guard version of the steel ball)
     public static final ForgeConfigSpec.IntValue WRECKING_SATELLITES;
@@ -281,6 +282,8 @@ public class SpinConfig {
                 .defineInRange("senescenceIntervalTicks", 20, 1, 1200);
         BALL_BREAKER_SENESCENCE_DAMAGE = b.comment("Aging damage per interval (ignores armor, like the canon bypass).")
                 .defineInRange("senescenceDamage", 1.0, 0.0, 100.0);
+        BALL_BREAKER_SPIN_DAMAGE_MULT = b.comment("Ball Breaker summoned + Golden Spin calibrated: damage multiplier of the thrower's spinning steel balls (the visualization amplifies the Spin itself).")
+                .defineInRange("spinDamageMultiplier", 1.5, 1.0, 100.0);
         b.pop();
 
         b.push("wrecking_ball");

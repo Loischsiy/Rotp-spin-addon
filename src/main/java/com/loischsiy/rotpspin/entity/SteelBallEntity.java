@@ -16,6 +16,7 @@ import com.loischsiy.rotpspin.item.GyrosHolsterItem;
 import com.loischsiy.rotpspin.item.SteelBallItem;
 import com.loischsiy.rotpspin.item.WreckingBallItem;
 import com.loischsiy.rotpspin.power.SpinData;
+import com.loischsiy.rotpspin.power.BallBreakerBoost;
 import com.loischsiy.rotpspin.power.SpinGolden;
 import com.loischsiy.rotpspin.power.SpinSteer;
 
@@ -100,10 +101,15 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         this.fromHolster = fromHolster;
     }
 
-    /** Lesson 4 Golden Spin / lesson 5 Super Spin bonus of the thrower, 1.0 if not learned or not calibrated. */
+    /** Lesson 4 Golden Spin / lesson 5 Super Spin bonus of the thrower, 1.0 if not learned or not calibrated.
+     * A summoned Ball Breaker amplifies the Spin itself, but only on top of Golden (SBR ch. 83). */
     private static double goldenMultiplier(World world, LivingEntity thrower, boolean chipped) {
         double mult = SpinData.goldenMultiplier(world, thrower);
-        return chipped ? SpinGolden.applyChipped(mult, SpinConfig.GOLDEN_CHIPPED_RETENTION.get()) : mult;
+        if (chipped) {
+            mult = SpinGolden.applyChipped(mult, SpinConfig.GOLDEN_CHIPPED_RETENTION.get());
+        }
+        return BallBreakerBoost.boostedMultiplier(mult,
+                BallBreakerBoost.hasBallBreakerOut(thrower), SpinConfig.BALL_BREAKER_SPIN_DAMAGE_MULT.get());
     }
 
     @Override
@@ -312,11 +318,18 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     }
 
     // A hit on a creature with a spinning ball is practice for lesson 2.
+    // A Golden throw under the summoned Ball Breaker also ages the victim (senescence, SBR ch. 83-84).
     @Override
     protected boolean hurtTarget(Entity target, Entity thrower) {
         boolean hurt = super.hurtTarget(target, thrower);
         if (hurt && !level.isClientSide() && isSpinning() && !isSatellite() && thrower instanceof LivingEntity) {
             SpinData.practiceHit((LivingEntity) thrower, target);
+            if (target instanceof LivingEntity
+                    && BallBreakerBoost.shouldBoost(BallBreakerBoost.hasBallBreakerOut((LivingEntity) thrower),
+                            SpinData.goldenMultiplier(level, (LivingEntity) thrower))) {
+                ((LivingEntity) target).addEffect(new EffectInstance(InitEffects.SENESCENCE.get(),
+                        SpinConfig.BALL_BREAKER_SENESCENCE_DURATION.get()));
+            }
         }
         return hurt;
     }
