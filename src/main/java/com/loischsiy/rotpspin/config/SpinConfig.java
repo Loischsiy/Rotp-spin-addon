@@ -19,6 +19,15 @@ public class SpinConfig {
     public static final ForgeConfigSpec.BooleanValue LEAP_IGNORE_SLOWNESS;
     public static final ForgeConfigSpec.DoubleValue LEAP_FALL_REDUCTION;
 
+    // Lesson 1: Spin on one's own body
+    public static final ForgeConfigSpec.IntValue BRACE_WINDUP_TICKS;
+    public static final ForgeConfigSpec.DoubleValue BRACE_ENERGY_PER_TICK;
+    public static final ForgeConfigSpec.DoubleValue BRACE_DAMAGE_REDUCTION;
+    public static final ForgeConfigSpec.DoubleValue BRACE_ENERGY_PER_DAMAGE;
+    public static final ForgeConfigSpec.DoubleValue BRACE_ATTACKER_KNOCKBACK;
+    public static final ForgeConfigSpec.IntValue BRACE_SLOWNESS_AMPLIFIER;
+    public static final ForgeConfigSpec.IntValue BRACE_COOLDOWN_TICKS;
+
     // Spin actions (RotP hotbars)
     public static final ForgeConfigSpec.DoubleValue STEER_ENERGY_PER_TICK;
     public static final ForgeConfigSpec.DoubleValue STEER_TURN_RATE;
@@ -138,6 +147,23 @@ public class SpinConfig {
                 .define("ignoreSlowness", true);
         LEAP_FALL_REDUCTION = b.comment("Fall distance (blocks) forgiven to a Spin user. Replaces RotP's generic leap bonus (~19 blocks): Spin does not make the body superhuman.")
                 .defineInRange("fallDistanceReduction", 0.0, 0.0, 256.0);
+        b.pop();
+
+        b.push("body_brace");
+        BRACE_WINDUP_TICKS = b.comment("Ability \"Spin Body Brace\" (hold, lesson 1): ticks of holding before the spinning body becomes rigid (Gyro withstood a bullet and a bomb blast, SBR ch. 22, 25, 54).")
+                .defineInRange("windupTicks", 5, 0, 200);
+        BRACE_ENERGY_PER_TICK = b.comment("Spin energy consumed per tick while holding the stance.")
+                .defineInRange("energyPerTick", 0.4, 0.0, 1000.0);
+        BRACE_DAMAGE_REDUCTION = b.comment("Share of a kinetic blow (projectile, explosion, melee) the rigid body passes on. Capped at 0.95 in code: temporary toughness, not invulnerability.")
+                .defineInRange("damageReduction", 0.6, 0.0, 0.95);
+        BRACE_ENERGY_PER_DAMAGE = b.comment("Spin energy spent per absorbed damage point; with too little energy only part of the blow is absorbed.")
+                .defineInRange("energyPerAbsorbedDamage", 4.0, 0.0, 1000.0);
+        BRACE_ATTACKER_KNOCKBACK = b.comment("Knockback strength a melee attacker receives: the energy of the blow is passed back (Wekapipo, ch. 54). 0 disables.")
+                .defineInRange("attackerKnockback", 0.6, 0.0, 5.0);
+        BRACE_SLOWNESS_AMPLIFIER = b.comment("Slowness amplifier while the body is rigid (-1 disables).")
+                .defineInRange("slownessAmplifier", 1, -1, 5);
+        BRACE_COOLDOWN_TICKS = b.comment("Cooldown after releasing a completed stance, in ticks.")
+                .defineInRange("cooldownTicks", 40, 0, 1200);
         b.pop();
 
         b.push("ball_steer");

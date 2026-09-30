@@ -17,6 +17,7 @@
 | `textures/action/spin_item_throw.png` | 32×32 | [action_spin_item_throw.md](action_spin_item_throw.md) | ✅ есть |
 | `textures/action/spin_block_throw.png` | 32×32 | [action_spin_block_throw.md](action_spin_block_throw.md) | ✅ есть |
 | `textures/action/spin_golden_frame.png` | 32×32 | [action_spin_golden_frame.md](action_spin_golden_frame.md) | ⏳ ждёт художника (в игре пока заглушка) |
+| `textures/action/spin_body_brace.png` | 32×32 | [action_spin_body_brace.md](action_spin_body_brace.md) | ⏳ ждёт художника (в игре пока заглушка) |
 | `textures/item/calibration_buckle.png` | 16×16 | [calibration_buckle.md](calibration_buckle.md) | ✅ есть |
 | `textures/item/wrecking_ball.png` | 16×16 | [wrecking_ball.md](wrecking_ball.md) | ✅ есть (по референсам: медь + оранжевые борозды + золотые сателлиты; генерируется `tools/gen_wrecking_ball_icon.py`) |
 | `textures/entity/stand/ball_breaker.png` | 128×128 | [ball_breaker.md](ball_breaker.md) | ✅ по референсам манга/ASB (аниме-версии Ball Breaker ещё нет); `tools/gen_ball_breaker_texture.py`; + 5 иконок `power/ball_breaker`, `action/ball_breaker_{punch,heavy_punch,block,senescence}` (`tools/gen_ball_breaker_icons.py`); проверить в игре |

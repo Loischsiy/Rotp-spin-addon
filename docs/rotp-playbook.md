@@ -119,6 +119,11 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
     (урок 4, пустые руки: сложенный руками золотой прямоугольник калибрует Golden Spin на
     `golden_spin.hand_frame.durationTicks`, срок — `SpinData` NBT `HandFrameUntil`; удар срывает складывание).
     Снегопад над бросающим тоже калибрует (`golden_spin.snowfallCalibrates`).
+    `spin_body_brace` (урок 1, Спин на своём теле): после `body_brace.windupTicks` тело жёсткое —
+    `power.SpinBraceHandler` (`LivingHurtEvent`) снимает долю кинетического удара (снаряд, взрыв, ближний
+    бой; не огонь/магия/bypassArmor) за энергию и отбрасывает атакующего в упор; математика —
+    `power.SpinBrace` (JUnit, потолок 0.95: не неуязвимость). Цена — энергия за тик, за поглощённый
+    урон и замедление; удар стойку не срывает.
 - Уроки: `power.SpinData` хранит урок и счётчики практики (NBT `Lesson`, `BallHits`, `Hijacks`, `GoldenHits`),
   `SpinData#isActionUnlocked` (хук RotP `TypeSpecificData`) закрывает действия старших уроков;
   соответствие действие → урок — `SpinData#requiredLesson` (действия только до урока 3; уроки 4–5 —
