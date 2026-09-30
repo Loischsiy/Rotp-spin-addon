@@ -31,18 +31,14 @@ git clone --depth 1 https://github.com/StandoByte/RotP-Addon-example.git .tmp-te
 `build.gradle` в остальном не трогай.
 
 ## Сборка и тесты
-**JDK 8 лежит прямо в этой папке**, в каталоге `openjdk8`. Внешний Java не используй.
-Перед каждой Gradle-командой активируй его:
+JDK 8 — системный. Перед каждой Gradle-командой:
 ```bash
-export JAVA_HOME="$PWD/openjdk8/Contents/Home" && export PATH="$JAVA_HOME/bin:$PATH"
-./gradlew build          # сборка
-./gradlew test           # JUnit
-./gradlew runClient      # ручная проверка в игре
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 && export PATH="$JAVA_HOME/bin:$PATH"
+./gradlew build test --offline   # сборка + JUnit
 ```
-- Путь `Contents/Home` — раскладка macOS-бандла. Если внутри `openjdk8` сразу лежит `bin/java`,
-  то `export JAVA_HOME="$PWD/openjdk8"`. Проверь раскладку один раз: `ls openjdk8`.
-- JDK строго 8. После экспорта проверяй: `java -version` должно показать `1.8`.
-- Каталог `openjdk8/` добавь в `.gitignore` — бинарники в репозиторий не коммитим.
+- JDK строго 8: `java -version` должно показать `1.8`.
+- `~/.gradle/gradle.properties` задаёт `org.gradle.java.home` и `org.gradle.java.installations.paths`
+  (java-8 + java-21) — без них Forge не найдёт тулчейн. JDK-бинарники в репозиторий не коммитим.
 - Версии зафиксированы шаблоном: Forge `1.16.5-36.2.34`, ForgeGradle `5.1.+`,
   mappings `channel: 'official', version: '1.16.5'`.
 - Версия основного мода — только через `gradle.properties/main_mod_version`
@@ -128,34 +124,11 @@ git clone --depth 1 https://github.com/StandoByte/RotP-Addon-example.git .refs/a
 ГОТОВО КОГДА:  <критерий приёмки>
 ```
 
-## Headless-тестирование клиента
-
-Используй `mcx` (см. /srv/minecraft-agent/MCX.md): `mcx start`, `mcx launch ./gradlew runClient --offline`, `mcx wait-window`, `mcx fit`, `mcx newworld`, `mcx key/hold/type/click/clickr`, `mcx shot`, `mcx rec`, `mcx stop`. Не запускай Xvfb вручную и не используй `pkill -f` (вместо него `mcx kill`).
-
 ## Headless-тестирование клиента (mcx)
-
-Для запуска и проверки headless-клиента Minecraft на этом сервере
-используйте `mcx` (см. `/srv/minecraft-agent/MCX.md` или `~/MCX.md`).
-Никогда не запускайте `Xvfb`/`pkill`/`xdotool` напрямую — только через
-`mcx start/stop/restart/kill`.
-
-Важно для сборки: в `~/.gradle/gradle.properties` прописан
-`org.gradle.java.installations.paths` с путём к bundled `openjdk8/`
-этого репозитория + системному Java 21 — это нужно для авто-резолва
-Java 8 тулчейна Gradle/Forge. Если файл потерян/переустановлен —
-восстановите строку:
-```
-org.gradle.java.installations.paths=/srv/minecraft-agent/projects/Rotp-spin-addon/openjdk8,/usr/lib/jvm/java-21-openjdk-amd64
-```
-Первый прогон `./gradlew runClient` лучше делать без `--offline`,
-чтобы прогреть кэш зависимостей.
-
-Пример:
-```
-mcx start
-mcx launch ./gradlew runClient
-mcx wait-window 'Minecraft'
-mcx newworld
-mcx shot
-mcx stop
+Только через `mcx` (см. `/srv/minecraft-agent/MCX.md`). Никогда не запускай `Xvfb`/`pkill`/`xdotool`
+напрямую — используй `mcx start/stop/restart/kill`. Команды: `launch`, `wait-window`, `fit`, `newworld`,
+`key/hold/type/click/clickr`, `shot`, `rec`. Первый `runClient` — без `--offline` (прогрев кэша).
+```bash
+mcx start && mcx launch ./gradlew runClient && mcx wait-window 'Minecraft'
+mcx newworld && mcx shot && mcx stop
 ```
