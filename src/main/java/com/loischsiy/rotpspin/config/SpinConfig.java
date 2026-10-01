@@ -146,6 +146,10 @@ public class SpinConfig {
     public static final ForgeConfigSpec.BooleanValue COMPAT_TUSK_ENABLED;
     public static final ForgeConfigSpec.IntValue COMPAT_TUSK_CHARGE_4;
     public static final ForgeConfigSpec.IntValue COMPAT_TUSK_CHARGE_5;
+    public static final ForgeConfigSpec.BooleanValue COMPAT_TUSK_HERBS_ENABLED;
+    public static final ForgeConfigSpec.IntValue COMPAT_TUSK_HERB_DURATION;
+    public static final ForgeConfigSpec.IntValue COMPAT_TUSK_HERB_INTERVAL;
+    public static final ForgeConfigSpec.IntValue COMPAT_TUSK_HERB_MAX_STACK;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -434,6 +438,14 @@ public class SpinConfig {
                 .defineInRange("charge4", 2, 0, 20);
         COMPAT_TUSK_CHARGE_5 = b.comment("Lesson 5 Super Spin: spin charge added to Tusk nails.")
                 .defineInRange("charge5", 4, 0, 20);
+        COMPAT_TUSK_HERBS_ENABLED = b.comment("Tusk user chewing a herb from the rotp_spin:tusk_nail_herbs tag (mint and chamomile, SBR ch. 45; default: oxeye daisy) gets a herbal infusion that grows extra nails.")
+                .define("herbsEnabled", true);
+        COMPAT_TUSK_HERB_DURATION = b.comment("Herbal infusion duration per herb, ticks.")
+                .defineInRange("herbDurationTicks", 1200, 20, 24000);
+        COMPAT_TUSK_HERB_INTERVAL = b.comment("While the infusion lasts, one extra nail grows every this many ticks (on top of Tusk's own regrowth).")
+                .defineInRange("herbIntervalTicks", 100, 1, 6000);
+        COMPAT_TUSK_HERB_MAX_STACK = b.comment("Infusion can be stacked up to this many herb durations.")
+                .defineInRange("herbMaxStack", 3, 1, 20);
         b.pop();
         b.pop();
 
