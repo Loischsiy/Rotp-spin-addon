@@ -154,6 +154,15 @@ public class SpinConfig {
 
     // Optional integrations
     public static final ForgeConfigSpec.BooleanValue COMPAT_CURIOS_ENABLED;
+
+    // Cloak as a sail (SBR ch. 11)
+    public static final ForgeConfigSpec.BooleanValue SAIL_ENABLED;
+    public static final ForgeConfigSpec.DoubleValue SAIL_MIN_FALL_DISTANCE;
+    public static final ForgeConfigSpec.DoubleValue SAIL_MAX_FALL_SPEED;
+    public static final ForgeConfigSpec.DoubleValue SAIL_FORWARD_PUSH;
+    public static final ForgeConfigSpec.DoubleValue SAIL_MAX_HORIZONTAL_SPEED;
+    public static final ForgeConfigSpec.DoubleValue SAIL_COST_PER_TICK;
+    public static final ForgeConfigSpec.DoubleValue SAIL_START_ENERGY;
     public static final ForgeConfigSpec.BooleanValue COMPAT_TUSK_ENABLED;
     public static final ForgeConfigSpec.IntValue COMPAT_TUSK_CHARGE_4;
     public static final ForgeConfigSpec.IntValue COMPAT_TUSK_CHARGE_5;
@@ -459,6 +468,23 @@ public class SpinConfig {
                 .defineInRange("maxSources", 3, 0, 64);
         RESONANCE_EXTRA_FLIGHT_TICKS_PER_SOURCE = b.comment("Extra ticks of forward flight per source before the ball turns back (longer range).")
                 .defineInRange("extraFlightTicksPerSource", 5, 0, 200);
+        b.pop();
+
+        b.push("cloak_sail");
+        SAIL_ENABLED = b.comment("A Spin user falling with a steel ball in hand holds a cloak as a sail (SBR ch. 11): slow descent, a glide forward, no fall damage. The cloak is any item in tag rotp_spin:spin_sails (default: elytra) in the chest slot or, with Curios, in any curio slot.")
+                .define("enabled", true);
+        SAIL_MIN_FALL_DISTANCE = b.comment("Blocks of free fall before the sail opens (an ordinary jump costs nothing).")
+                .defineInRange("minFallDistance", 1.5, 0.0, 64.0);
+        SAIL_MAX_FALL_SPEED = b.comment("Descent speed cap under the sail (blocks per tick).")
+                .defineInRange("maxFallSpeed", 0.12, 0.0, 4.0);
+        SAIL_FORWARD_PUSH = b.comment("Horizontal push along the look direction each tick (blocks per tick).")
+                .defineInRange("forwardPush", 0.03, 0.0, 1.0);
+        SAIL_MAX_HORIZONTAL_SPEED = b.comment("Horizontal speed cap under the sail (blocks per tick).")
+                .defineInRange("maxHorizontalSpeed", 0.5, 0.0, 4.0);
+        SAIL_COST_PER_TICK = b.comment("Spin energy spent per tick of sailing (regeneration keeps running).")
+                .defineInRange("costPerTick", 0.75, 0.0, 100.0);
+        SAIL_START_ENERGY = b.comment("Spin energy needed to open the sail (keeping it open needs only costPerTick), so an exhausted user falls instead of flickering.")
+                .defineInRange("startEnergy", 10.0, 0.0, 100.0);
         b.pop();
 
         b.push("compat");

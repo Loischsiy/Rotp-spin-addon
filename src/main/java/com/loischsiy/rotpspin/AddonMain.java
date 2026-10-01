@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.loischsiy.rotpspin.capability.SpinPowerCapability;
+import com.loischsiy.rotpspin.power.SpinSailHandler;
 import com.loischsiy.rotpspin.compat.curios.CuriosCompat;
 import com.loischsiy.rotpspin.compat.tusk.ITuskCompat;
 import com.loischsiy.rotpspin.compat.tusk.TuskCompat;
@@ -63,6 +64,7 @@ public class AddonMain {
         // Optional integrations: compat classes are loaded only when the mod is present (docs/integrations.md).
         if (isCuriosLoaded()) {
             HolsterAccess.set(CuriosCompat.createHolsterAccess());
+            SpinSailHandler.setCurioFinder(CuriosCompat::hasCurio);
         }
         if (isTuskLoaded()) {
             tuskCompat = new TuskCompat();

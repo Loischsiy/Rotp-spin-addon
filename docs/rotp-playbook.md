@@ -145,6 +145,11 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
     Верёвка (гл. 55): бросок с Shift (`SteelBallItem#throwBall` → `makeRope`) — шар цепляется за первый блок
     (без рикошета), `tickRope` тянет бросавшего (`hurtMarked` для пакета скорости, `fallDistance = 0`), затем
     шар возвращается; математика — `entity.SpinRope` (JUnit), пороги — `steel_ball.rope`.
+    Парус (гл. 11): `power.SpinSailHandler` (сервер: энергия за тик, `fallDistance = 0`, флаг в persistent NBT)
+    + `client.SpinSailClient` (локальный игрок сам считает движение, как с элитрами: скорость спуска режется
+    здесь). Условия — `SpinSailHandler#canSail`: в воздухе, шар в руке, Спин, «плащ» из тега
+    `rotp_spin:spin_sails` в слоте груди или Curios. Открытие после `minFallDistance`, повторное открытие —
+    только от `startEnergy` (без мигания при пустой энергии); математика — `power.SpinSail`, пороги — `cloak_sail`.
 - Уроки: `power.SpinData` хранит урок и счётчики практики (NBT `Lesson`, `BallHits`, `Hijacks`, `GoldenHits`),
   `SpinData#isActionUnlocked` (хук RotP `TypeSpecificData`) закрывает действия старших уроков;
   соответствие действие → урок — `SpinData#requiredLesson` (действия только до урока 3; уроки 4–5 —

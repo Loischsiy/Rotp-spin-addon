@@ -103,6 +103,9 @@ tuskCompat = ModList.get().isLoaded("rotp_t")
 - Код: только `compat.curios.*`; ядро знает лишь `IHolsterAccess` / `HolsterAccess`. `AddonMain` проверяет
   `ModList.get().isLoaded("curios")` строковым литералом, не трогая классы compat.
 - Конфиг `compat.curios.enabled` проверяется при каждом поиске кобуры — выключается без перезапуска.
+- Парус (`cloak_sail`): «плащ» — любой предмет из тега `rotp_spin:spin_sails` в любом слоте Curios
+  (`CuriosCompat#hasCurio`, передаётся в `SpinSailHandler.setCurioFinder` из `AddonMain`). Чтобы подключить мод
+  плащей, добавьте его предмет в тег датапаком.
 
 Ручная проверка:
 - [ ] Без Curios: игра запускается, нет `NoClassDefFoundError`, кобура работает из инвентаря.

@@ -1,5 +1,9 @@
 package com.loischsiy.rotpspin.compat.curios;
 
+import net.minecraft.entity.player.PlayerEntity;
+
+import java.util.function.Predicate;
+
 import com.loischsiy.rotpspin.AddonMain;
 import com.loischsiy.rotpspin.holster.IHolsterAccess;
 import com.loischsiy.rotpspin.item.GyrosHolsterItem;
@@ -40,6 +44,11 @@ public final class CuriosCompat {
     public static void enqueueImc() {
         InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE,
                 () -> SlotTypePreset.BELT.getMessageBuilder().build());
+    }
+
+    /** A matching item worn in any Curios slot (the spin sail looks for a cloak from other mods). */
+    public static boolean hasCurio(PlayerEntity player, Predicate<ItemStack> filter) {
+        return CuriosApi.getCuriosHelper().findFirstCurio(player, filter).isPresent();
     }
 
     public static IHolsterAccess createHolsterAccess() {
