@@ -21,13 +21,19 @@
 | Цветная манга | желтовато-бежевый (tan), как шляпа и штаны | тёмно-фиолетовая рубашка с зелёными аксессуарами |
 | Eyes of Heaven | голубой (cyan) | индиго-рубашка, бронзовые аксессуары |
 
-**Выбор аддона (утверждён):** палитра аниме — оливково-зелёный плащ + медная застёжка. Варианты
+**Выбор аддона (утверждён):** палитра аниме — оливково-зелёный плащ + медные заклёпки. Варианты
 цветной манги (tan) и Eyes of Heaven (cyan) отклонены, не рисуем.
-⚠️ Hex-значения подобраны по словесному описанию, а не сняты пипеткой с кадра: художник
-сверяет оттенок с галереей и может сдвинуть его, сохранив три ступени база/тень/блик.
-⚠️ Кант, изнанка и форма застёжки в вики не описаны — это допущения для читаемости в 16 px.
 
-Две текстуры, обе рисует художник. Пока PNG нет, игра рисует фиолетово-чёрную «missing texture».
+**Аниме-референс (основной):** официальный лист персонажа SBR (2026), файл `Gyro anime.png` на JoJo Fandom
+(https://jojo.fandom.com/wiki/Gyro_Zeppeli). Что с него взято:
+- плащ держится на **двух зелёных ремнях через плечи**, на груди ремни заканчиваются
+  **медно-оранжевыми заклёпками**; центральной застёжки на груди нет — грудь открыта (рубашка видна);
+- три хвоста длинные и **заострённые на концах**, изнанка почти чёрно-оливковая;
+- hex ниже сняты пипеткой с этого листа (квантование 6 ступеней), а не подобраны по описанию.
+⚠️ Длина: в аниме плащ до щиколоток; в аддоне длина задана геометрией `GyrosCloakModel` (11/13 px).
+
+Две текстуры, обе генерируются `docs/art/tools/gen_gyros_cloak.py` (`--sheet` — превью в
+`.agent/preview`): правки пикселей и палитры — в скрипте, затем перегенерация.
 
 ## 1. Иконка предмета
 
@@ -42,19 +48,21 @@
 
 | Материал | База | Тень | Блик |
 |---|---|---|---|
-| Ткань (оливковая) | `#66702f` | `#454d1d` | `#87924a` |
-| Изнанка | `#4e5624` | `#363c17` | — |
-| Застёжка (медь) | `#b06d36` | `#7c4a22` | `#d9955a` |
-| Контур | `#1b1e0b` | — | — |
+| Ткань (оливковая) | `#96a866` | `#5a663c` | `#b4c078` |
+| Складка | `#7a8a50` | — | — |
+| Изнанка | `#4e5a36` | `#363c24` | — |
+| Ремни | `#8a9c58` | `#54603c` | `#a2ae6c` |
+| Заклёпки (медь) | `#c8683a` | `#8a4424` | `#ea905a` |
+| Контур | `#14160a` | — | — |
 
 Промпт для nano banana:
 ```
 Pixel art Minecraft item icon, 16x16 pixels, transparent background, no anti-aliasing,
-dark outline #1b1e0b, light from top-left. A short shoulder cape (Gyro Zeppeli, JoJo Steel Ball Run)
-seen from the back, laid flat: a curved shoulder piece on top with a small copper clasp #b06d36
-in the centre, splitting below into three separate cloth tails with 1px gaps, the middle tail
-slightly longer, tails fanning out a little; one tail flipped by the wind shows its darker
-inner side #4e5624. Olive green cloth #66702f, shadow #454d1d, highlight #87924a.
+dark outline #14160a, light from top-left. A short shoulder cape (Gyro Zeppeli, JoJo Steel Ball Run)
+seen from the back, laid flat: a curved shoulder piece on top with a two green straps ending
+in small copper studs #c8683a, splitting below into three separate cloth tails with 1px gaps, the middle tail
+slightly longer, pointed tips, tails fanning out a little; one tail flipped by the wind shows its darker
+inner side #4e5a36. Olive green cloth #96a866, shadow #5a663c, highlight #b4c078.
 Flat sprite, no text, no background, no fur.
 ```
 После генерации: уменьшить до 16×16 методом **Nearest Neighbor**, фон — в настоящую альфу,
@@ -81,8 +89,9 @@ Flat sprite, no text, no background, no fur.
   «перед» (к спине) — изнанка `#4e5624`. Правый сегмент — зеркало левого (одна область UV), поэтому
   рисунок на боковых должен быть симметричен. Прозрачные пиксели допустимы (`entityCutoutNoCull`),
   например рваный нижний край.
-- Накидка: ткань `#66702f`; на грани «перед» по центру — медная застёжка 2 px `#b06d36`. Без меха
-  (мех — только зимний наряд).
+- Сегменты заострены: два нижних ряда сужаются к центру (прозрачность), низ коробки прозрачный.
+- Накидка: ткань `#96a866`; грань «перед» (грудь) прозрачна, кроме двух ремней по 2 px с медными
+  заклёпками `#c8683a` в нижнем ряду (по аниме-листу). Без меха (мех — только зимний наряд).
 - Остальная площадь 64×32 — полностью прозрачная.
 
 Анимация (код, `client/render/CloakAnim`, текстуру не меняет): сегменты отстают при движении (как
