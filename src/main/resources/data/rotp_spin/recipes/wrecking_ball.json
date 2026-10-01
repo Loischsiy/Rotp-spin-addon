@@ -1,13 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " i ",
-    "isi",
-    " i "
+    "gBg",
+    "BsB",
+    "gBg"
   ],
   "key": {
-    "i": {
-      "tag": "forge:ingots/iron"
+    "g": {
+      "tag": "forge:ingots/gold"
+    },
+    "B": {
+      "tag": "forge:storage_blocks/iron"
     },
     "s": {
       "item": "rotp_spin:steel_ball"
