@@ -489,7 +489,7 @@ public class SpinConfig {
 
         b.push("compat");
         b.push("curios");
-        COMPAT_CURIOS_ENABLED = b.comment("If Curios is installed, a holster worn in the belt slot is used first. No effect without Curios.")
+        COMPAT_CURIOS_ENABLED = b.comment("If Curios is installed, a holster worn in the belt slot is used first and a cloak (tag rotp_spin:spin_sails) in any curio slot works as a sail. No effect without Curios.")
                 .define("enabled", true);
         b.pop();
         b.push("tusk");
