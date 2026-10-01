@@ -181,6 +181,10 @@ public class SpinConfig {
     public static final ForgeConfigSpec.IntValue COMPAT_TUSK_HERB_DURATION;
     public static final ForgeConfigSpec.IntValue COMPAT_TUSK_HERB_INTERVAL;
     public static final ForgeConfigSpec.IntValue COMPAT_TUSK_HERB_MAX_STACK;
+    public static final ForgeConfigSpec.BooleanValue COMPAT_TUSK_INFINITE_ENABLED;
+    public static final ForgeConfigSpec.IntValue COMPAT_TUSK_INFINITE_LESSON;
+    public static final ForgeConfigSpec.BooleanValue COMPAT_TUSK_COUNTER_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue COMPAT_TUSK_COUNTER_NEEDS_SUPER_SPIN;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -539,6 +543,14 @@ public class SpinConfig {
                 .defineInRange("herbIntervalTicks", 100, 1, 6000);
         COMPAT_TUSK_HERB_MAX_STACK = b.comment("Infusion can be stacked up to this many herb durations.")
                 .defineInRange("herbMaxStack", 3, 1, 20);
+        COMPAT_TUSK_INFINITE_ENABLED = b.comment("Spin user with Tusk on ACT4 who holds Super Spin (natural gallop or the lesson 5 detour kick, SBR ch. 85) gets Tusk's infinite rotation charge. Tusk's own unlock route stays as is.")
+                .define("infiniteRotationEnabled", true);
+        COMPAT_TUSK_INFINITE_LESSON = b.comment("Minimum Spin lesson for the infinite rotation charge and for counter-rotation.")
+                .defineInRange("infiniteRotationLesson", 5, 1, 5);
+        COMPAT_TUSK_COUNTER_ENABLED = b.comment("A spinning steel ball removes Tusk's infinite rotation from the target it hits (counter-rotation, SBR ch. 86-87).")
+                .define("counterRotationEnabled", true);
+        COMPAT_TUSK_COUNTER_NEEDS_SUPER_SPIN = b.comment("Counter-rotation needs the thrower to hold Super Spin (and an unchipped ball); otherwise any lesson-gated spinning ball works.")
+                .define("counterRotationNeedsSuperSpin", true);
         b.pop();
         b.pop();
 

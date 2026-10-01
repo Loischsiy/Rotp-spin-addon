@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import com.github.standobyte.jojo.entity.itemprojectile.ItemNbtProjectileEntity;
 import com.github.standobyte.jojo.entity.stand.StandEntity;
+import com.loischsiy.rotpspin.AddonMain;
 import com.loischsiy.rotpspin.config.SpinConfig;
 import com.loischsiy.rotpspin.holster.IHolsterAccess;
 import com.loischsiy.rotpspin.init.InitEffects;
@@ -567,6 +568,12 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
                 && SpinData.tryDetour((LivingEntity) thrower, (AbstractHorseEntity) target,
                         SteelBallItem.isChipped(thrownStack))) {
             return true;
+        }
+        // Counter-rotation: a Super Spin ball unwinds Tusk's infinite rotation (SBR ch. 86-87, optional rotp_t).
+        if (!level.isClientSide() && isSpinning() && !isSatellite() && thrower instanceof LivingEntity
+                && target instanceof LivingEntity) {
+            AddonMain.getTuskCompat().onSpinBallHit((LivingEntity) target, (LivingEntity) thrower,
+                    SteelBallItem.isChipped(thrownStack));
         }
         boolean hurt = super.hurtTarget(target, thrower);
         if (hurt && !level.isClientSide() && isSpinning() && !isSatellite() && thrower instanceof LivingEntity) {

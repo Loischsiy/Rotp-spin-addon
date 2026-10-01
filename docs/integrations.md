@@ -30,6 +30,19 @@ Tusk-аддон: https://github.com/Yarost228/RotpTuskAddon, пакет `com.dog
 дополнение. Доступ: `TuskCapabilityProvider.CAPABILITY` и публичные `getNailCount`/`setNailCount`
 через рефлексию (`compat.tusk.TuskHerbs`), при несовпадении — один варн и фича выключается.
 
+**Бесконечное вращение ACT4** (✅ гл. 85–87). Механика целиком своя у Tusk: способность
+`tusk_infinite_rotation` (нужен флаг `hasInfiniteRotationCharge` + ACT4), эффект `rotp_t:infinite_rotation`
+(бесконечный, переходит на «средство побега», тянет цель к месту удара; повторный удар Tusk снимает).
+Собственный путь Tusk к заряду (лошадь + Решимость ≥ 4) **не трогаем** — решение владельца проекта,
+хотя по `spin-lore.md` это ближе к 🔴. Наш путь — дополнительный и каноничный:
+- владелец Спина с уроком ≥ `infiniteRotationLesson` (5), Tusk на ACT4 (`getAct() >= 3`) и активным
+  Суперспином (естественный галоп или обходной удар по ноге коня, `SpinData.hasSuperSpin`) получает
+  заряд через `setHasInfiniteRotationCharge(true)` (сеттер Tusk сам синхронизирует клиент);
+- встречное вращение: попадание вращающимся нещербатым мячом с активным Суперспином снимает
+  `rotp_t:infinite_rotation` с цели и её «средства побега» (`counterRotationNeedsSuperSpin`).
+Код — `compat.tusk.TuskInfiniteRotation` (рефлексия, один варн при несовпадении), правила —
+`TuskInfiniteRules`, ядро зовёт только `ITuskCompat.onSpinBallHit`.
+
 ## Как реализовано (паттерн с отклонением)
 1. **`mods.toml`** — зависимость с `mandatory=false` и порядком загрузки (`ordering="AFTER"`) ✅.
 2. **Без `compileOnly`-бинарника.** У `rotp_t` нет релизных jar (только исходники), а поле шва —
@@ -89,6 +102,7 @@ tuskCompat = ModList.get().isLoaded("rotp_t")
 - [x] Игра запускается **с** `rotp_t`: способность есть и работает (проверено в dev-клиенте с
   `RotP-Tusk-1.0.2-fix.jar` в `run/mods`, собранным из `.refs/tusk` с `-x reobfJar` и
   `main_mod_version=1.16.5-0.2.2-snapshot-250108-c`; прежний краш на `PlayerModelMixin` был из-за reobf-jar).
+- [ ] Бесконечное вращение: заряд от Суперспина на ACT4 и снятие эффекта мячом со Суперспином — в игре не проверено (`TuskInfiniteRulesTest` покрывает правила).
 - [ ] Выключение через конфиг отключает способность без перезапуска мира.
 - [ ] Сохранение мира, сделанное с `rotp_t`, открывается после его удаления без потери прогресса Спина. Статически: Tusk-совместимость пишет только ключ `rotp_spin_tusk_herb_ticks` в persistentData игрока, прогресс Спина хранится в нашей capability. Сквозной тест в игре не проведён.
 - [x] Порядок загрузки: наш мод грузится после `jojo` и после `rotp_t` (`ordering="AFTER"` в `mods.toml` для `jojo`, `curios`, `rotp_t`; проверено статически).

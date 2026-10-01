@@ -97,7 +97,7 @@ public class TuskHerbs {
         }
     }
 
-    private static boolean hasTusk(PlayerEntity player) {
+    static boolean hasTusk(PlayerEntity player) {
         return IStandPower.getStandPowerOptional(player).resolve()
                 .map(power -> power.hasPower() && power.getType() != null
                         && power.getType().getRegistryName() != null

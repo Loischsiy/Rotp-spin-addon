@@ -27,15 +27,22 @@ public class TuskCompat implements ITuskCompat {
 
     private Field spinChargeField;
     private boolean fieldMissingLogged;
+    private final TuskInfiniteRotation infiniteRotation = new TuskInfiniteRotation();
 
     public TuskCompat() {
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new TuskHerbs());
+        MinecraftForge.EVENT_BUS.register(infiniteRotation);
     }
 
     @Override
     public boolean isActive() {
         return true;
+    }
+
+    @Override
+    public boolean onSpinBallHit(LivingEntity target, LivingEntity thrower, boolean chipped) {
+        return infiniteRotation.counterRotate(target, thrower, chipped);
     }
 
     /** Spin charge bonus for the lesson, 0 without Golden Spin. Pure mapping for tests. */
