@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -46,6 +47,11 @@ public class GyrosCloakItem extends Item {
             return ActionResult.sidedSuccess(stack, world.isClientSide());
         }
         return ActionResult.fail(stack);
+    }
+
+    /** The cloak sits in the chest slot (the player layer draws it there; Curios skips its own copy). */
+    public static boolean isWornOnChest(LivingEntity entity) {
+        return entity.getItemBySlot(EquipmentSlotType.CHEST).getItem() instanceof GyrosCloakItem;
     }
 
     @Override

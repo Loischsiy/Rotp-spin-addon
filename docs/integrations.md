@@ -101,6 +101,7 @@ tuskCompat = ModList.get().isLoaded("rotp_t")
   `data/curios/tags/items/belt.json` (кобура) и `back.json` (плащ Джайро). Без Curios теги просто не используются.
 - Плащ Джайро (`rotp_spin:gyros_cloak`) рисуется на спине через `CloakCurio` → `client.render.GyrosCloakRender`;
   тот же рендер вызывает слой `GyrosCloakLayer`, когда плащ надет в слот груди (без Curios).
+  Если плащ надет и на грудь, и в Curios, рисует только слой груди (`CloakCurio#canRender` → false).
 - Код: только `compat.curios.*`; ядро знает лишь `IHolsterAccess` / `HolsterAccess`. `AddonMain` проверяет
   `ModList.get().isLoaded("curios")` строковым литералом, не трогая классы compat.
 - Конфиг `compat.curios.enabled` проверяется при каждом поиске кобуры — выключается без перезапуска.

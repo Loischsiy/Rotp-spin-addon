@@ -4,10 +4,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.loischsiy.rotpspin.client.render.GyrosCloakRender;
+import com.loischsiy.rotpspin.item.GyrosCloakItem;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -25,14 +27,15 @@ class CloakCurio implements ICurio {
 
     @Override
     public boolean canRender(String identifier, int index, LivingEntity livingEntity) {
-        return true;
+        // A player wearing a second cloak on the chest: GyrosCloakLayer already draws it, draw it once.
+        return !(livingEntity instanceof PlayerEntity && GyrosCloakItem.isWornOnChest(livingEntity));
     }
 
     @Override
     public void render(String identifier, int index, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int light,
             LivingEntity livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks,
             float netHeadYaw, float headPitch) {
-        GyrosCloakRender.render(matrixStack, renderTypeBuffer, light, livingEntity);
+        GyrosCloakRender.render(matrixStack, renderTypeBuffer, light, livingEntity, partialTicks, ageInTicks);
     }
 
     static class Provider implements ICapabilityProvider {

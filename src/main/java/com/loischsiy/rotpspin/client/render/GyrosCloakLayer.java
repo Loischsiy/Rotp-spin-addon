@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -23,8 +22,8 @@ public class GyrosCloakLayer extends LayerRenderer<AbstractClientPlayerEntity, P
     @Override
     public void render(MatrixStack matrixStack, IRenderTypeBuffer buffers, int light, AbstractClientPlayerEntity player,
             float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (!player.isInvisible() && player.getItemBySlot(EquipmentSlotType.CHEST).getItem() instanceof GyrosCloakItem) {
-            GyrosCloakRender.render(matrixStack, buffers, light, player);
+        if (!player.isInvisible() && GyrosCloakItem.isWornOnChest(player)) {
+            GyrosCloakRender.render(matrixStack, buffers, light, player, partialTicks, ageInTicks);
         }
     }
 }

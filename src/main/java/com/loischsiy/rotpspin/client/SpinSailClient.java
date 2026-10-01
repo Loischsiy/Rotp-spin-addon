@@ -20,6 +20,11 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 public class SpinSailClient {
     private static boolean sailing;
 
+    /** The local player's sail is open this tick (the worn cloak opens with it). */
+    public static boolean isSailing() {
+        return sailing;
+    }
+
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         ClientPlayerEntity player = Minecraft.getInstance().player;
