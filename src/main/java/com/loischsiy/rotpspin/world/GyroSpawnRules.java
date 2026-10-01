@@ -40,4 +40,23 @@ public final class GyroSpawnRules {
         int offset = (int) Math.floor(roll * (2 * spread + 1)) - spread;
         return Math.max(-spread, Math.min(spread, offset));
     }
+
+    /**
+     * Signed X offset for the horse that keeps her in Gyro's chunk: during chunk generation the
+     * world region only holds that one chunk, and touching a neighbour crashes the server.
+     */
+    public static double sameChunkOffset(double x, double offset) {
+        int chunk = chunkOf(x);
+        if (chunkOf(x + offset) == chunk) {
+            return offset;
+        }
+        if (chunkOf(x - offset) == chunk) {
+            return -offset;
+        }
+        return 0;
+    }
+
+    private static int chunkOf(double x) {
+        return ((int) Math.floor(x)) >> 4;
+    }
 }

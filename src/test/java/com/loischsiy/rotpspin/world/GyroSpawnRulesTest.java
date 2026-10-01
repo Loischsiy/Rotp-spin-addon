@@ -50,4 +50,15 @@ class GyroSpawnRulesTest {
         assertEquals(0, GyroSpawnRules.spreadOffset(0.5, 8));
         assertEquals(0, GyroSpawnRules.spreadOffset(0.7, 0));
     }
+
+    @Test
+    void horseStaysInGyrosChunk() {
+        assertEquals(1.5, GyroSpawnRules.sameChunkOffset(4.5, 1.5), 1e-9);
+        assertEquals(-1.5, GyroSpawnRules.sameChunkOffset(15.5, 1.5), 1e-9);
+        assertEquals(1.5, GyroSpawnRules.sameChunkOffset(-16.0, 1.5), 1e-9);
+        assertEquals(-1.5, GyroSpawnRules.sameChunkOffset(-0.5, 1.5), 1e-9);
+        assertEquals(8.0, GyroSpawnRules.sameChunkOffset(663.5, 8.0), 1e-9);
+        assertEquals(-8.0, GyroSpawnRules.sameChunkOffset(670.5, 8.0), 1e-9);
+        assertEquals(0.0, GyroSpawnRules.sameChunkOffset(7.5, 0.0), 1e-9);
+    }
 }

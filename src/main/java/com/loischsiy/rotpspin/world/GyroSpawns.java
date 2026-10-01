@@ -16,6 +16,8 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MutableBoundingBox;
+import net.minecraft.util.math.SectionPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.biome.MobSpawnInfo;
@@ -88,14 +90,19 @@ public final class GyroSpawns {
     }
 
     private static void visitVillage(ServerWorld world, BlockPos playerPos) {
-        StructureStart<?> village = world.structureFeatureManager().getStructureAt(playerPos, false, Structure.VILLAGE);
-        if (village == null || !village.isValid()) {
+        StructureStart<?> village = villageAt(world, playerPos);
+        if (village == null) {
             return;
         }
+        // getLocatePos() is the chunk corner at Y = 0, so the Gyro search spans the village's own height.
         BlockPos center = village.getLocatePos();
+        MutableBoundingBox box = village.getBoundingBox();
+        double radius = SpinConfig.GYRO_VILLAGE_RADIUS.get();
+        AxisAlignedBB area = new AxisAlignedBB(center.getX() - radius, box.y0 - radius, center.getZ() - radius,
+                center.getX() + radius, box.y1 + radius, center.getZ() + radius);
         if (!GyroSpawnRules.categoryListed(world.getBiome(center).getBiomeCategory().name(),
                 SpinConfig.GYRO_VILLAGE_BIOME_CATEGORIES.get())
-                || gyroNearby(world, center, SpinConfig.GYRO_VILLAGE_RADIUS.get())
+                || !world.getEntitiesOfClass(GyroTeacherEntity.class, area).isEmpty()
                 || !GyroSpawnRules.rolled(world.random.nextDouble(), SpinConfig.GYRO_VILLAGE_SPAWN_CHANCE.get())) {
             return;
         }
@@ -126,6 +133,18 @@ public final class GyroSpawns {
         }
     }
 
+    /**
+     * The village under the player, by X/Z only: getStructureAt() tests the 3D box, so flying
+     * or standing on a tower above the village would never count as a visit.
+     */
+    private static StructureStart<?> villageAt(ServerWorld world, BlockPos playerPos) {
+        int x = playerPos.getX();
+        int z = playerPos.getZ();
+        return world.structureFeatureManager().startsForFeature(SectionPos.of(playerPos), Structure.VILLAGE)
+                .filter(start -> start.isValid() && start.getBoundingBox().intersects(x, z, x, z))
+                .findFirst().orElse(null);
+    }
+
     /** Valkyrie: saddled, on Gyro's lead, not tamed. Only for world spawns, never for eggs or commands. */
     public static void spawnHorse(IServerWorld world, GyroTeacherEntity gyro, SpawnReason reason) {
         if (!SpinConfig.GYRO_SPAWN_WITH_HORSE.get() || !(reason == SpawnReason.NATURAL
@@ -136,9 +155,9 @@ public final class GyroSpawns {
         if (horse == null) {
             return;
         }
-        double offset = SpinConfig.GYRO_HORSE_OFFSET.get();
+        double offset = GyroSpawnRules.sameChunkOffset(gyro.getX(), SpinConfig.GYRO_HORSE_OFFSET.get());
         horse.moveTo(gyro.getX() + offset, gyro.getY(), gyro.getZ(), gyro.yRot, 0);
-        horse.finalizeSpawn(world, world.getCurrentDifficultyAt(horse.blockPosition()), reason, null, null);
+        horse.finalizeSpawn(world, world.getCurrentDifficultyAt(gyro.blockPosition()), reason, null, null);
         horse.equipSaddle(SoundCategory.NEUTRAL);
         horse.setLeashedTo(gyro, false);
         horse.setCustomName(new TranslationTextComponent("entity.rotp_spin.gyro_teacher.horse"));
