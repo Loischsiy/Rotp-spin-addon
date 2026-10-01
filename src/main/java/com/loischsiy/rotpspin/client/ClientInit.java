@@ -3,6 +3,7 @@ package com.loischsiy.rotpspin.client;
 import com.loischsiy.rotpspin.AddonMain;
 import com.loischsiy.rotpspin.client.anim.SpinPlayerAnimations;
 import com.loischsiy.rotpspin.client.render.BallBreakerRenderer;
+import com.loischsiy.rotpspin.client.render.GyrosCloakLayer;
 import com.loischsiy.rotpspin.client.render.GyroTeacherRenderer;
 import com.loischsiy.rotpspin.client.render.SpunBlockRenderer;
 import com.loischsiy.rotpspin.client.render.SpunItemRenderer;
@@ -10,6 +11,8 @@ import com.loischsiy.rotpspin.client.render.SteelBallRenderer;
 import com.loischsiy.rotpspin.init.InitEntities;
 import com.loischsiy.rotpspin.init.InitStands;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -33,5 +36,13 @@ public class ClientInit {
         event.enqueueWork(SpinKeys::register);
         // Deferred: RotP builds its player animator in its own (parallel) client setup handler.
         event.enqueueWork(SpinPlayerAnimations::init);
+        // Player renderers (default and slim skins) already exist here; the layer draws a cloak worn in the chest slot.
+        event.enqueueWork(ClientInit::addPlayerLayers);
+    }
+
+    private static void addPlayerLayers() {
+        for (PlayerRenderer renderer : Minecraft.getInstance().getEntityRenderDispatcher().getSkinMap().values()) {
+            renderer.addLayer(new GyrosCloakLayer(renderer));
+        }
     }
 }

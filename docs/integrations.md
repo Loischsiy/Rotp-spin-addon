@@ -97,8 +97,10 @@ tuskCompat = ModList.get().isLoaded("rotp_t")
 - `build.gradle`: API — `compileOnly fg.deobf(".../curios-forge:${curios_version}:api")`, полный мод —
   `runtimeOnly` (только для `runClient`); в jar не попадает. Версия — `gradle.properties/curios_version`.
 - `mods.toml`: `curios`, `mandatory=false`, `ordering="AFTER"`.
-- Слот: IMC `SlotTypePreset.BELT` в `InterModEnqueueEvent`; предмет — тег `data/curios/tags/items/belt.json`
-  (без Curios тег просто не используется).
+- Слоты: IMC `SlotTypePreset.BELT` и `SlotTypePreset.BACK` в `InterModEnqueueEvent`; предметы — теги
+  `data/curios/tags/items/belt.json` (кобура) и `back.json` (плащ Джайро). Без Curios теги просто не используются.
+- Плащ Джайро (`rotp_spin:gyros_cloak`) рисуется на спине через `CloakCurio` → `client.render.GyrosCloakRender`;
+  тот же рендер вызывает слой `GyrosCloakLayer`, когда плащ надет в слот груди (без Curios).
 - Код: только `compat.curios.*`; ядро знает лишь `IHolsterAccess` / `HolsterAccess`. `AddonMain` проверяет
   `ModList.get().isLoaded("curios")` строковым литералом, не трогая классы compat.
 - Конфиг `compat.curios.enabled` проверяется при каждом поиске кобуры — выключается без перезапуска.
@@ -113,6 +115,12 @@ tuskCompat = ModList.get().isLoaded("rotp_t")
 - [x] С Curios (`curios-forge 1.16.5-4.1.0.1`): кобура в слоте «Пояс», `R` бросает из неё (2→1),
       вернувшийся шар ложится туда же (1→2).
 - [ ] С Curios: полоска энергии кобуры в поясе — визуально не проверена.
+- [x] Плащ Джайро в слоте груди (надет ПКМ): падение с 30 блоков со стальным шаром — здоровье 20/20.
+      `/replaceitem … armor.chest` его не кладёт: ванильный `PlayerEntity#setSlot` пускает в броню только
+      `ArmorItem`/`ElytraItem`; ПКМ и слот брони в инвентаре работают.
+- [x] С Curios: слот `back` появился (`/curios list`), плащ в нём (`/curios replace back 0`) — парус
+      работает (30 блоков, здоровье 19.8/20). Рендер (F5) отработал без исключений; вид на игроке визуально
+      не проверен — текстуры ещё нет.
 - [x] С Curios: элитра в слоте Curios при пустой груди — парус работает (лог `curio=true`,
       20 блоков за ~8 с, без урона; клиентская синхронизация в порядке).
 - [x] `compat.curios.enabled=false` (горячая перезагрузка): кобура в поясе игнорируется (`R` ничего

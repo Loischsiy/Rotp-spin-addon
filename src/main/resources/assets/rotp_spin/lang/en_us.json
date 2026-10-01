@@ -40,6 +40,8 @@
   "commands.rotp_spin.spinlesson.set.success.multiple": "Set Spin lesson of %s players to %s",
   "commands.rotp_spin.spinlesson.get.success": "%s: lesson %s \"%s\"; ball hits %s/%s, muscle hijacks %s/%s, golden hits %s",
   "item.rotp_spin.calibration_buckle": "Calibration Buckle",
+  "item.rotp_spin.gyros_cloak": "Gyro's Cloak",
+  "item.rotp_spin.gyros_cloak.usage": "Fall with a steel ball in hand: the Spin holds the cloak as a sail",
   "rotp_spin.lesson.4": "Pay tribute. Spin the bullets in the golden ratio",
   "rotp_spin.lesson.5": "The shortest route is the detour",
   "action.rotp_spin.spin_block_throw": "Block Spin Throw",

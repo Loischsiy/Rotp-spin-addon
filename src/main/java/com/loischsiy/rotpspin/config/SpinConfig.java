@@ -471,7 +471,7 @@ public class SpinConfig {
         b.pop();
 
         b.push("cloak_sail");
-        SAIL_ENABLED = b.comment("A Spin user falling with a steel ball in hand holds a cloak as a sail (SBR ch. 11): slow descent, a glide forward, no fall damage. The cloak is any item in tag rotp_spin:spin_sails (default: elytra) in the chest slot or, with Curios, in any curio slot.")
+        SAIL_ENABLED = b.comment("A Spin user falling with a steel ball in hand holds a cloak as a sail (SBR ch. 11): slow descent, a glide forward, no fall damage. The cloak is any item in tag rotp_spin:spin_sails (default: rotp_spin:gyros_cloak and elytra) in the chest slot or, with Curios, in any curio slot.")
                 .define("enabled", true);
         SAIL_MIN_FALL_DISTANCE = b.comment("Blocks of free fall before the sail opens (an ordinary jump costs nothing).")
                 .defineInRange("minFallDistance", 1.5, 0.0, 64.0);

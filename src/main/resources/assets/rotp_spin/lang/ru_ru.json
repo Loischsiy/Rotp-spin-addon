@@ -40,6 +40,8 @@
   "commands.rotp_spin.spinlesson.set.success.multiple": "Урок Спина %s игроков установлен: %s",
   "commands.rotp_spin.spinlesson.get.success": "%s: урок %s «%s»; попаданий шаром %s/%s, перехватов мышц %s/%s, золотых попаданий %s",
   "item.rotp_spin.calibration_buckle": "Калибровочная пряжка",
+  "item.rotp_spin.gyros_cloak": "Плащ Джайро",
+  "item.rotp_spin.gyros_cloak.usage": "Падай со стальным шаром в руке: Спин держит плащ как парус",
   "rotp_spin.lesson.4": "Отдай дань уважения. Вращай пули по золотому сечению",
   "rotp_spin.lesson.5": "Самый короткий путь — обходной",
   "action.rotp_spin.spin_block_throw": "Бросок блока",

@@ -148,7 +148,8 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
     Парус (гл. 11): `power.SpinSailHandler` (сервер: энергия за тик, `fallDistance = 0`, флаг в persistent NBT)
     + `client.SpinSailClient` (локальный игрок сам считает движение, как с элитрами: скорость спуска режется
     здесь). Условия — `SpinSailHandler#canSail`: в воздухе, шар в руке, Спин, «плащ» из тега
-    `rotp_spin:spin_sails` в слоте груди или Curios. Открытие после `minFallDistance`, повторное открытие —
+    `rotp_spin:spin_sails` (свой `item.GyrosCloakItem` + элитры) в слоте груди или Curios. Плащ на игроке —
+    `client.render.GyrosCloak{Model,Render,Layer}` (слой груди) и `compat.curios.CloakCurio` (слот «Спина»). Открытие после `minFallDistance`, повторное открытие —
     только от `startEnergy` (без мигания при пустой энергии); математика — `power.SpinSail`, пороги — `cloak_sail`.
 - Уроки: `power.SpinData` хранит урок и счётчики практики (NBT `Lesson`, `BallHits`, `Hijacks`, `GoldenHits`),
   `SpinData#isActionUnlocked` (хук RotP `TypeSpecificData`) закрывает действия старших уроков;
