@@ -133,6 +133,17 @@ public class SpinConfig {
     public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_SENESCENCE_DAMAGE;
     public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_SPIN_DAMAGE_MULT;
 
+    // Squeeze (a spinning ball flattens limbs and wrings water out of the body, SBR ch. 2/20)
+    public static final ForgeConfigSpec.BooleanValue SQUEEZE_ENABLED;
+    public static final ForgeConfigSpec.IntValue SQUEEZE_MIN_LESSON;
+    public static final ForgeConfigSpec.DoubleValue SQUEEZE_LEG_HEIGHT;
+    public static final ForgeConfigSpec.DoubleValue SQUEEZE_HEAD_HEIGHT;
+    public static final ForgeConfigSpec.IntValue SQUEEZE_LIMB_TICKS;
+    public static final ForgeConfigSpec.IntValue SQUEEZE_LIMB_AMPLIFIER;
+    public static final ForgeConfigSpec.IntValue SQUEEZE_DRY_TICKS;
+    public static final ForgeConfigSpec.DoubleValue SQUEEZE_DRY_EXHAUSTION_PER_TICK;
+    public static final ForgeConfigSpec.DoubleValue SQUEEZE_WATER_MOB_BONUS_DAMAGE;
+
     // Spin resonance (a spinning object amplifies other throws, SBR ch. 23)
     public static final ForgeConfigSpec.BooleanValue RESONANCE_ENABLED;
     public static final ForgeConfigSpec.DoubleValue RESONANCE_RADIUS;
@@ -453,6 +464,27 @@ public class SpinConfig {
                 .defineInRange("shockwaveDamage", 3.0, 0.0, 1000.0);
         WRECKING_NEGLECT_DURATION = b.comment("How long (ticks) the shockwave's hemispatial neglect lasts: victims ignore their left side.")
                 .defineInRange("neglectDurationTicks", 100, 10, 6000);
+        b.pop();
+
+        b.push("squeeze");
+        SQUEEZE_ENABLED = b.comment("A hit with a spinning steel ball squeezes the target (SBR ch. 2/20: it flattens limbs and wrings water out of the body). Legs: Slowness, body and arms: Weakness, head: no limb effect. Every squeezed target also gets Desiccation.")
+                .define("enabled", true);
+        SQUEEZE_MIN_LESSON = b.comment("Lowest Spin lesson of the thrower for the squeeze to work (0 = any Spin user).")
+                .defineInRange("minLesson", 0, 0, 5);
+        SQUEEZE_LEG_HEIGHT = b.comment("A hit below this share of the target's height lands on the legs.")
+                .defineInRange("legHeight", 0.5, 0.0, 1.0);
+        SQUEEZE_HEAD_HEIGHT = b.comment("A hit at or above this share of the target's height lands on the head (between legHeight and this: body and arms).")
+                .defineInRange("headHeight", 0.85, 0.0, 1.0);
+        SQUEEZE_LIMB_TICKS = b.comment("Duration (ticks) of Slowness / Weakness from a flattened limb. A chipped ball multiplies it by steel_ball damagedMultiplier.")
+                .defineInRange("limbTicks", 60, 0, 6000);
+        SQUEEZE_LIMB_AMPLIFIER = b.comment("Amplifier of Slowness / Weakness (0 = level I).")
+                .defineInRange("limbAmplifier", 0, 0, 4);
+        SQUEEZE_DRY_TICKS = b.comment("Duration (ticks) of Desiccation. A chipped ball multiplies it by steel_ball damagedMultiplier. 0 disables Desiccation.")
+                .defineInRange("dryTicks", 100, 0, 6000);
+        SQUEEZE_DRY_EXHAUSTION_PER_TICK = b.comment("Extra food exhaustion per tick of Desiccation for players (vanilla sprinting is 0.1 per block). Desiccation also puts out fire.")
+                .defineInRange("dryExhaustionPerTick", 0.05, 0.0, 4.0);
+        SQUEEZE_WATER_MOB_BONUS_DAMAGE = b.comment("Extra damage to water creatures (drowned, guardians, squid and other water mobs) when the water is wrung out of them.")
+                .defineInRange("waterMobBonusDamage", 3.0, 0.0, 100.0);
         b.pop();
 
         b.push("resonance");

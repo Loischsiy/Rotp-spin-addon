@@ -1,6 +1,7 @@
 package com.loischsiy.rotpspin.init;
 
 import com.loischsiy.rotpspin.AddonMain;
+import com.loischsiy.rotpspin.effect.DesiccationEffect;
 import com.loischsiy.rotpspin.effect.HemispatialNeglectEffect;
 import com.loischsiy.rotpspin.effect.SenescenceEffect;
 
@@ -18,4 +19,7 @@ public class InitEffects {
 
     public static final RegistryObject<SenescenceEffect> SENESCENCE = EFFECTS.register("senescence",
             SenescenceEffect::new);
+
+    public static final RegistryObject<DesiccationEffect> DESICCATION = EFFECTS.register("desiccation",
+            DesiccationEffect::new);
 }

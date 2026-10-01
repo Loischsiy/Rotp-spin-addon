@@ -56,6 +56,7 @@
   "action.rotp_spin.ball_breaker_block": "Spin Guard",
   "action.rotp_spin.ball_breaker_senescence": "Senescence Touch",
   "effect.rotp_spin.senescence": "Senescence",
+  "effect.rotp_spin.desiccation": "Desiccation",
   "entity.rotp_spin.gyro_teacher": "Gyro Zeppeli",
   "item.rotp_spin.gyro_teacher_egg": "Gyro Zeppeli Spawn Egg",
   "rotp_spin.message.gyro_spin_given": "Gyro nods. \"Lesson 1 — If there is a will, do it. Your Spin is yours now.\"",

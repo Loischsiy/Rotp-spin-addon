@@ -19,10 +19,13 @@ import com.loischsiy.rotpspin.power.SpinData;
 import com.loischsiy.rotpspin.power.BallBreakerBoost;
 import com.loischsiy.rotpspin.power.SpinGolden;
 import com.loischsiy.rotpspin.power.SpinResonance;
+import com.loischsiy.rotpspin.power.SpinSqueeze;
 import com.loischsiy.rotpspin.power.SpinSteer;
 
+import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.monster.DrownedEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -33,7 +36,9 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.particles.RedstoneParticleData;
+import net.minecraft.potion.Effects;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
@@ -572,8 +577,51 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
                 ((LivingEntity) target).addEffect(new EffectInstance(InitEffects.SENESCENCE.get(),
                         SpinConfig.BALL_BREAKER_SENESCENCE_DURATION.get()));
             }
+            if (target instanceof LivingEntity && target.isAlive()) {
+                squeeze((LivingEntity) target, (LivingEntity) thrower);
+            }
         }
         return hurt;
+    }
+
+    /**
+     * The spinning ball flattens the limb it hits and wrings water out of the body
+     * (docs/spin-lore.md, SBR ch. 2/20). The gameplay form is an assumption (⚠️ in the lore doc).
+     */
+    private void squeeze(LivingEntity target, LivingEntity thrower) {
+        if (!SpinSqueeze.applies(SpinConfig.SQUEEZE_ENABLED.get(), SpinData.lessonOf(thrower),
+                SpinConfig.SQUEEZE_MIN_LESSON.get())) {
+            return;
+        }
+        boolean chipped = SteelBallItem.isChipped(thrownStack);
+        double damagedMult = SpinConfig.BALL_DAMAGED_MULTIPLIER.get();
+        double hitY = getY() + getBbHeight() * 0.5;
+        SpinSqueeze.Zone zone = SpinSqueeze.zone(
+                SpinSqueeze.relativeHeight(hitY, target.getY(), target.getBbHeight()),
+                SpinConfig.SQUEEZE_LEG_HEIGHT.get(), SpinConfig.SQUEEZE_HEAD_HEIGHT.get());
+        int limbTicks = SpinSqueeze.duration(SpinConfig.SQUEEZE_LIMB_TICKS.get(), chipped, damagedMult);
+        int amplifier = SpinConfig.SQUEEZE_LIMB_AMPLIFIER.get();
+        if (limbTicks > 0 && zone == SpinSqueeze.Zone.LEGS) {
+            target.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, limbTicks, amplifier));
+        } else if (limbTicks > 0 && zone == SpinSqueeze.Zone.BODY) {
+            target.addEffect(new EffectInstance(Effects.WEAKNESS, limbTicks, amplifier));
+        }
+        int dryTicks = SpinSqueeze.duration(SpinConfig.SQUEEZE_DRY_TICKS.get(), chipped, damagedMult);
+        if (dryTicks <= 0) {
+            return;
+        }
+        target.addEffect(new EffectInstance(InitEffects.DESICCATION.get(), dryTicks));
+        target.clearFire();
+        if (level instanceof ServerWorld) {
+            ((ServerWorld) level).sendParticles(ParticleTypes.DRIPPING_WATER, target.getX(), hitY, target.getZ(),
+                    12, target.getBbWidth() * 0.4, 0.2, target.getBbWidth() * 0.4, 0.0);
+        }
+        float bonus = SpinConfig.SQUEEZE_WATER_MOB_BONUS_DAMAGE.get().floatValue();
+        if (bonus > 0 && (target.getMobType() == CreatureAttribute.WATER || target instanceof DrownedEntity)) {
+            // The ball's own hit just set hurt immunity; the wrung-out water is a separate wound.
+            target.invulnerableTime = 0;
+            target.hurt(DamageSource.indirectMagic(this, thrower), bonus);
+        }
     }
 
     /**
