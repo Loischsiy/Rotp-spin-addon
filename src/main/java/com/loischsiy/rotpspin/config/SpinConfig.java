@@ -122,6 +122,14 @@ public class SpinConfig {
     public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_SENESCENCE_DAMAGE;
     public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_SPIN_DAMAGE_MULT;
 
+    // Spin resonance (a spinning object amplifies other throws, SBR ch. 23)
+    public static final ForgeConfigSpec.BooleanValue RESONANCE_ENABLED;
+    public static final ForgeConfigSpec.DoubleValue RESONANCE_RADIUS;
+    public static final ForgeConfigSpec.DoubleValue RESONANCE_DAMAGE_PER_SOURCE;
+    public static final ForgeConfigSpec.DoubleValue RESONANCE_MAX_MULTIPLIER;
+    public static final ForgeConfigSpec.IntValue RESONANCE_MAX_SOURCES;
+    public static final ForgeConfigSpec.IntValue RESONANCE_EXTRA_FLIGHT_TICKS_PER_SOURCE;
+
     // Wrecking Ball (royal guard version of the steel ball)
     public static final ForgeConfigSpec.IntValue WRECKING_SATELLITES;
     public static final ForgeConfigSpec.IntValue WRECKING_RELEASE_AFTER_TICKS;
@@ -397,6 +405,21 @@ public class SpinConfig {
                 .defineInRange("shockwaveDamage", 3.0, 0.0, 1000.0);
         WRECKING_NEGLECT_DURATION = b.comment("How long (ticks) the shockwave's hemispatial neglect lasts: victims ignore their left side.")
                 .defineInRange("neglectDurationTicks", 100, 10, 6000);
+        b.pop();
+
+        b.push("resonance");
+        RESONANCE_ENABLED = b.comment("Spin resonance (SBR ch. 23): spinning projectiles near the thrower amplify a new spinning steel ball throw and extend its range.")
+                .define("enabled", true);
+        RESONANCE_RADIUS = b.comment("Spinning projectiles (steel balls, spun items and blocks, any owner; satellites excluded) within this distance of the thrower count as sources.")
+                .defineInRange("radius", 8.0, 0.0, 64.0);
+        RESONANCE_DAMAGE_PER_SOURCE = b.comment("Damage bonus per source: multiplier = 1 + sources * this.")
+                .defineInRange("damagePerSource", 0.15, 0.0, 10.0);
+        RESONANCE_MAX_MULTIPLIER = b.comment("Upper limit of the resonance damage multiplier.")
+                .defineInRange("maxMultiplier", 1.5, 1.0, 100.0);
+        RESONANCE_MAX_SOURCES = b.comment("At most this many sources count.")
+                .defineInRange("maxSources", 3, 0, 64);
+        RESONANCE_EXTRA_FLIGHT_TICKS_PER_SOURCE = b.comment("Extra ticks of forward flight per source before the ball turns back (longer range).")
+                .defineInRange("extraFlightTicksPerSource", 5, 0, 200);
         b.pop();
 
         b.push("compat");

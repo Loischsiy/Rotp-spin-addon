@@ -18,6 +18,7 @@ import com.loischsiy.rotpspin.item.WreckingBallItem;
 import com.loischsiy.rotpspin.power.SpinData;
 import com.loischsiy.rotpspin.power.BallBreakerBoost;
 import com.loischsiy.rotpspin.power.SpinGolden;
+import com.loischsiy.rotpspin.power.SpinResonance;
 import com.loischsiy.rotpspin.power.SpinSteer;
 
 import net.minecraft.entity.Entity;
@@ -72,6 +73,8 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     private boolean shockwaveDone;
     // Where the ball was thrown from: a holster throw returns to the holster, a hand throw to the hand.
     private boolean fromHolster;
+    // Spin resonance: extra ticks of forward flight granted by spinning projectiles near the throw.
+    private int resonanceTicks;
 
     public SteelBallEntity(EntityType<? extends SteelBallEntity> type, World world) {
         super(type, world);
@@ -87,9 +90,35 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         }
         if (spinning) {
             damage *= goldenMultiplier(world, thrower, chipped);
+            if (!world.isClientSide() && SpinConfig.RESONANCE_ENABLED.get()) {
+                int sources = countResonanceSources(world, thrower, SpinConfig.RESONANCE_RADIUS.get());
+                int maxSources = SpinConfig.RESONANCE_MAX_SOURCES.get();
+                damage *= SpinResonance.damageMultiplier(sources, maxSources,
+                        SpinConfig.RESONANCE_DAMAGE_PER_SOURCE.get(), SpinConfig.RESONANCE_MAX_MULTIPLIER.get());
+                resonanceTicks = SpinResonance.extraFlightTicks(sources, maxSources,
+                        SpinConfig.RESONANCE_EXTRA_FLIGHT_TICKS_PER_SOURCE.get());
+            }
         }
         setBaseDamage(damage);
         setWrecking(thrownStack.getItem() instanceof WreckingBallItem);
+    }
+
+    /**
+     * Server: spinning projectiles near the thrower that resonate with a new throw (SBR ch. 23):
+     * other spinning steel balls (satellites excluded), spun items and spun blocks, of any owner.
+     */
+    private static int countResonanceSources(World world, LivingEntity thrower, double radius) {
+        if (thrower == null || radius <= 0.0) {
+            return 0;
+        }
+        net.minecraft.util.math.AxisAlignedBB area = thrower.getBoundingBox().inflate(radius);
+        int sources = world.getEntitiesOfClass(SteelBallEntity.class, area,
+                ball -> ball.isAlive() && ball.isSpinning() && !ball.isSatellite()).size();
+        // A spun item that landed lies still (stuck like an arrow): it no longer carries rotation.
+        sources += world.getEntitiesOfClass(SpunItemEntity.class, area,
+                e -> e.isAlive() && e.getDeltaMovement().lengthSqr() > 1.0E-4).size();
+        sources += world.getEntitiesOfClass(SpunBlockEntity.class, area, Entity::isAlive).size();
+        return sources;
     }
 
     /** Marks this ball as a satellite: it strikes once and is spent (no return, no steering). */
@@ -163,7 +192,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
 
         // A satellite is spent matter: it never returns to the thrower.
         if (!level.isClientSide() && isSpinning() && !isReturning() && !isSatellite()
-                && (tickCount - steeredTicks >= SpinConfig.BALL_RETURN_AFTER_TICKS.get() || inGround)) {
+                && (tickCount - steeredTicks >= SpinConfig.BALL_RETURN_AFTER_TICKS.get() + resonanceTicks || inGround)) {
             startReturning();
         }
 
@@ -600,6 +629,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         entityData.set(SATELLITES_RELEASED, satellitesReleased);
         shockwaveDone = compound.getBoolean("ShockwaveDone");
         fromHolster = compound.getBoolean("FromHolster");
+        resonanceTicks = compound.getInt("ResonanceTicks");
     }
 
     @Override
@@ -615,5 +645,6 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         compound.putBoolean("SatellitesReleased", satellitesReleased);
         compound.putBoolean("ShockwaveDone", shockwaveDone);
         compound.putBoolean("FromHolster", fromHolster);
+        compound.putInt("ResonanceTicks", resonanceTicks);
     }
 }
