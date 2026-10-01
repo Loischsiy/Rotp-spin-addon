@@ -4,8 +4,13 @@ import com.github.standobyte.jojo.power.impl.nonstand.INonStandPower;
 import com.loischsiy.rotpspin.init.InitPowers;
 import com.loischsiy.rotpspin.power.SpinData;
 import com.loischsiy.rotpspin.power.SpinPowerType;
+import com.loischsiy.rotpspin.world.GyroSpawns;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -16,12 +21,15 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 
 /**
@@ -73,6 +81,14 @@ public class GyroTeacherEntity extends CreatureEntity {
                 new TranslationTextComponent("rotp_spin.lesson." + data.getLesson()),
                 data.getBallHits(), data.getHijacks(), data.getGoldenHits())
                 .withStyle(TextFormatting.YELLOW), Util.NIL_UUID));
+    }
+
+    @Override
+    public ILivingEntityData finalizeSpawn(IServerWorld world, DifficultyInstance difficulty, SpawnReason reason,
+            @Nullable ILivingEntityData data, @Nullable CompoundNBT nbt) {
+        ILivingEntityData result = super.finalizeSpawn(world, difficulty, reason, data, nbt);
+        GyroSpawns.spawnHorse(world, this, reason);
+        return result;
     }
 
     @Override

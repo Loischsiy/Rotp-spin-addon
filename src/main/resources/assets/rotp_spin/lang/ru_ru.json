@@ -59,6 +59,7 @@
   "effect.rotp_spin.desiccation": "Обезвоживание",
   "entity.rotp_spin.gyro_teacher": "Джайро Цеппели",
   "item.rotp_spin.gyro_teacher_egg": "Яйцо призыва Джайро Цеппели",
+  "entity.rotp_spin.gyro_teacher.horse": "Валькирия",
   "rotp_spin.message.gyro_spin_given": "Джайро кивает. «Урок 1 — Если есть воля, сделай это. Твой Спин теперь твой.»",
   "rotp_spin.message.gyro_has_other": "Джайро качает головой. «Ты уже идёшь другим путём — я не могу учить тебя Спину.»",
   "rotp_spin.message.gyro_status": "Урок %s «%s» — попаданий шаром %s, перехватов %s, золотых %s",

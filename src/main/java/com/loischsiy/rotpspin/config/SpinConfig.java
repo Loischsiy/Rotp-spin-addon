@@ -174,6 +174,22 @@ public class SpinConfig {
     public static final ForgeConfigSpec.DoubleValue WRECKING_NEGLECT_VEIL_FADE_WIDTH;
     public static final ForgeConfigSpec.IntValue WRECKING_NEGLECT_VEIL_FADE_OUT_TICKS;
 
+    // Gyro Zeppeli, the Spin teacher: where he appears in the world
+    public static final ForgeConfigSpec.BooleanValue GYRO_NATURAL_SPAWN;
+    public static final ForgeConfigSpec.IntValue GYRO_SPAWN_WEIGHT;
+    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> GYRO_BIOME_CATEGORIES;
+    public static final ForgeConfigSpec.DoubleValue GYRO_UNIQUE_RADIUS;
+    public static final ForgeConfigSpec.IntValue GYRO_MIN_LIGHT;
+    public static final ForgeConfigSpec.BooleanValue GYRO_VILLAGE_SPAWN;
+    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> GYRO_VILLAGE_BIOME_CATEGORIES;
+    public static final ForgeConfigSpec.IntValue GYRO_VILLAGE_CHECK_INTERVAL;
+    public static final ForgeConfigSpec.DoubleValue GYRO_VILLAGE_SPAWN_CHANCE;
+    public static final ForgeConfigSpec.DoubleValue GYRO_VILLAGE_RADIUS;
+    public static final ForgeConfigSpec.IntValue GYRO_VILLAGE_SPAWN_SPREAD;
+    public static final ForgeConfigSpec.IntValue GYRO_VILLAGE_SPAWN_ATTEMPTS;
+    public static final ForgeConfigSpec.BooleanValue GYRO_SPAWN_WITH_HORSE;
+    public static final ForgeConfigSpec.DoubleValue GYRO_HORSE_OFFSET;
+
     // Optional integrations
     public static final ForgeConfigSpec.BooleanValue COMPAT_CURIOS_ENABLED;
 
@@ -556,6 +572,37 @@ public class SpinConfig {
                 .defineInRange("costPerTick", 0.75, 0.0, 100.0);
         SAIL_START_ENERGY = b.comment("Spin energy needed to open the sail (keeping it open needs only costPerTick), so an exhausted user falls instead of flickering.")
                 .defineInRange("startEnergy", 10.0, 0.0, 100.0);
+        b.pop();
+
+        b.push("gyro_teacher");
+        GYRO_NATURAL_SPAWN = b.comment("Gyro Zeppeli wanders the open country on his own: the Steel Ball Run crossed the American prairies and the West. Rare, always alone.")
+                .define("naturalSpawn", true);
+        GYRO_SPAWN_WEIGHT = b.comment("Spawn weight among the creatures of a matching biome (a cow is 8, a horse is 1-5).")
+                .defineInRange("spawnWeight", 1, 1, 100);
+        GYRO_BIOME_CATEGORIES = b.comment("Biome categories where Gyro spawns naturally. Names of Biome.Category.")
+                .defineList("biomeCategories", Arrays.asList("PLAINS", "SAVANNA"), entry -> entry instanceof String);
+        GYRO_UNIQUE_RADIUS = b.comment("Gyro is one man: he does not spawn naturally while another Gyro is within this many blocks (only loaded entities are seen; at chunk generation the low weight keeps him rare).")
+                .defineInRange("uniqueRadius", 128.0, 0.0, 1024.0);
+        GYRO_MIN_LIGHT = b.comment("Minimum light level for a natural spawn (animals use 9).")
+                .defineInRange("minLight", 9, 0, 15);
+        GYRO_VILLAGE_SPAWN = b.comment("Gyro stops in a town on a race stage: a player inside a village may meet him at its centre, one Gyro per village.")
+                .define("villageSpawn", true);
+        GYRO_VILLAGE_BIOME_CATEGORIES = b.comment("Biome categories (at the village centre) of the villages Gyro visits: prairie, savanna and the Arizona desert stage. Names of Biome.Category.")
+                .defineList("villageBiomeCategories", Arrays.asList("PLAINS", "SAVANNA", "DESERT"), entry -> entry instanceof String);
+        GYRO_VILLAGE_CHECK_INTERVAL = b.comment("How often (ticks) each player's village is checked.")
+                .defineInRange("villageCheckIntervalTicks", 1200, 20, 72000);
+        GYRO_VILLAGE_SPAWN_CHANCE = b.comment("Chance (0..1) per check that Gyro arrives in a village without one.")
+                .defineInRange("villageSpawnChance", 0.25, 0.0, 1.0);
+        GYRO_VILLAGE_RADIUS = b.comment("A Gyro within this many blocks of the village centre counts as the village's Gyro.")
+                .defineInRange("villageRadius", 64.0, 1.0, 512.0);
+        GYRO_VILLAGE_SPAWN_SPREAD = b.comment("Gyro appears up to this many blocks from the village centre.")
+                .defineInRange("villageSpawnSpread", 8, 0, 64);
+        GYRO_VILLAGE_SPAWN_ATTEMPTS = b.comment("Spots tried per successful roll before giving up until the next check.")
+                .defineInRange("villageSpawnAttempts", 8, 1, 64);
+        GYRO_SPAWN_WITH_HORSE = b.comment("Gyro is a racer: a naturally spawned or village Gyro brings a saddled horse, Valkyrie, on a lead. She is not tamed for anyone. Spawn eggs and commands spawn him alone.")
+                .define("spawnWithHorse", true);
+        GYRO_HORSE_OFFSET = b.comment("How far (blocks) from Gyro his horse stands.")
+                .defineInRange("horseOffset", 1.5, 0.0, 8.0);
         b.pop();
 
         b.push("compat");

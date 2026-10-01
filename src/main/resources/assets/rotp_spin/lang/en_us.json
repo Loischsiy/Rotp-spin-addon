@@ -59,6 +59,7 @@
   "effect.rotp_spin.desiccation": "Desiccation",
   "entity.rotp_spin.gyro_teacher": "Gyro Zeppeli",
   "item.rotp_spin.gyro_teacher_egg": "Gyro Zeppeli Spawn Egg",
+  "entity.rotp_spin.gyro_teacher.horse": "Valkyrie",
   "rotp_spin.message.gyro_spin_given": "Gyro nods. \"Lesson 1 — If there is a will, do it. Your Spin is yours now.\"",
   "rotp_spin.message.gyro_has_other": "Gyro shakes his head. \"You already walk another path — I cannot teach you Spin.\"",
   "rotp_spin.message.gyro_status": "Lesson %s \"%s\" — steel hits %s, hijacks %s, golden hits %s",

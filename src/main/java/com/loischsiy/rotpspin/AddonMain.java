@@ -17,6 +17,7 @@ import com.loischsiy.rotpspin.init.InitItems;
 import com.loischsiy.rotpspin.init.InitPowers;
 import com.loischsiy.rotpspin.init.InitStands;
 import com.loischsiy.rotpspin.network.AddonPackets;
+import com.loischsiy.rotpspin.world.GyroSpawns;
 
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -61,6 +62,7 @@ public class AddonMain {
     private void commonSetup(FMLCommonSetupEvent event) {
         AddonPackets.init();
         SpinPowerCapability.commonSetupRegister();
+        event.enqueueWork(GyroSpawns::registerPlacement);
         // Optional integrations: compat classes are loaded only when the mod is present (docs/integrations.md).
         if (isCuriosLoaded()) {
             HolsterAccess.set(CuriosCompat.createHolsterAccess());
