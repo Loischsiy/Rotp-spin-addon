@@ -102,6 +102,42 @@ class WreckingBallTest {
     }
 
     @Test
+    void veilHoldsThenLiftsOverFadeOut() {
+        assertEquals(0.9F, WreckingBall.neglectVeilOpacity(100, 20, 0.9), EPS);
+        assertEquals(0.9F, WreckingBall.neglectVeilOpacity(20, 20, 0.9), EPS);
+        assertEquals(0.45F, WreckingBall.neglectVeilOpacity(10, 20, 0.9), EPS);
+        assertEquals(0.0F, WreckingBall.neglectVeilOpacity(0, 20, 0.9), EPS);
+    }
+
+    @Test
+    void veilClampsAndHandlesNoFade() {
+        assertEquals(1.0F, WreckingBall.neglectVeilOpacity(5, 0, 3.0), EPS);
+        assertEquals(0.0F, WreckingBall.neglectVeilOpacity(50, 20, 0.0), EPS);
+    }
+
+    @Test
+    void veerTurnsToTheRightHand() {
+        // Facing south (yaw 0) the right hand is west (-X): after the drift, the look must lean there.
+        float yaw = WreckingBall.veerRight(0.0F, 10.0);
+        Vector3d south = lookFromYaw(0.0F);
+        Vector3d after = lookFromYaw(yaw);
+        assertTrue(after.x < 0);
+        assertFalse(WreckingBall.isOnLeftSide(south, after));
+    }
+
+    @Test
+    void veerIgnoresNegativeRateAndDoesNotWrap() {
+        assertEquals(170.0F, WreckingBall.veerRight(170.0F, -5.0), EPS);
+        assertEquals(185.0F, WreckingBall.veerRight(175.0F, 10.0), EPS);
+    }
+
+    /** Same formula as Entity#calculateViewVector with pitch 0. */
+    private static Vector3d lookFromYaw(float yaw) {
+        double rad = Math.toRadians(yaw);
+        return new Vector3d(-Math.sin(rad), 0, Math.cos(rad));
+    }
+
+    @Test
     void noSocketsForNonPositiveCount() {
         assertTrue(WreckingBall.socketDirections(0).isEmpty());
     }

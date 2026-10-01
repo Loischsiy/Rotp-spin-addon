@@ -162,6 +162,11 @@ public class SpinConfig {
     public static final ForgeConfigSpec.DoubleValue WRECKING_SHOCKWAVE_RADIUS;
     public static final ForgeConfigSpec.DoubleValue WRECKING_SHOCKWAVE_DAMAGE;
     public static final ForgeConfigSpec.IntValue WRECKING_NEGLECT_DURATION;
+    public static final ForgeConfigSpec.BooleanValue WRECKING_NEGLECT_BLOCKS_RETARGET;
+    public static final ForgeConfigSpec.DoubleValue WRECKING_NEGLECT_VEER_DEGREES;
+    public static final ForgeConfigSpec.DoubleValue WRECKING_NEGLECT_VEIL_OPACITY;
+    public static final ForgeConfigSpec.DoubleValue WRECKING_NEGLECT_VEIL_FADE_WIDTH;
+    public static final ForgeConfigSpec.IntValue WRECKING_NEGLECT_VEIL_FADE_OUT_TICKS;
 
     // Optional integrations
     public static final ForgeConfigSpec.BooleanValue COMPAT_CURIOS_ENABLED;
@@ -468,6 +473,16 @@ public class SpinConfig {
                 .defineInRange("shockwaveDamage", 3.0, 0.0, 1000.0);
         WRECKING_NEGLECT_DURATION = b.comment("How long (ticks) the shockwave's hemispatial neglect lasts: victims ignore their left side.")
                 .defineInRange("neglectDurationTicks", 100, 10, 6000);
+        WRECKING_NEGLECT_BLOCKS_RETARGET = b.comment("A neglected mob cannot pick a new target on its left side either (canon: Wekapipo hid himself and allies this way).")
+                .define("neglectBlocksRetarget", true);
+        WRECKING_NEGLECT_VEER_DEGREES = b.comment("A neglected rider's horse keeps drifting to the right by this many degrees per tick (canon: Wekapipo made horses turn right). 0 disables.")
+                .defineInRange("neglectVeerDegreesPerTick", 2.0, 0.0, 45.0);
+        WRECKING_NEGLECT_VEIL_OPACITY = b.comment("How dark the left half of a neglected player's screen gets (0 = no veil, 1 = black): the victim loses sight on the left.")
+                .defineInRange("neglectVeilOpacity", 0.9, 0.0, 1.0);
+        WRECKING_NEGLECT_VEIL_FADE_WIDTH = b.comment("Share of the screen width, left of the centre line, over which the veil fades into clear sight.")
+                .defineInRange("neglectVeilFadeWidth", 0.1, 0.0, 0.5);
+        WRECKING_NEGLECT_VEIL_FADE_OUT_TICKS = b.comment("During the last ticks of the neglect the veil lifts gradually.")
+                .defineInRange("neglectVeilFadeOutTicks", 20, 0, 1200);
         b.pop();
 
         b.push("squeeze");

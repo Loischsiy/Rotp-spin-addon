@@ -69,4 +69,28 @@ public final class WreckingBall {
     public static boolean isOnLeftSide(Vector3d look, Vector3d toTarget) {
         return look.z * toTarget.x - look.x * toTarget.z > 0.0;
     }
+
+    /**
+     * Opacity of the dark veil over the victim's left half: {@code maxOpacity} while the neglect
+     * holds, fading linearly to 0 over the last {@code fadeOutTicks} ticks. 0 when nothing is left.
+     */
+    public static float neglectVeilOpacity(int remainingTicks, int fadeOutTicks, double maxOpacity) {
+        if (remainingTicks <= 0 || maxOpacity <= 0.0) {
+            return 0.0F;
+        }
+        double max = Math.min(maxOpacity, 1.0);
+        if (fadeOutTicks <= 0 || remainingTicks >= fadeOutTicks) {
+            return (float) max;
+        }
+        return (float) (max * remainingTicks / fadeOutTicks);
+    }
+
+    /**
+     * Yaw after one tick of drifting to the right (Minecraft yaw grows clockwise seen from above,
+     * so facing south a growing yaw turns west, which is the right hand). Not wrapped: the camera
+     * interpolates from the previous yaw, a jump of 360 would spin it. Negative rates count as 0.
+     */
+    public static float veerRight(float yaw, double degreesPerTick) {
+        return (float) (yaw + Math.max(degreesPerTick, 0.0));
+    }
 }
