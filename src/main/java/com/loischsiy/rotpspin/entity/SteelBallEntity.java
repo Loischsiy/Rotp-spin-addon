@@ -75,6 +75,10 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     private boolean fromHolster;
     // Spin resonance: extra ticks of forward flight granted by spinning projectiles near the throw.
     private int resonanceTicks;
+    // Server, visual only: resonating sources counted at the throw (not saved, a reload just drops the trail).
+    private int resonanceSources;
+    /** Server, visual only: the launch ring has been emitted (the first tick may already see tickCount 1). */
+    private boolean resonanceRung;
 
     public SteelBallEntity(EntityType<? extends SteelBallEntity> type, World world) {
         super(type, world);
@@ -97,10 +101,23 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
                         SpinConfig.RESONANCE_DAMAGE_PER_SOURCE.get(), SpinConfig.RESONANCE_MAX_MULTIPLIER.get());
                 resonanceTicks = SpinResonance.extraFlightTicks(sources, maxSources,
                         SpinConfig.RESONANCE_EXTRA_FLIGHT_TICKS_PER_SOURCE.get());
+                resonanceSources = SpinResonance.effectiveSources(sources, maxSources);
             }
         }
         setBaseDamage(damage);
         setWrecking(thrownStack.getItem() instanceof WreckingBallItem);
+    }
+
+    /**
+     * A Wrecking Ball satellite: fixed damage, always spinning, no Golden/resonance lookups
+     * (the release spawns many at once and would repeat the same entity searches for each).
+     */
+    private SteelBallEntity(World world, LivingEntity owner, double satelliteDamage) {
+        super(InitEntities.STEEL_BALL.get(), world, owner, new ItemStack(InitItems.WRECKING_BALL.get()));
+        setSpinning(true);
+        setWrecking(true);
+        setSatellite();
+        setBaseDamage(satelliteDamage);
     }
 
     /**
@@ -119,6 +136,32 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
                 e -> e.isAlive() && e.getDeltaMovement().lengthSqr() > 1.0E-4).size();
         sources += world.getEntitiesOfClass(SpunBlockEntity.class, area, Entity::isAlive).size();
         return sources;
+    }
+
+    /**
+     * Server, visual only: a resonating throw rings out at launch (gold dust ring + bell resonance)
+     * and leaves a glowing trail while it flies forward, denser with more sources.
+     */
+    private void emitResonanceParticles() {
+        ServerWorld world = (ServerWorld) level;
+        if (!resonanceRung) {
+            resonanceRung = true;
+            int points = 12 * resonanceSources;
+            for (int i = 0; i < points; i++) {
+                double angle = Math.PI * 2.0 * i / points;
+                world.sendParticles(GOLD_DUST, getX() + Math.cos(angle) * 0.6, getY(), getZ() + Math.sin(angle) * 0.6,
+                        1, 0.0, 0.0, 0.0, 0.0);
+            }
+            playSound(SoundEvents.BELL_RESONATE, 0.5F, 1.6F);
+        }
+        if (isSpinning() && !isReturning() && !inGround) {
+            world.sendParticles(net.minecraft.particles.ParticleTypes.END_ROD, xo, yo, zo,
+                    resonanceSources, 0.05, 0.05, 0.05, 0.0);
+        }
+        else {
+            // The ball turned back or landed: the resonance has been spent.
+            resonanceSources = 0;
+        }
     }
 
     /** Marks this ball as a satellite: it strikes once and is spent (no return, no steering). */
@@ -185,6 +228,9 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         if (isSatellite() && level.isClientSide()) {
             // A 0.25-block ball at bullet speed is lost against the sky: a gold trail shows its path.
             level.addParticle(GOLD_DUST, xo, yo, zo, 0.0, 0.0, 0.0);
+        }
+        if (resonanceSources > 0 && !level.isClientSide()) {
+            emitResonanceParticles();
         }
         if (tickCount - steeredTicks >= SpinConfig.WRECKING_RELEASE_AFTER_TICKS.get()) {
             releaseSatellitesOnce(null);
@@ -506,10 +552,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         double damage = SpinConfig.WRECKING_SATELLITE_DAMAGE.get();
         for (Vector3d velocity : WreckingBall.satelliteVelocities(aimDir,
                 SpinConfig.WRECKING_SATELLITES.get(), speed)) {
-            SteelBallEntity sat = new SteelBallEntity(level, (LivingEntity) owner,
-                    new ItemStack(InitItems.WRECKING_BALL.get()), isSpinning());
-            sat.setSatellite();
-            sat.setBaseDamage(damage);
+            SteelBallEntity sat = new SteelBallEntity(level, (LivingEntity) owner, damage);
             sat.pickup = AbstractArrowEntity.PickupStatus.DISALLOWED;
             sat.setPos(from.x, from.y, from.z);
             sat.shoot(velocity.x, velocity.y, velocity.z, (float) velocity.length(), 0.0F);
