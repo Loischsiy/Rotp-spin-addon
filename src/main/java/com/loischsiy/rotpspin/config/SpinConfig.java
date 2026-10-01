@@ -132,6 +132,12 @@ public class SpinConfig {
     public static final ForgeConfigSpec.IntValue BALL_BREAKER_SENESCENCE_INTERVAL;
     public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_SENESCENCE_DAMAGE;
     public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_SPIN_DAMAGE_MULT;
+    public static final ForgeConfigSpec.BooleanValue BALL_BREAKER_AURA_ENABLED;
+    public static final ForgeConfigSpec.IntValue BALL_BREAKER_AURA_SPARKS;
+    public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_AURA_RADIUS;
+    public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_AURA_ARC_CHANCE;
+    public static final ForgeConfigSpec.IntValue BALL_BREAKER_AURA_ARC_SEGMENTS;
+    public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_AURA_ARC_JITTER;
 
     // Squeeze (a spinning ball flattens limbs and wrings water out of the body, SBR ch. 2/20)
     public static final ForgeConfigSpec.BooleanValue SQUEEZE_ENABLED;
@@ -452,6 +458,20 @@ public class SpinConfig {
                 .defineInRange("senescenceDamage", 1.0, 0.0, 100.0);
         BALL_BREAKER_SPIN_DAMAGE_MULT = b.comment("Ball Breaker summoned + Golden Spin calibrated: damage multiplier of the thrower's spinning steel balls (the visualization amplifies the Spin itself).")
                 .defineInRange("spinDamageMultiplier", 1.5, 1.0, 100.0);
+        b.push("aura");
+        BALL_BREAKER_AURA_ENABLED = b.comment("Cloud of Spin energy resembling electrostatic discharges around the summoned Stand (SBR ch. 83). Visual only, seen by those who can see Stands.")
+                .define("enabled", true);
+        BALL_BREAKER_AURA_SPARKS = b.comment("Energy specks around the body per tick (scaled by the summon fade-in).")
+                .defineInRange("sparksPerTick", 6, 0, 64);
+        BALL_BREAKER_AURA_RADIUS = b.comment("Horizontal radius of the cloud around the body, blocks.")
+                .defineInRange("radius", 0.6, 0.1, 4.0);
+        BALL_BREAKER_AURA_ARC_CHANCE = b.comment("Chance (0..1) per tick of a discharge arc across the cloud.")
+                .defineInRange("arcChance", 0.25, 0.0, 1.0);
+        BALL_BREAKER_AURA_ARC_SEGMENTS = b.comment("Joints of one discharge arc.")
+                .defineInRange("arcSegments", 5, 1, 16);
+        BALL_BREAKER_AURA_ARC_JITTER = b.comment("How far (blocks) an arc joint may zigzag off the straight line.")
+                .defineInRange("arcJitter", 0.12, 0.0, 1.0);
+        b.pop();
         b.pop();
 
         b.push("wrecking_ball");
