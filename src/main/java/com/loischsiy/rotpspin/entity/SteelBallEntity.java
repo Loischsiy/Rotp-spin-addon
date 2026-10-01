@@ -71,6 +71,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     // Wrecking Ball (royal guard version): hidden satellites and a shockwave on a miss
     private boolean satellitesReleased;
     private boolean shockwaveDone;
+    private boolean bulletsCut;
     // Where the ball was thrown from: a holster throw returns to the holster, a hand throw to the hand.
     private boolean fromHolster;
     // Spin resonance: extra ticks of forward flight granted by spinning projectiles near the throw.
@@ -387,6 +388,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         if (!level.isClientSide()) {
             releaseSatellitesOnce(result.getLocation());
             stripBark(result);
+            cutBullets(result);
         }
         if (isSpinning() && !isReturning()) {
             Vector3d normal = Vector3d.atLowerCornerOf(result.getDirection().getNormal());
@@ -425,6 +427,40 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         level.playSound(null, pos, SoundEvents.AXE_STRIP, net.minecraft.util.SoundCategory.BLOCKS, 1.0F, 1.0F);
         setDeltaMovement(getDeltaMovement().scale(
                 SpinFriction.speedAfterStrip(1.0, SpinConfig.FRICTION_BARK_SPEED_RETENTION.get())));
+        hurtMarked = true;
+    }
+
+    /**
+     * Server: the rotation cuts bullets out of an iron block (SBR ch. 44): iron nuggets fly off
+     * the face, and now and then the carved block is used up (see {@link SpinFriction#blockConsumeChance}).
+     */
+    private void cutBullets(BlockRayTraceResult result) {
+        if (!SpinFriction.canCutBullets(SpinConfig.FRICTION_BULLET_CUTTING.get(), isSpinning(), isReturning(),
+                bulletsCut, getDeltaMovement().length(), SpinConfig.FRICTION_BULLET_MIN_SPEED.get())) {
+            return;
+        }
+        net.minecraft.util.math.BlockPos pos = result.getBlockPos();
+        if (!level.getBlockState(pos).is(net.minecraft.block.Blocks.IRON_BLOCK)) {
+            return;
+        }
+        Entity owner = getOwner();
+        if (!(owner instanceof PlayerEntity) || !level.mayInteract((PlayerEntity) owner, pos)
+                || !((PlayerEntity) owner).mayUseItemAt(pos, result.getDirection(), ItemStack.EMPTY)) {
+            return;
+        }
+        bulletsCut = true;
+        int bullets = SpinConfig.FRICTION_BULLETS_PER_CUT.get();
+        Vector3d face = result.getLocation().add(Vector3d.atLowerCornerOf(result.getDirection().getNormal()).scale(0.25));
+        net.minecraft.entity.item.ItemEntity drop = new net.minecraft.entity.item.ItemEntity(level,
+                face.x, face.y, face.z, new ItemStack(net.minecraft.item.Items.IRON_NUGGET, bullets));
+        drop.setDefaultPickUpDelay();
+        level.addFreshEntity(drop);
+        if (random.nextDouble() < SpinFriction.blockConsumeChance(bullets, SpinConfig.FRICTION_BULLET_NUGGETS_PER_BLOCK.get())) {
+            level.destroyBlock(pos, false, owner);
+        }
+        level.playSound(null, pos, SoundEvents.GRINDSTONE_USE, net.minecraft.util.SoundCategory.BLOCKS, 0.8F, 1.6F);
+        setDeltaMovement(getDeltaMovement().scale(
+                SpinFriction.speedAfterStrip(1.0, SpinConfig.FRICTION_BULLET_SPEED_RETENTION.get())));
         hurtMarked = true;
     }
 
@@ -671,6 +707,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         satellitesReleased = compound.getBoolean("SatellitesReleased");
         entityData.set(SATELLITES_RELEASED, satellitesReleased);
         shockwaveDone = compound.getBoolean("ShockwaveDone");
+        bulletsCut = compound.getBoolean("BulletsCut");
         fromHolster = compound.getBoolean("FromHolster");
         resonanceTicks = compound.getInt("ResonanceTicks");
     }
@@ -687,6 +724,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         compound.putBoolean("Satellite", isSatellite());
         compound.putBoolean("SatellitesReleased", satellitesReleased);
         compound.putBoolean("ShockwaveDone", shockwaveDone);
+        compound.putBoolean("BulletsCut", bulletsCut);
         compound.putBoolean("FromHolster", fromHolster);
         compound.putInt("ResonanceTicks", resonanceTicks);
     }

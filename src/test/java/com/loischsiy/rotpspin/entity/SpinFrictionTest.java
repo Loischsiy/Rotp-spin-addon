@@ -10,6 +10,22 @@ class SpinFrictionTest {
     private static final double EPS = 1e-9;
 
     @Test
+    void cutsBulletsOncePerFlight() {
+        assertTrue(SpinFriction.canCutBullets(true, true, false, false, 1.2, 1.0));
+        assertFalse(SpinFriction.canCutBullets(true, true, false, true, 1.2, 1.0));
+        assertFalse(SpinFriction.canCutBullets(true, true, false, false, 0.9, 1.0));
+        assertFalse(SpinFriction.canCutBullets(true, true, true, false, 1.2, 1.0));
+        assertFalse(SpinFriction.canCutBullets(false, true, false, false, 1.2, 1.0));
+    }
+
+    @Test
+    void consumeChanceKeepsIronValue() {
+        assertEquals(3.0 / 81.0, SpinFriction.blockConsumeChance(3, 81), EPS);
+        assertEquals(1.0, SpinFriction.blockConsumeChance(100, 81), EPS);
+        assertEquals(1.0, SpinFriction.blockConsumeChance(3, 0), EPS);
+    }
+
+    @Test
     void stripsOnlyWhenSpinningOutwardAndFast() {
         assertTrue(SpinFriction.canStripBark(true, true, false, 1.0, 0.8));
         assertTrue(SpinFriction.canStripBark(true, true, false, 0.8, 0.8));

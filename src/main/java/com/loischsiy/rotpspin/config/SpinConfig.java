@@ -107,6 +107,11 @@ public class SpinConfig {
     public static final ForgeConfigSpec.BooleanValue FRICTION_BARK_STRIPPING;
     public static final ForgeConfigSpec.DoubleValue FRICTION_BARK_MIN_SPEED;
     public static final ForgeConfigSpec.DoubleValue FRICTION_BARK_SPEED_RETENTION;
+    public static final ForgeConfigSpec.BooleanValue FRICTION_BULLET_CUTTING;
+    public static final ForgeConfigSpec.DoubleValue FRICTION_BULLET_MIN_SPEED;
+    public static final ForgeConfigSpec.IntValue FRICTION_BULLETS_PER_CUT;
+    public static final ForgeConfigSpec.IntValue FRICTION_BULLET_NUGGETS_PER_BLOCK;
+    public static final ForgeConfigSpec.DoubleValue FRICTION_BULLET_SPEED_RETENTION;
     public static final ForgeConfigSpec.ConfigValue<String> BALL_REPAIR_MATERIAL;
     public static final ForgeConfigSpec.IntValue BALL_REPAIR_LEVEL_COST;
 
@@ -365,6 +370,16 @@ public class SpinConfig {
                 .defineInRange("barkMinSpeed", 0.8, 0.0, 10.0);
         FRICTION_BARK_SPEED_RETENTION = b.comment("Share of speed the ball keeps after stripping bark (friction against the trunk).")
                 .defineInRange("barkSpeedRetention", 0.7, 0.0, 1.0);
+        FRICTION_BULLET_CUTTING = b.comment("A spinning steel ball cuts bullets (iron nuggets) out of an iron block it hits (SBR ch. 44), once per flight. Needs the thrower's permission to use items at that spot.")
+                .define("bulletCutting", true);
+        FRICTION_BULLET_MIN_SPEED = b.comment("Minimum ball speed (blocks per tick) to cut bullets in metal.")
+                .defineInRange("bulletMinSpeed", 1.0, 0.0, 10.0);
+        FRICTION_BULLETS_PER_CUT = b.comment("Iron nuggets cut out per hit.")
+                .defineInRange("bulletsPerCut", 3, 1, 64);
+        FRICTION_BULLET_NUGGETS_PER_BLOCK = b.comment("Nuggets an iron block is worth: the block is used up with chance bulletsPerCut / this, so carving never yields more iron than crafting.")
+                .defineInRange("bulletNuggetsPerBlock", 81, 1, 1000);
+        FRICTION_BULLET_SPEED_RETENTION = b.comment("Share of speed the ball keeps after cutting the metal.")
+                .defineInRange("bulletSpeedRetention", 0.5, 0.0, 1.0);
         b.pop();
         b.pop();
 
