@@ -60,6 +60,13 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     // Plain fields stay server-side only, so both flags ride the EntityDataManager.
     private static final DataParameter<Boolean> WRECKING = EntityDataManager.defineId(SteelBallEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> SATELLITE = EntityDataManager.defineId(SteelBallEntity.class, DataSerializers.BOOLEAN);
+    // Rope (SBR ch. 55): ROPE_NONE, ROPE_FLYING (sneak throw), ROPE_ANCHORED (stuck in a block, pulling the thrower).
+    private static final DataParameter<Byte> ROPE = EntityDataManager.defineId(SteelBallEntity.class, DataSerializers.BYTE);
+    private static final byte ROPE_NONE = 0;
+    private static final byte ROPE_FLYING = 1;
+    private static final byte ROPE_ANCHORED = 2;
+    // Visual only: hemp-coloured dust along the rope.
+    private static final RedstoneParticleData ROPE_DUST = new RedstoneParticleData(0.76F, 0.64F, 0.43F, 0.6F);
     // Visual only: polished-gold dust (#ebc731) trailing a satellite and bursting at release.
     private static final RedstoneParticleData GOLD_DUST = new RedstoneParticleData(0.92F, 0.78F, 0.19F, 1.0F);
 
@@ -72,6 +79,8 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
     private boolean satellitesReleased;
     private boolean shockwaveDone;
     private boolean bulletsCut;
+    // Ticks the anchored rope has been pulling the thrower.
+    private int ropeTicks;
     // Where the ball was thrown from: a holster throw returns to the holster, a hand throw to the hand.
     private boolean fromHolster;
     // Spin resonance: extra ticks of forward flight granted by spinning projectiles near the throw.
@@ -198,6 +207,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         entityData.define(SATELLITES_RELEASED, false);
         entityData.define(WRECKING, false);
         entityData.define(SATELLITE, false);
+        entityData.define(ROPE, ROPE_NONE);
     }
 
     @Override
@@ -207,6 +217,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         // a 60-tick satellite would fly a third of its life as a steel ball without this.
         buffer.writeBoolean(isWrecking());
         buffer.writeBoolean(isSatellite());
+        buffer.writeByte(getRope());
     }
 
     @Override
@@ -216,6 +227,7 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         if (additionalData.readBoolean()) {
             setSatellite();
         }
+        entityData.set(ROPE, additionalData.readByte());
     }
 
     @Override
@@ -237,8 +249,12 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
             releaseSatellitesOnce(null);
         }
 
-        // A satellite is spent matter: it never returns to the thrower.
-        if (!level.isClientSide() && isSpinning() && !isReturning() && !isSatellite()
+        if (getRope() == ROPE_ANCHORED && !level.isClientSide()) {
+            tickRope();
+        }
+
+        // A satellite is spent matter: it never returns to the thrower. An anchored rope holds the ball in place.
+        if (!level.isClientSide() && isSpinning() && !isReturning() && !isSatellite() && getRope() != ROPE_ANCHORED
                 && (tickCount - steeredTicks >= SpinConfig.BALL_RETURN_AFTER_TICKS.get() + resonanceTicks || inGround)) {
             startReturning();
         }
@@ -329,6 +345,70 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         return closest;
     }
 
+    /** Server side, before the throw: a sneak throw weaves a rope (SBR ch. 55). */
+    public void makeRope() {
+        entityData.set(ROPE, ROPE_FLYING);
+    }
+
+    private byte getRope() {
+        return entityData.get(ROPE);
+    }
+
+    /** Server side: the rope ball hit a block. Anchors within the rope length, otherwise it is just a stuck ball. */
+    private void anchorRope() {
+        Entity owner = getOwner();
+        if (owner != null && owner.level == level
+                && SpinRope.canAnchor(distanceTo(owner), SpinConfig.ROPE_MAX_LENGTH.get())) {
+            entityData.set(ROPE, ROPE_ANCHORED);
+            ropeTicks = 0;
+            playSound(SoundEvents.TRIPWIRE_ATTACH, 1.0F, 0.8F);
+        }
+        else {
+            entityData.set(ROPE, ROPE_NONE);
+        }
+    }
+
+    /** Server side, every tick while anchored: the spin reels the thrower in, then the ball comes back. */
+    private void tickRope() {
+        Entity owner = getOwner();
+        if (owner == null || !owner.isAlive() || owner.level != level || !inGround || !isSpinning()) {
+            releaseRope();
+            return;
+        }
+        Vector3d toAnchor = position().subtract(owner.position().add(0.0D, owner.getBbHeight() * 0.5D, 0.0D));
+        if (SpinRope.shouldRelease(toAnchor.length(), ++ropeTicks,
+                SpinConfig.ROPE_RELEASE_DISTANCE.get(), SpinConfig.ROPE_MAX_TICKS.get())) {
+            releaseRope();
+            return;
+        }
+        owner.setDeltaMovement(SpinRope.pull(owner.getDeltaMovement(), toAnchor,
+                SpinConfig.ROPE_PULL_STRENGTH.get(), SpinConfig.ROPE_MAX_SPEED.get()));
+        // Players move client-side: hurtMarked sends them the velocity packet this tick.
+        owner.hurtMarked = true;
+        owner.fallDistance = 0.0F;
+        if (ropeTicks % 2 == 0) {
+            emitRopeParticles(owner);
+        }
+    }
+
+    private void releaseRope() {
+        entityData.set(ROPE, ROPE_NONE);
+        if (isSpinning()) {
+            startReturning();
+        }
+    }
+
+    private void emitRopeParticles(Entity owner) {
+        Vector3d from = owner.position().add(0.0D, owner.getBbHeight() * 0.6D, 0.0D);
+        Vector3d span = position().subtract(from);
+        int points = Math.min(24, Math.max(2, (int) (span.length() * 1.5D)));
+        ServerWorld world = (ServerWorld) level;
+        for (int i = 1; i < points; i++) {
+            Vector3d p = from.add(span.scale((double) i / points));
+            world.sendParticles(ROPE_DUST, p.x, p.y, p.z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        }
+    }
+
     private void startReturning() {
         inGround = false;
         returnTicks = 0;
@@ -378,6 +458,14 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
      */
     @Override
     protected void onHitBlock(BlockRayTraceResult result) {
+        if (getRope() == ROPE_FLYING && isSpinning() && !isReturning()) {
+            // The rope ball sticks where it lands: no ricochet, no friction tricks.
+            if (!level.isClientSide()) {
+                anchorRope();
+            }
+            super.onHitBlock(result);
+            return;
+        }
         if (isWrecking() && !isSatellite() && isSpinning() && !isReturning() && !shockwaveDone) {
             // Even a miss raises a shockwave (docs/spin-lore.md): once per flight.
             shockwaveDone = true;
@@ -708,6 +796,8 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         entityData.set(SATELLITES_RELEASED, satellitesReleased);
         shockwaveDone = compound.getBoolean("ShockwaveDone");
         bulletsCut = compound.getBoolean("BulletsCut");
+        entityData.set(ROPE, compound.getByte("Rope"));
+        ropeTicks = compound.getInt("RopeTicks");
         fromHolster = compound.getBoolean("FromHolster");
         resonanceTicks = compound.getInt("ResonanceTicks");
     }
@@ -725,6 +815,8 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
         compound.putBoolean("SatellitesReleased", satellitesReleased);
         compound.putBoolean("ShockwaveDone", shockwaveDone);
         compound.putBoolean("BulletsCut", bulletsCut);
+        compound.putByte("Rope", getRope());
+        compound.putInt("RopeTicks", ropeTicks);
         compound.putBoolean("FromHolster", fromHolster);
         compound.putInt("ResonanceTicks", resonanceTicks);
     }

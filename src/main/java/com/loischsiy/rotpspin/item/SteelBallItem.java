@@ -65,6 +65,9 @@ public class SteelBallItem extends Item {
 
         SteelBallEntity ball = new SteelBallEntity(world, player, ballStack, spinning);
         ball.setFromHolster(fromHolster);
+        if (spinning && player.isShiftKeyDown() && SpinConfig.ROPE_ENABLED.get()) {
+            ball.makeRope();
+        }
         float velocity = (spinning ? SpinConfig.BALL_SPIN_VELOCITY.get() : SpinConfig.BALL_PLAIN_VELOCITY.get()).floatValue();
         ball.shootFromRotation(player, velocity, SpinConfig.BALL_INACCURACY.get().floatValue());
         if (creative) {

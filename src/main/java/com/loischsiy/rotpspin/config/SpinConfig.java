@@ -112,6 +112,12 @@ public class SpinConfig {
     public static final ForgeConfigSpec.IntValue FRICTION_BULLETS_PER_CUT;
     public static final ForgeConfigSpec.IntValue FRICTION_BULLET_NUGGETS_PER_BLOCK;
     public static final ForgeConfigSpec.DoubleValue FRICTION_BULLET_SPEED_RETENTION;
+    public static final ForgeConfigSpec.BooleanValue ROPE_ENABLED;
+    public static final ForgeConfigSpec.IntValue ROPE_MAX_TICKS;
+    public static final ForgeConfigSpec.DoubleValue ROPE_PULL_STRENGTH;
+    public static final ForgeConfigSpec.DoubleValue ROPE_MAX_SPEED;
+    public static final ForgeConfigSpec.DoubleValue ROPE_RELEASE_DISTANCE;
+    public static final ForgeConfigSpec.DoubleValue ROPE_MAX_LENGTH;
     public static final ForgeConfigSpec.ConfigValue<String> BALL_REPAIR_MATERIAL;
     public static final ForgeConfigSpec.IntValue BALL_REPAIR_LEVEL_COST;
 
@@ -380,6 +386,20 @@ public class SpinConfig {
                 .defineInRange("bulletNuggetsPerBlock", 81, 1, 1000);
         FRICTION_BULLET_SPEED_RETENTION = b.comment("Share of speed the ball keeps after cutting the metal.")
                 .defineInRange("bulletSpeedRetention", 0.5, 0.0, 1.0);
+        b.pop();
+        b.push("rope");
+        ROPE_ENABLED = b.comment("Sneak + throw a spinning ball: it weaves a rope (SBR ch. 55), anchors in the first block it hits and pulls the thrower to it.")
+                .define("enabled", true);
+        ROPE_MAX_TICKS = b.comment("Longest pull in ticks, then the rope lets go and the ball returns.")
+                .defineInRange("maxTicks", 60, 1, 1200);
+        ROPE_PULL_STRENGTH = b.comment("Velocity added to the thrower towards the anchor each tick (blocks per tick).")
+                .defineInRange("pullStrength", 0.25, 0.0, 5.0);
+        ROPE_MAX_SPEED = b.comment("Speed cap of the pulled thrower (blocks per tick).")
+                .defineInRange("maxSpeed", 1.2, 0.0, 10.0);
+        ROPE_RELEASE_DISTANCE = b.comment("The rope lets go when the thrower is this close to the anchor (blocks).")
+                .defineInRange("releaseDistance", 2.0, 0.0, 64.0);
+        ROPE_MAX_LENGTH = b.comment("The ball anchors only this close to the thrower (blocks); farther it just returns.")
+                .defineInRange("maxLength", 32.0, 1.0, 256.0);
         b.pop();
         b.pop();
 

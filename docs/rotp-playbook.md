@@ -142,6 +142,9 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
     (шар по своей лошади → лягает владельца, Super Spin на `detourDurationTicks`). Щербатый шар — без Super Spin.
     Трение: `SteelBallEntity#stripBark` (сервер, `onHitBlock`) — вращающийся шар обдирает кору с бревна
     через `AxeItem.getAxeStrippingState`, только у игрока с правом `mayUseItemAt`; пороги — `steel_ball.friction`.
+    Верёвка (гл. 55): бросок с Shift (`SteelBallItem#throwBall` → `makeRope`) — шар цепляется за первый блок
+    (без рикошета), `tickRope` тянет бросавшего (`hurtMarked` для пакета скорости, `fallDistance = 0`), затем
+    шар возвращается; математика — `entity.SpinRope` (JUnit), пороги — `steel_ball.rope`.
 - Уроки: `power.SpinData` хранит урок и счётчики практики (NBT `Lesson`, `BallHits`, `Hijacks`, `GoldenHits`),
   `SpinData#isActionUnlocked` (хук RotP `TypeSpecificData`) закрывает действия старших уроков;
   соответствие действие → урок — `SpinData#requiredLesson` (действия только до урока 3; уроки 4–5 —
