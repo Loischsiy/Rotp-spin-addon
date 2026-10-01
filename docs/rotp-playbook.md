@@ -110,7 +110,9 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
 - Способности Спина — наследники `NonStandAction` в пакете `action`, регистрируются в общем
   `InitStands.ACTIONS`, в хотбар — через массивы `attacks`/`abilities` конструктора `SpinPowerType`
   (раскладка в `InitPowers`, образец — `ModZombieActions`). Урок 1 — встроенный прыжок RotP `isLeapUnlocked`.
-  - ЛКМ: `spin_ball_throw` (урок 1; также быстрый доступ, средняя кнопка), `spin_muscle_hijack` (урок 2),
+  - ЛКМ: `spin_ball_throw` (урок 1; также быстрый доступ, средняя кнопка), `spin_ball_strike` (урок 1:
+    удар вплотную шаром в руке с отбросом, конфиг `ball_strike`, математика `power.SpinStrike`, JUnit;
+    в `BallHits` не засчитывается), `spin_muscle_hijack` (урок 2),
     `spin_item_throw` (урок 3, сущность `entity.SpunItemEntity`), `spin_block_throw` (урок 3:
     вырывает целевой блок и бросает как грубый шар, сущность `entity.SpunBlockEntity`, правил
     выбора — `entity.SpinBlock`, JUnit; возврат и Golden-бонус только у идеальной сферы).

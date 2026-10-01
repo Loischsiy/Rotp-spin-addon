@@ -21,6 +21,8 @@
   "commands.rotp_spin.spinenergy.failed.multiple.no_spin": "None of the %s players have Spin",
   "commands.rotp_spin.spinenergy.get.success": "%s has %s/%s (%s) Spin energy points",
   "action.rotp_spin.spin_ball_throw": "Steel Ball Throw",
+  "action.rotp_spin.spin_ball_strike": "Spinning Ball Strike",
+  "jojo.message.action_condition.rotp_spin.no_steel_ball_in_hand": "Hold a steel ball in your hand",
   "action.rotp_spin.spin_muscle_hijack": "Muscle Hijack",
   "action.rotp_spin.spin_ball_steer": "Steel Ball Control",
   "action.rotp_spin.spin_healing": "Zeppeli Medicine",

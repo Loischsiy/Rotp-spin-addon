@@ -12,6 +12,7 @@
 | `textures/power/spin.png` | 32×32 | [spin_power_icon.md](spin_power_icon.md) | ✅ есть (шар зелёный по лору; `tools/gen_spin_icons.py`) |
 | `textures/action/spin_ball_throw.png` | 32×32 | [action_spin_ball_throw.md](action_spin_ball_throw.md) | ✅ есть (шар зелёный по лору; `tools/gen_spin_icons.py`) |
 | `textures/action/spin_muscle_hijack.png` | 32×32 | [action_spin_muscle_hijack.md](action_spin_muscle_hijack.md) | ✅ есть |
+| `textures/action/spin_ball_strike.png` | 32×32 | [action_spin_ball_strike.md](action_spin_ball_strike.md) | ❌ PNG нет — пока заглушка |
 | `textures/action/spin_ball_steer.png` | 32×32 | [action_spin_ball_steer.md](action_spin_ball_steer.md) | ✅ есть (шар зелёный по лору; `tools/gen_spin_icons.py`) |
 | `textures/action/spin_healing.png` | 32×32 | [action_spin_healing.md](action_spin_healing.md) | ✅ есть (шар зелёный по лору; `tools/gen_spin_icons.py`, крест светлый) |
 | `textures/action/spin_item_throw.png` | 32×32 | [action_spin_item_throw.md](action_spin_item_throw.md) | ✅ есть |

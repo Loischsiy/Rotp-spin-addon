@@ -6,6 +6,7 @@ import com.github.standobyte.jojo.power.impl.nonstand.INonStandPower;
 import com.github.standobyte.jojo.power.impl.nonstand.type.NonStandPowerType;
 import com.loischsiy.rotpspin.AddonMain;
 import com.loischsiy.rotpspin.action.SpinBallSteer;
+import com.loischsiy.rotpspin.action.SpinBallStrike;
 import com.loischsiy.rotpspin.action.SpinBallThrow;
 import com.loischsiy.rotpspin.action.SpinBlockThrow;
 import com.loischsiy.rotpspin.action.SpinBodyBrace;
@@ -28,6 +29,10 @@ public class InitPowers {
 
     public static final RegistryObject<SpinBallThrow> SPIN_BALL_THROW = InitStands.ACTIONS.register("spin_ball_throw",
             () -> new SpinBallThrow(new NonStandAction.Builder()));
+
+    // Lesson 1: point-blank strike with the spinning ball held in the hand (requiredLesson defaults to 1).
+    public static final RegistryObject<SpinBallStrike> SPIN_BALL_STRIKE = InitStands.ACTIONS.register("spin_ball_strike",
+            () -> new SpinBallStrike(new NonStandAction.Builder()));
 
     public static final RegistryObject<SpinMuscleHijack> SPIN_MUSCLE_HIJACK = InitStands.ACTIONS.register("spin_muscle_hijack",
             () -> new SpinMuscleHijack(new NonStandAction.Builder().swingHand()));
@@ -58,6 +63,7 @@ public class InitPowers {
             () -> new SpinPowerType(
                     (Action<INonStandPower>[]) new Action<?>[] {
                             SPIN_BALL_THROW.get(),
+                            SPIN_BALL_STRIKE.get(),
                             SPIN_MUSCLE_HIJACK.get(),
                             SPIN_ITEM_THROW.get(),
                             SPIN_BLOCK_THROW.get() },

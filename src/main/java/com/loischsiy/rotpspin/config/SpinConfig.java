@@ -42,6 +42,13 @@ public class SpinConfig {
     public static final ForgeConfigSpec.BooleanValue HIJACK_FORCED_ACTION;
     public static final ForgeConfigSpec.DoubleValue HIJACK_FORCED_RANGE;
     public static final ForgeConfigSpec.BooleanValue HIJACK_DISARM_PLAYERS;
+    public static final ForgeConfigSpec.DoubleValue STRIKE_ENERGY_COST;
+    public static final ForgeConfigSpec.DoubleValue STRIKE_REACH;
+    public static final ForgeConfigSpec.DoubleValue STRIKE_DAMAGE;
+    public static final ForgeConfigSpec.DoubleValue STRIKE_KNOCKBACK;
+    public static final ForgeConfigSpec.DoubleValue STRIKE_LIFT;
+    public static final ForgeConfigSpec.IntValue STRIKE_COOLDOWN_TICKS;
+    public static final ForgeConfigSpec.DoubleValue STRIKE_CHIPPED_MULTIPLIER;
     public static final ForgeConfigSpec.DoubleValue ITEM_SPIN_ENERGY_COST;
     public static final ForgeConfigSpec.DoubleValue ITEM_SPIN_DAMAGE;
     public static final ForgeConfigSpec.DoubleValue ITEM_SPIN_VELOCITY;
@@ -283,6 +290,23 @@ public class SpinConfig {
                 .defineInRange("forcedActionRange", 6.0, 1.0, 32.0);
         HIJACK_DISARM_PLAYERS = b.comment("A hijacked player's hand opens: the main hand item is dropped.")
                 .define("disarmPlayers", true);
+        b.pop();
+
+        b.push("ball_strike");
+        STRIKE_ENERGY_COST = b.comment("Lesson 1: Spin energy consumed by striking a target point-blank with the spinning steel ball held in the hand (the ball stays in the hand).")
+                .defineInRange("energyCost", 20.0, 0.0, 10000.0);
+        STRIKE_REACH = b.comment("Maximum distance to the target (blocks): the rotation is passed on by a touch.")
+                .defineInRange("reach", 3.0, 0.5, 16.0);
+        STRIKE_DAMAGE = b.comment("Damage of the strike.")
+                .defineInRange("damage", 4.0, 0.0, 1000.0);
+        STRIKE_KNOCKBACK = b.comment("Knockback strength: the rotation's energy throws the touched body away from the user (vanilla knockback units, a sword hit is 0.4).")
+                .defineInRange("knockback", 2.0, 0.0, 20.0);
+        STRIKE_LIFT = b.comment("The target is lifted to at least this vertical speed (blocks per tick); 0 = no lift.")
+                .defineInRange("lift", 0.35, 0.0, 5.0);
+        STRIKE_COOLDOWN_TICKS = b.comment("Cooldown of the strike, in ticks.")
+                .defineInRange("cooldownTicks", 30, 0, 6000);
+        STRIKE_CHIPPED_MULTIPLIER = b.comment("A chipped (imperfect) ball gives only this share of damage, knockback and lift.")
+                .defineInRange("chippedMultiplier", 0.5, 0.0, 1.0);
         b.pop();
 
         b.push("item_spin");

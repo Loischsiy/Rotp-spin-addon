@@ -21,6 +21,8 @@
   "commands.rotp_spin.spinenergy.failed.multiple.no_spin": "Никто из %s игроков не владеет Спином",
   "commands.rotp_spin.spinenergy.get.success": "У %s %s/%s (%s) очков энергии Спина",
   "action.rotp_spin.spin_ball_throw": "Бросок стального шара",
+  "action.rotp_spin.spin_ball_strike": "Удар вращением",
+  "jojo.message.action_condition.rotp_spin.no_steel_ball_in_hand": "Возьмите стальной шар в руку",
   "action.rotp_spin.spin_muscle_hijack": "Перехват мышц",
   "action.rotp_spin.spin_ball_steer": "Управление шаром",
   "action.rotp_spin.spin_healing": "Медицина Цеппели",
