@@ -12,8 +12,8 @@
 | `textures/power/spin.png` | 32×32 | [spin_power_icon.md](spin_power_icon.md) | ✅ есть (шар зелёный по лору; `tools/gen_spin_icons.py`) |
 | `textures/action/spin_ball_throw.png` | 32×32 | [action_spin_ball_throw.md](action_spin_ball_throw.md) | ✅ есть (шар зелёный по лору; `tools/gen_spin_icons.py`) |
 | `textures/action/spin_muscle_hijack.png` | 32×32 | [action_spin_muscle_hijack.md](action_spin_muscle_hijack.md) | ✅ есть |
-| `textures/action/spin_ball_strike.png` | 32×32 | [action_spin_ball_strike.md](action_spin_ball_strike.md) | ❌ PNG нет — пока заглушка |
-| `textures/action/spin_ball_charge.png` | 32×32 | [action_spin_ball_charge.md](action_spin_ball_charge.md) | ❌ PNG нет — пока заглушка |
+| `textures/action/spin_ball_strike.png` | 32×32 | [action_spin_ball_strike.md](action_spin_ball_strike.md) | ✅ есть (кулак сжимает зелёный шар, пальцы поверх края шара как в опенинге «SPIN», 2 золотые дуги со стрелками + 3 луча + отброшенный силуэт; `tools/gen_ball_strike_charge_icons.py`), проверить в игре |
+| `textures/action/spin_ball_charge.png` | 32×32 | [action_spin_ball_charge.md](action_spin_ball_charge.md) | ✅ есть (по аниме, 1-я серия: шар висит над раскрытой ладонью, сужающаяся золотая спираль в 2 витка упирается в шар, искры сверху; `tools/gen_ball_strike_charge_icons.py`), проверить в игре |
 | `textures/action/spin_ball_steer.png` | 32×32 | [action_spin_ball_steer.md](action_spin_ball_steer.md) | ✅ есть (шар зелёный по лору; `tools/gen_spin_icons.py`) |
 | `textures/action/spin_healing.png` | 32×32 | [action_spin_healing.md](action_spin_healing.md) | ✅ есть (шар зелёный по лору; `tools/gen_spin_icons.py`, крест светлый) |
 | `textures/action/spin_item_throw.png` | 32×32 | [action_spin_item_throw.md](action_spin_item_throw.md) | ✅ есть |
