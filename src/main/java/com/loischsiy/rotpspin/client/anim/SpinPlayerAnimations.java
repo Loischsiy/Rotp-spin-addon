@@ -13,6 +13,7 @@ import net.minecraft.util.ResourceLocation;
  */
 public final class SpinPlayerAnimations {
     public static BasicToggleAnim bodyBrace;
+    public static BasicToggleAnim ballCharge;
 
     private SpinPlayerAnimations() {}
 
@@ -20,15 +21,22 @@ public final class SpinPlayerAnimations {
     public static void init() {
         PlayerAnimationHandler.IPlayerAnimator animator = PlayerAnimationHandler.getPlayerAnimator();
         if (animator == null) {
-            AddonMain.LOGGER.warn("RotP player animator is not initialised; Body Brace pose disabled");
+            AddonMain.LOGGER.warn("RotP player animator is not initialised; Spin poses disabled");
             return;
         }
         bodyBrace = animator.registerBasicAnimLayer(
                 "com.loischsiy.rotpspin.client.anim.KosmXBodyBraceHandler",
                 new ResourceLocation(AddonMain.MOD_ID, "body_brace"), 1);
+        ballCharge = animator.registerBasicAnimLayer(
+                "com.loischsiy.rotpspin.client.anim.KosmXBallChargeHandler",
+                new ResourceLocation(AddonMain.MOD_ID, "ball_charge"), 1);
     }
 
     public static boolean setBodyBrace(net.minecraft.entity.player.PlayerEntity player, boolean enabled) {
         return bodyBrace != null && bodyBrace.setAnimEnabled(player, enabled);
+    }
+
+    public static boolean setBallCharge(net.minecraft.entity.player.PlayerEntity player, boolean enabled) {
+        return ballCharge != null && ballCharge.setAnimEnabled(player, enabled);
     }
 }

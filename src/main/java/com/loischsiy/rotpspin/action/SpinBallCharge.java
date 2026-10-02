@@ -6,6 +6,8 @@ import com.github.standobyte.jojo.action.ActionConditionResult;
 import com.github.standobyte.jojo.action.ActionTarget;
 import com.github.standobyte.jojo.action.non_stand.NonStandAction;
 import com.github.standobyte.jojo.power.impl.nonstand.INonStandPower;
+import com.loischsiy.rotpspin.client.ClientSpinState;
+import com.loischsiy.rotpspin.client.anim.SpinPlayerAnimations;
 import com.loischsiy.rotpspin.capability.SpinPower;
 import com.loischsiy.rotpspin.capability.SpinPowerCapability;
 import com.loischsiy.rotpspin.config.SpinConfig;
@@ -197,8 +199,8 @@ public class SpinBallCharge extends NonStandAction {
 
     /**
      * Sparks circle the hand with the ball; the circle tightens and spins faster as the charge grows,
-     * and turns golden at full charge. COMMON config is not synced, so the client shows an estimate
-     * from its own config; the real charge is decided on the server.
+     * and turns golden at full charge. The charge settings come from the server on login
+     * ({@code SpinChargeConfigPacket}); the local config is only a fallback until then.
      */
     @Override
     public void onHoldTickClientEffect(LivingEntity user, INonStandPower power, int ticksHeld,
@@ -211,8 +213,10 @@ public class SpinBallCharge extends NonStandAction {
             return;
         }
         boolean chipped = SteelBallItem.isChipped(user.getItemInHand(hand));
-        double fraction = SpinCharge.cap(SpinCharge.fraction(ticksHeld, maxTicks()), chipped, chippedMax());
-        boolean full = SpinCharge.isFull(ticksHeld, maxTicks(), chipped, chippedMax());
+        int maxTicks = ClientSpinState.chargeMaxTicks(maxTicks());
+        double chippedMax = ClientSpinState.chargeChippedMax(chippedMax());
+        double fraction = SpinCharge.cap(SpinCharge.fraction(ticksHeld, maxTicks), chipped, chippedMax);
+        boolean full = SpinCharge.isFull(ticksHeld, maxTicks, chipped, chippedMax);
 
         HandSide side = hand == Hand.MAIN_HAND ? user.getMainArm() : user.getMainArm().getOpposite();
         double sign = side == HandSide.RIGHT ? 1 : -1;
@@ -241,9 +245,20 @@ public class SpinBallCharge extends NonStandAction {
         }
     }
 
+    /** Wind-up pose: the ball arm drawn back, the torso turned (playerAnimator, optional). */
+    @Override
+    public boolean clHeldStartAnim(PlayerEntity user) {
+        return SpinPlayerAnimations.setBallCharge(user, true);
+    }
+
+    @Override
+    public void clHeldStopAnim(PlayerEntity user) {
+        SpinPlayerAnimations.setBallCharge(user, false);
+    }
+
     /** Only the ordinary steel ball: the Wrecking Ball (a subclass) is excluded. */
     @Nullable
-    private static Hand handWithPlainBall(PlayerEntity player) {
+    public static Hand handWithPlainBall(PlayerEntity player) {
         if (player.getMainHandItem().getItem() == InitItems.STEEL_BALL.get()) {
             return Hand.MAIN_HAND;
         }

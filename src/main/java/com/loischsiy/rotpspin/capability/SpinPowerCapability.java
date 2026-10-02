@@ -3,6 +3,7 @@ package com.loischsiy.rotpspin.capability;
 import com.loischsiy.rotpspin.AddonMain;
 import com.loischsiy.rotpspin.config.SpinConfig;
 import com.loischsiy.rotpspin.network.AddonPackets;
+import com.loischsiy.rotpspin.network.s2c.SpinChargeConfigPacket;
 import com.loischsiy.rotpspin.network.s2c.SpinEnergySyncPacket;
 import com.loischsiy.rotpspin.power.SpinPowerType;
 
@@ -47,6 +48,15 @@ public class SpinPowerCapability {
     public static void onAttachCapabilitiesEntity(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof PlayerEntity) {
             event.addCapability(ID, new SpinPowerProvider());
+        }
+    }
+
+    // COMMON config is not synced: hand every client the server's charge settings (sparks of other players too).
+    @SubscribeEvent
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getPlayer() instanceof ServerPlayerEntity) {
+            AddonPackets.sendToClient(new SpinChargeConfigPacket(SpinConfig.CHARGE_MAX_TICKS.get(),
+                    SpinConfig.CHARGE_CHIPPED_MAX.get().floatValue()), (ServerPlayerEntity) event.getPlayer());
         }
     }
 

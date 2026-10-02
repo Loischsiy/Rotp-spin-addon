@@ -11,6 +11,18 @@ class ClientSpinStateTest {
     void reset() {
         ClientSpinState.setEnergy(0);
         ClientSpinState.setLesson(1);
+        ClientSpinState.clearChargeConfig();
+    }
+
+    @Test
+    void chargeConfigFallsBackUntilServerValuesArrive() {
+        assertEquals(false, ClientSpinState.hasChargeConfig());
+        assertEquals(40, ClientSpinState.chargeMaxTicks(40));
+        assertEquals(0.5, ClientSpinState.chargeChippedMax(0.5));
+        ClientSpinState.setChargeConfig(60, 0.25);
+        assertEquals(true, ClientSpinState.hasChargeConfig());
+        assertEquals(60, ClientSpinState.chargeMaxTicks(40));
+        assertEquals(0.25, ClientSpinState.chargeChippedMax(0.5));
     }
 
     @Test

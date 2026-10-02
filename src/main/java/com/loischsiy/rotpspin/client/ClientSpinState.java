@@ -9,6 +9,9 @@ import com.loischsiy.rotpspin.power.SpinLessons;
 public class ClientSpinState {
     private static float energy;
     private static int lesson = SpinLessons.FIRST;
+    /** Server charge settings; 0 = not received yet (callers fall back to the local config). */
+    private static int chargeMaxTicks;
+    private static double chargeChippedMax;
 
     public static void setEnergy(float energy) {
         ClientSpinState.energy = energy;
@@ -25,5 +28,29 @@ public class ClientSpinState {
     /** Lesson in effect; lesson 1 until the first sync arrives. */
     public static int getLesson() {
         return lesson;
+    }
+
+    public static void setChargeConfig(int maxTicks, double chippedMax) {
+        chargeMaxTicks = Math.max(0, maxTicks);
+        chargeChippedMax = chippedMax;
+    }
+
+    public static void clearChargeConfig() {
+        chargeMaxTicks = 0;
+        chargeChippedMax = 0;
+    }
+
+    public static boolean hasChargeConfig() {
+        return chargeMaxTicks > 0;
+    }
+
+    /** Server value if received, otherwise {@code fallback}. */
+    public static int chargeMaxTicks(int fallback) {
+        return hasChargeConfig() ? chargeMaxTicks : fallback;
+    }
+
+    /** Server value if received, otherwise {@code fallback}. */
+    public static double chargeChippedMax(double fallback) {
+        return hasChargeConfig() ? chargeChippedMax : fallback;
     }
 }

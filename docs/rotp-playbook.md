@@ -192,6 +192,15 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
   (`rotp_spin.BallChargeTicks`), сброс в `startedHolding`, бросок в `stoppedHolding` (сервер) через
   `SteelBallItem#throwBall(..., charge)`. Энергия за тик списывается вручную (`getHeldTickEnergyCost` = 0),
   чтобы цена броска со Спином оставалась в резерве. Математика — `power.SpinCharge` (JUnit), числа — `ball_charge`.
+  - COMMON-конфиг Forge **не синхронизируется** с клиентом. Клиентским эффектам нужны серверные
+    `maxChargeTicks`/`chippedMaxCharge`: их шлёт `SpinChargeConfigPacket` на `PlayerLoggedInEvent`,
+    `ClientSpinState.chargeMaxTicks(fallback)` откатывается на локальный конфиг, пока пакета нет.
+    Горячая перезагрузка конфига на живом сервере повторно не рассылается.
+  - Поза зарядки — KosmX-слой `rotp_spin:ball_charge` (`KosmXBallChargeHandler`, зеркалится для левой руки),
+    включается в `clHeldStartAnim`/`clHeldStopAnim`.
+  - Пролёт сквозь цель: шар — `AbstractArrowEntity`, ванильный тик проверяет весь путь за тик
+    (`level.clip` + `ProjectileHelper`). Проверено в игре (полный заряд, 18 блоков, стена в 1 блок) —
+    сабстепы не нужны. Возвращающийся шар (`setNoPhysics(true)`) сквозь блоки летит намеренно.
   Только `InitItems.STEEL_BALL` (сравнение `==`, т.к. `WreckingBallItem extends SteelBallItem`).
 
 ## D. Предметы аддона

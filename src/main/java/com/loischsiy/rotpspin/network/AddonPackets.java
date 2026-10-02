@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.loischsiy.rotpspin.AddonMain;
 import com.loischsiy.rotpspin.network.c2s.HolsterThrowPacket;
+import com.loischsiy.rotpspin.network.s2c.SpinChargeConfigPacket;
 import com.loischsiy.rotpspin.network.s2c.SpinEnergySyncPacket;
 import com.loischsiy.rotpspin.network.s2c.SpinLessonSyncPacket;
 
@@ -38,6 +39,9 @@ public class AddonPackets {
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
         channel.registerMessage(packetIndex++, SpinLessonSyncPacket.class,
                 SpinLessonSyncPacket::encode, SpinLessonSyncPacket::decode, SpinLessonSyncPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        channel.registerMessage(packetIndex++, SpinChargeConfigPacket.class,
+                SpinChargeConfigPacket::encode, SpinChargeConfigPacket::decode, SpinChargeConfigPacket::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 
