@@ -12,7 +12,9 @@ class SpinSphereTest {
     void counts() {
         SpinSphere sphere = SpinSphere.build(1.0F, 24, 16);
         assertEquals(25 * 17, sphere.vertexCount());
-        assertEquals(24 * 16 * 2, sphere.triangleCount());
+        // One quad per cell: entity render types in 1.16.5 are GL_QUADS.
+        assertEquals(24 * 16, sphere.quadCount());
+        assertEquals(0, sphere.indices.length % 4);
         assertEquals(sphere.vertexCount() * 3, sphere.positions.length);
         assertEquals(sphere.vertexCount() * 3, sphere.normals.length);
         assertEquals(sphere.vertexCount() * 2, sphere.uvs.length);
@@ -42,6 +44,22 @@ class SpinSphereTest {
         SpinSphere sphere = SpinSphere.build(1.0F, 8, 6);
         for (int index : sphere.indices) {
             assertTrue(index >= 0 && index < sphere.vertexCount());
+        }
+    }
+
+    @Test
+    void everyCellIsCoveredByItsOwnQuad() {
+        // Regression: triangles fed into a QUADS buffer left every other cell half-empty.
+        int lon = 8;
+        int lat = 6;
+        SpinSphere sphere = SpinSphere.build(1.0F, lon, lat);
+        int cols = lon + 1;
+        for (int q = 0; q < sphere.quadCount(); q++) {
+            int a = (q / lon) * cols + (q % lon);
+            assertEquals(a, sphere.indices[q * 4]);
+            assertEquals(a + cols, sphere.indices[q * 4 + 1]);
+            assertEquals(a + cols + 1, sphere.indices[q * 4 + 2]);
+            assertEquals(a + 1, sphere.indices[q * 4 + 3]);
         }
     }
 

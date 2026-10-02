@@ -3,6 +3,9 @@ package com.loischsiy.rotpspin.client.render;
 /**
  * Exact UV-sphere mesh (no Blockbench needed: a ball is pure math, smoother than any
  * cube-built model). Shared by all spinning balls; the renderer only scales and rotates it.
+ * Indices are QUADS (4 per cell), because 1.16.5 entity render types draw GL_QUADS: feeding
+ * triangles there regroups the stream by 4 and drops every other triangle (holes in the ball).
+ * Pole cells are degenerate quads (two corners share the pole), which renders as a triangle.
  * Pure data, no World access.
  */
 public final class SpinSphere {
@@ -45,7 +48,7 @@ public final class SpinSphere {
                 uvs[v * 2 + 1] = (float) lat / latitudes;
             }
         }
-        int[] indices = new int[longitudes * latitudes * 6];
+        int[] indices = new int[longitudes * latitudes * 4];
         int i = 0;
         for (int lat = 0; lat < latitudes; lat++) {
             for (int lon = 0; lon < longitudes; lon++) {
@@ -55,10 +58,8 @@ public final class SpinSphere {
                 int d = c + 1;
                 indices[i++] = a;
                 indices[i++] = c;
-                indices[i++] = b;
-                indices[i++] = b;
-                indices[i++] = c;
                 indices[i++] = d;
+                indices[i++] = b;
             }
         }
         return new SpinSphere(positions, normals, uvs, indices);
@@ -68,7 +69,7 @@ public final class SpinSphere {
         return positions.length / 3;
     }
 
-    public int triangleCount() {
-        return indices.length / 3;
+    public int quadCount() {
+        return indices.length / 4;
     }
 }
