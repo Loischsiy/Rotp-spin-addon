@@ -5,6 +5,7 @@ import com.github.standobyte.jojo.action.non_stand.NonStandAction;
 import com.github.standobyte.jojo.power.impl.nonstand.INonStandPower;
 import com.github.standobyte.jojo.power.impl.nonstand.type.NonStandPowerType;
 import com.loischsiy.rotpspin.AddonMain;
+import com.loischsiy.rotpspin.action.SpinBallCharge;
 import com.loischsiy.rotpspin.action.SpinBallSteer;
 import com.loischsiy.rotpspin.action.SpinBallStrike;
 import com.loischsiy.rotpspin.action.SpinBallThrow;
@@ -57,6 +58,10 @@ public class InitPowers {
     public static final RegistryObject<SpinBodyBrace> SPIN_BODY_BRACE = InitStands.ACTIONS.register("spin_body_brace",
             () -> new SpinBodyBrace(new NonStandAction.Builder().holdType(1200)));
 
+    // Lesson 1: hold to wind up the Spin of an ordinary steel ball, thrown on release. Numbers from SpinConfig.
+    public static final RegistryObject<SpinBallCharge> SPIN_BALL_CHARGE = InitStands.ACTIONS.register("spin_ball_charge",
+            () -> new SpinBallCharge(new NonStandAction.Builder().holdType(1200)));
+
     // Given with /jojopower give <player> rotp_spin:spin (learning from the Zeppeli family comes later).
     @SuppressWarnings("unchecked")
     public static final RegistryObject<SpinPowerType> SPIN = NON_STAND_POWERS.register("spin",
@@ -71,7 +76,8 @@ public class InitPowers {
                             SPIN_BALL_STEER.get(),
                             SPIN_HEALING.get(),
                             SPIN_GOLDEN_FRAME.get(),
-                            SPIN_BODY_BRACE.get() },
+                            SPIN_BODY_BRACE.get(),
+                            SPIN_BALL_CHARGE.get() },
                     SPIN_BALL_THROW.get()
             ).withColor(SpinPowerType.COLOR));
 }

@@ -188,6 +188,11 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
   убирает этот бонус
   для Спина и ставит `spin_leap.fallDistanceReduction` (по умолчанию 0); бонус прыгающего стенда
   и изменения других модов сохраняются. Исходная высота — `entity.fallDistance` (обнуляется после события).
+- Заряд шара (`action.SpinBallCharge`, hold-only): тики заряда — в persistent NBT игрока
+  (`rotp_spin.BallChargeTicks`), сброс в `startedHolding`, бросок в `stoppedHolding` (сервер) через
+  `SteelBallItem#throwBall(..., charge)`. Энергия за тик списывается вручную (`getHeldTickEnergyCost` = 0),
+  чтобы цена броска со Спином оставалась в резерве. Математика — `power.SpinCharge` (JUnit), числа — `ball_charge`.
+  Только `InitItems.STEEL_BALL` (сравнение `==`, т.к. `WreckingBallItem extends SteelBallItem`).
 
 ## D. Предметы аддона
 - **`steel_ball`** — бросок с возвратом в руку; NBT-флаг «повреждён», влияющий на Golden Spin

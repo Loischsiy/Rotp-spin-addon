@@ -8,6 +8,7 @@ import com.loischsiy.rotpspin.capability.SpinPower;
 import com.loischsiy.rotpspin.capability.SpinPowerCapability;
 import com.loischsiy.rotpspin.config.SpinConfig;
 import com.loischsiy.rotpspin.entity.SteelBallEntity;
+import com.loischsiy.rotpspin.power.SpinCharge;
 import com.loischsiy.rotpspin.power.SpinPowerType;
 
 import net.minecraft.client.util.ITooltipFlag;
@@ -57,6 +58,14 @@ public class SteelBallItem extends Item {
     }
 
     public static void throwBall(World world, PlayerEntity player, ItemStack ballStack, boolean fromHolster) {
+        throwBall(world, player, ballStack, fromHolster, 0);
+    }
+
+    /**
+     * {@code charge} (0..1) is the share of the held Spin charge ({@link com.loischsiy.rotpspin.action.SpinBallCharge});
+     * it raises speed and damage of a spinning throw only.
+     */
+    public static void throwBall(World world, PlayerEntity player, ItemStack ballStack, boolean fromHolster, double charge) {
         float cost = SpinConfig.BALL_SPIN_COST.get().floatValue();
         boolean creative = player.abilities.instabuild;
         // Without the Spin power it is an ordinary throw: visual rotation only, no special effects, no return.
@@ -69,6 +78,10 @@ public class SteelBallItem extends Item {
             ball.makeRope();
         }
         float velocity = (spinning ? SpinConfig.BALL_SPIN_VELOCITY.get() : SpinConfig.BALL_PLAIN_VELOCITY.get()).floatValue();
+        if (spinning && charge > 0) {
+            velocity *= (float) SpinCharge.multiplier(charge, SpinConfig.CHARGE_MAX_VELOCITY_MULTIPLIER.get());
+            ball.setBaseDamage(ball.getBaseDamage() * SpinCharge.multiplier(charge, SpinConfig.CHARGE_MAX_DAMAGE_MULTIPLIER.get()));
+        }
         ball.shootFromRotation(player, velocity, SpinConfig.BALL_INACCURACY.get().floatValue());
         if (creative) {
             // The ball is not consumed in creative, so the returning ball must not add a copy (as vanilla TridentItem).

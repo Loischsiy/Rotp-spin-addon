@@ -49,6 +49,15 @@ public class SpinConfig {
     public static final ForgeConfigSpec.DoubleValue STRIKE_LIFT;
     public static final ForgeConfigSpec.IntValue STRIKE_COOLDOWN_TICKS;
     public static final ForgeConfigSpec.DoubleValue STRIKE_CHIPPED_MULTIPLIER;
+
+    public static final ForgeConfigSpec.BooleanValue CHARGE_ENABLED;
+    public static final ForgeConfigSpec.IntValue CHARGE_MAX_TICKS;
+    public static final ForgeConfigSpec.DoubleValue CHARGE_MAX_VELOCITY_MULTIPLIER;
+    public static final ForgeConfigSpec.DoubleValue CHARGE_MAX_DAMAGE_MULTIPLIER;
+    public static final ForgeConfigSpec.DoubleValue CHARGE_ENERGY_PER_TICK;
+    public static final ForgeConfigSpec.IntValue CHARGE_SLOWNESS_AMPLIFIER;
+    public static final ForgeConfigSpec.DoubleValue CHARGE_CHIPPED_MAX;
+    public static final ForgeConfigSpec.IntValue CHARGE_COOLDOWN_TICKS;
     public static final ForgeConfigSpec.DoubleValue ITEM_SPIN_ENERGY_COST;
     public static final ForgeConfigSpec.DoubleValue ITEM_SPIN_DAMAGE;
     public static final ForgeConfigSpec.DoubleValue ITEM_SPIN_VELOCITY;
@@ -307,6 +316,25 @@ public class SpinConfig {
                 .defineInRange("cooldownTicks", 30, 0, 6000);
         STRIKE_CHIPPED_MULTIPLIER = b.comment("A chipped (imperfect) ball gives only this share of damage, knockback and lift.")
                 .defineInRange("chippedMultiplier", 0.5, 0.0, 1.0);
+        b.pop();
+
+        b.push("ball_charge");
+        CHARGE_ENABLED = b.comment("Ability \"Spin Charge\" (hold, lesson 1): wind up the rotation of an ordinary steel ball in the hand, the ball is thrown on release (Spin raises a projectile's destructive power, SBR ch. 9). The Wrecking Ball cannot be charged.")
+                .define("enabled", true);
+        CHARGE_MAX_TICKS = b.comment("Ticks of holding to reach the full charge.")
+                .defineInRange("maxChargeTicks", 40, 0, 1200);
+        CHARGE_MAX_VELOCITY_MULTIPLIER = b.comment("Throw speed multiplier at full charge (spinning throw only; grows linearly with the charge).")
+                .defineInRange("maxVelocityMultiplier", 1.5, 1.0, 3.0);
+        CHARGE_MAX_DAMAGE_MULTIPLIER = b.comment("Base damage multiplier at full charge, on top of the speed gain (spinning throw only).")
+                .defineInRange("maxDamageMultiplier", 1.6, 1.0, 5.0);
+        CHARGE_ENERGY_PER_TICK = b.comment("Spin energy consumed per tick of charging. The throw cost (steel_ball spin cost) stays reserved: the charge stops growing instead of using it.")
+                .defineInRange("energyPerTick", 1.0, 0.0, 1000.0);
+        CHARGE_SLOWNESS_AMPLIFIER = b.comment("Slowness amplifier while charging: the user concentrates on the rotation (-1 disables).")
+                .defineInRange("slownessAmplifier", 2, -1, 5);
+        CHARGE_CHIPPED_MAX = b.comment("Highest charge share a chipped (imperfect) ball can take: it fails the higher rotation (SBR ch. 84).")
+                .defineInRange("chippedMaxCharge", 0.5, 0.0, 1.0);
+        CHARGE_COOLDOWN_TICKS = b.comment("Cooldown after a fully charged throw, in ticks; a shorter charge gives a proportionally shorter cooldown. The steel ball's own throw cooldown applies as usual.")
+                .defineInRange("cooldownTicks", 20, 0, 6000);
         b.pop();
 
         b.push("item_spin");
