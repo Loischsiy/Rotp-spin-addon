@@ -54,6 +54,8 @@ public class InitStands {
                     () -> new EntityStandType.Builder<StandStats>()
                     .color(0x7AC74F)
                     .storyPartName(ModStandsInit.PART_7_NAME)
+                    // Not from a Stand Arrow: Ball Breaker manifests from the Super Spin throw (BallBreakerManifestation).
+                    .setSurvivalGameplayPool(StandType.StandSurvivalGameplayPool.NON_ARROW)
                     .leftClickHotbar(
                             BALL_BREAKER_PUNCH.get(),
                             BALL_BREAKER_SENESCENCE.get()

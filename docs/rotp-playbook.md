@@ -203,6 +203,12 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
     сабстепы не нужны. Возвращающийся шар (`setNoPhysics(true)`) сквозь блоки летит намеренно.
   Только `InitItems.STEEL_BALL` (сравнение `==`, т.к. `WreckingBallItem extends SteelBallItem`).
 
+- **Выдача Стенда из механики аддона** (Ball Breaker, `power/BallBreakerManifestation`):
+  `.setSurvivalGameplayPool(StandType.StandSurvivalGameplayPool.NON_ARROW)` в билдере исключает Стенд
+  из Стрелы (диск в творческой вкладке остаётся); выдача — `IStandPower.getStandPowerOptional(user)`
+  → `hasPower()` / `givePower(standType)` на сервере, сразу призвать —
+  `EntityStandType#summon(user, power, false)`.
+
 ## D. Предметы аддона
 - **`steel_ball`** — бросок с возвратом в руку; NBT-флаг «повреждён», влияющий на Golden Spin
   и Ball Breaker.

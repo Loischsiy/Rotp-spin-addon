@@ -88,6 +88,9 @@ public class SteelBallItem extends Item {
             ball.pickup = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
         }
         world.addFreshEntity(ball);
+        if (spinning) {
+            com.loischsiy.rotpspin.power.BallBreakerManifestation.tryManifest(player, ballStack, true);
+        }
 
         // Energy level is shown by RotP's energy bar; only explain why the ball was thrown without rotation.
         if (spin != null && !spinning) {

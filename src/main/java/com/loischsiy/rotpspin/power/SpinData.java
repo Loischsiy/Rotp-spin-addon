@@ -166,6 +166,11 @@ public class SpinData extends TypeSpecificData {
         return SpinSuperSpin.isGallopReady(gallopTicks, SpinConfig.SUPER_SPIN_GALLOP_TICKS.get());
     }
 
+    /** Super Spin from the natural gallop of the horse (not the detour kick) is in the user now. */
+    public boolean hasGallopSuperSpin() {
+        return lesson >= 4 && isGallopReady();
+    }
+
     /** Super Spin from the gallop or from the detour kick is in the user now. */
     public boolean hasSuperSpin(long gameTime) {
         return (lesson >= 4 && isGallopReady()) || gameTime < detourUntil;

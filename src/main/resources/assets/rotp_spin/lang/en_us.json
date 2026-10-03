@@ -76,6 +76,7 @@
   "rotp_spin.message.super_spin_ready": "The horse's natural gait flows into the throw: Super Spin",
   "rotp_spin.message.super_spin_broken": "The gait is broken: Super Spin is lost",
   "rotp_spin.message.super_spin_detour": "The kick hands over the Golden Spin: Super Spin for %s s",
+  "rotp_spin.message.ball_breaker_manifested": "The Super Spin takes shape: Ball Breaker has manifested!",
   "rotp_spin.message.xray_diagnosis": "The ripples in the water show %s: %s (health %s)",
   "rotp_spin.message.xray_healthy": "The ripples in the water show %s: no hidden ailments (health %s)"
 }

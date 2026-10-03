@@ -76,6 +76,7 @@
   "rotp_spin.message.super_spin_ready": "Естественный ход коня переходит в бросок: Супер Спин",
   "rotp_spin.message.super_spin_broken": "Ход сбит: Супер Спин потерян",
   "rotp_spin.message.super_spin_detour": "Удар копыта передал Золотой Спин: Супер Спин на %s с",
+  "rotp_spin.message.ball_breaker_manifested": "Супер Спин обрёл форму: проявился Ball Breaker!",
   "rotp_spin.message.xray_diagnosis": "Рябь на воде показывает %s: %s (здоровье %s)",
   "rotp_spin.message.xray_healthy": "Рябь на воде показывает %s: скрытых недугов нет (здоровье %s)"
 }

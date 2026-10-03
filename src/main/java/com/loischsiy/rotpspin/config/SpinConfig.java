@@ -148,6 +148,10 @@ public class SpinConfig {
     public static final ForgeConfigSpec.IntValue BALL_BREAKER_SENESCENCE_INTERVAL;
     public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_SENESCENCE_DAMAGE;
     public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_SPIN_DAMAGE_MULT;
+    public static final ForgeConfigSpec.BooleanValue BALL_BREAKER_MANIFEST_ENABLED;
+    public static final ForgeConfigSpec.IntValue BALL_BREAKER_MANIFEST_MIN_LESSON;
+    public static final ForgeConfigSpec.BooleanValue BALL_BREAKER_MANIFEST_SUMMON;
+    public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_CHIPPED_RETENTION;
     public static final ForgeConfigSpec.BooleanValue BALL_BREAKER_AURA_ENABLED;
     public static final ForgeConfigSpec.IntValue BALL_BREAKER_AURA_SPARKS;
     public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_AURA_RADIUS;
@@ -526,6 +530,16 @@ public class SpinConfig {
                 .defineInRange("senescenceDamage", 1.0, 0.0, 100.0);
         BALL_BREAKER_SPIN_DAMAGE_MULT = b.comment("Ball Breaker summoned + Golden Spin calibrated: damage multiplier of the thrower's spinning steel balls (the visualization amplifies the Spin itself).")
                 .defineInRange("spinDamageMultiplier", 1.5, 1.0, 100.0);
+        BALL_BREAKER_CHIPPED_RETENTION = b.comment("Imperfect sphere (SBR ch. 84): with a chipped steel ball in the master's hand, Senescence Touch keeps this share of its damage and aging duration.")
+                .defineInRange("chippedRetention", 0.5, 0.0, 1.0);
+        b.push("manifestation");
+        BALL_BREAKER_MANIFEST_ENABLED = b.comment("Ball Breaker manifests (it never comes from a Stand Arrow) when a master throws a perfect steel ball with Super Spin from a galloping horse (SBR ch. 83). A chipped ball cannot take Super Spin (ch. 84). Users who already have a Stand are not affected.")
+                .define("enabled", true);
+        BALL_BREAKER_MANIFEST_MIN_LESSON = b.comment("Lesson the master must have reached for the manifestation.")
+                .defineInRange("minLesson", 5, 1, 5);
+        BALL_BREAKER_MANIFEST_SUMMON = b.comment("The Stand appears at once with the throw that manifested it, as in the manga.")
+                .define("summonOnManifest", true);
+        b.pop();
         b.push("aura");
         BALL_BREAKER_AURA_ENABLED = b.comment("Cloud of Spin energy resembling electrostatic discharges around the summoned Stand (SBR ch. 83). Visual only, seen by those who can see Stands.")
                 .define("enabled", true);
