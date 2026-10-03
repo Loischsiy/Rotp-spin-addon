@@ -208,6 +208,11 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
   из Стрелы (диск в творческой вкладке остаётся); выдача — `IStandPower.getStandPowerOptional(user)`
   → `hasPower()` / `givePower(standType)` на сервере, сразу призвать —
   `EntityStandType#summon(user, power, false)`.
+- **Удар по чужому Стенду и его стамине** (сенесценция, `power/BallBreakerAging`): фигура Стенда —
+  `StandEntity`, её пользователь — `StandEntity#getUser()`; стамина — `IStandPower#usesStamina()`,
+  `isStaminaInfinite()`, `getStamina()` / `setStamina(float)` на сервере. Эффект с атрибутами,
+  числа которых в конфиге: регистрируй модификатор с заглушкой и переопредели
+  `Effect#getAttributeModifierValue(amplifier, modifier)` (конфиг ещё не загружен при регистрации).
 
 ## D. Предметы аддона
 - **`steel_ball`** — бросок с возвратом в руку; NBT-флаг «повреждён», влияющий на Golden Spin

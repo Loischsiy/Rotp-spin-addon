@@ -17,7 +17,9 @@ import com.loischsiy.rotpspin.item.GyrosHolsterItem;
 import com.loischsiy.rotpspin.item.SteelBallItem;
 import com.loischsiy.rotpspin.item.WreckingBallItem;
 import com.loischsiy.rotpspin.power.SpinData;
+import com.loischsiy.rotpspin.power.BallBreakerAging;
 import com.loischsiy.rotpspin.power.BallBreakerBoost;
+import com.loischsiy.rotpspin.power.BallBreakerManifestation;
 import com.loischsiy.rotpspin.power.SpinGolden;
 import com.loischsiy.rotpspin.power.SpinResonance;
 import com.loischsiy.rotpspin.power.SpinSqueeze;
@@ -581,8 +583,8 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
             if (target instanceof LivingEntity
                     && BallBreakerBoost.shouldBoost(BallBreakerBoost.hasBallBreakerOut((LivingEntity) thrower),
                             SpinData.goldenMultiplier(level, (LivingEntity) thrower))) {
-                ((LivingEntity) target).addEffect(new EffectInstance(InitEffects.SENESCENCE.get(),
-                        SpinConfig.BALL_BREAKER_SENESCENCE_DURATION.get()));
+                BallBreakerAging.apply((LivingEntity) target, BallBreakerManifestation.senescenceScale(
+                        SteelBallItem.isChipped(thrownStack), SpinConfig.BALL_BREAKER_CHIPPED_RETENTION.get()));
             }
             if (target instanceof LivingEntity && target.isAlive()) {
                 squeeze((LivingEntity) target, (LivingEntity) thrower);

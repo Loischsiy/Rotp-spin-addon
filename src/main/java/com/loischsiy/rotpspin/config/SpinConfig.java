@@ -152,6 +152,11 @@ public class SpinConfig {
     public static final ForgeConfigSpec.IntValue BALL_BREAKER_MANIFEST_MIN_LESSON;
     public static final ForgeConfigSpec.BooleanValue BALL_BREAKER_MANIFEST_SUMMON;
     public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_CHIPPED_RETENTION;
+    public static final ForgeConfigSpec.IntValue BALL_BREAKER_MAX_STACKS;
+    public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_STAND_STAMINA_DRAIN;
+    public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_HEALTH_PER_STACK;
+    public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_SPEED_PER_STACK;
+    public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_ATTACK_PER_STACK;
     public static final ForgeConfigSpec.BooleanValue BALL_BREAKER_AURA_ENABLED;
     public static final ForgeConfigSpec.IntValue BALL_BREAKER_AURA_SPARKS;
     public static final ForgeConfigSpec.DoubleValue BALL_BREAKER_AURA_RADIUS;
@@ -517,7 +522,7 @@ public class SpinConfig {
 
         b.push("ball_breaker");
         BALL_BREAKER_TOUCH_DAMAGE = b.comment("Senescence Touch: direct armor-piercing damage in the touched zone.")
-                .defineInRange("touchDamage", 6.0, 0.0, 1000.0);
+                .defineInRange("touchDamage", 8.0, 0.0, 1000.0);
         BALL_BREAKER_TOUCH_RANGE = b.comment("Senescence Touch: radius around the Stand in which everything ages.")
                 .defineInRange("touchRange", 3.0, 0.5, 16.0);
         BALL_BREAKER_TOUCH_STAMINA = b.comment("Senescence Touch: stamina cost.")
@@ -525,13 +530,25 @@ public class SpinConfig {
         BALL_BREAKER_SENESCENCE_DURATION = b.comment("How long (ticks) the aging lasts after a touch.")
                 .defineInRange("senescenceDurationTicks", 120, 10, 6000);
         BALL_BREAKER_SENESCENCE_INTERVAL = b.comment("Aging wounds once per this many ticks.")
-                .defineInRange("senescenceIntervalTicks", 20, 1, 1200);
+                .defineInRange("senescenceIntervalTicks", 10, 1, 1200);
         BALL_BREAKER_SENESCENCE_DAMAGE = b.comment("Aging damage per interval (ignores armor, like the canon bypass).")
                 .defineInRange("senescenceDamage", 1.0, 0.0, 100.0);
         BALL_BREAKER_SPIN_DAMAGE_MULT = b.comment("Ball Breaker summoned + Golden Spin calibrated: damage multiplier of the thrower's spinning steel balls (the visualization amplifies the Spin itself).")
                 .defineInRange("spinDamageMultiplier", 1.5, 1.0, 100.0);
         BALL_BREAKER_CHIPPED_RETENTION = b.comment("Imperfect sphere (SBR ch. 84): with a chipped steel ball in the master's hand, Senescence Touch keeps this share of its damage and aging duration.")
                 .defineInRange("chippedRetention", 0.5, 0.0, 1.0);
+        b.push("aging");
+        BALL_BREAKER_MAX_STACKS = b.comment("The victim ages within seconds (SBR ch. 83-84): every new touch (or Golden throw under Ball Breaker) deepens senescence by one level, up to this many.")
+                .defineInRange("maxStacks", 3, 1, 10);
+        BALL_BREAKER_STAND_STAMINA_DRAIN = b.comment("Its Stand ages too (ch. 84): Stand stamina a Stand user loses per senescence level on each touch. A touch on a Stand's figure ages its user. 0 disables.")
+                .defineInRange("standStaminaDrain", 60.0, 0.0, 10000.0);
+        BALL_BREAKER_HEALTH_PER_STACK = b.comment("Aged body (game form): max health lost per senescence level while it lasts. Lost health is not given back when it ends. 0 disables.")
+                .defineInRange("maxHealthPerStack", 2.0, 0.0, 20.0);
+        BALL_BREAKER_SPEED_PER_STACK = b.comment("Aged body: share of movement speed lost per senescence level.")
+                .defineInRange("speedPerStack", 0.1, 0.0, 0.3);
+        BALL_BREAKER_ATTACK_PER_STACK = b.comment("Aged body: attack damage lost per senescence level.")
+                .defineInRange("attackPerStack", 1.0, 0.0, 10.0);
+        b.pop();
         b.push("manifestation");
         BALL_BREAKER_MANIFEST_ENABLED = b.comment("Ball Breaker manifests (it never comes from a Stand Arrow) when a master throws a perfect steel ball with Super Spin from a galloping horse (SBR ch. 83). A chipped ball cannot take Super Spin (ch. 84). Users who already have a Stand are not affected.")
                 .define("enabled", true);
