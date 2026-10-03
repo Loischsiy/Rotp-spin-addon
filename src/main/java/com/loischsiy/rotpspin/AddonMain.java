@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import com.loischsiy.rotpspin.capability.SpinPowerCapability;
 import com.loischsiy.rotpspin.power.SpinSailHandler;
 import com.loischsiy.rotpspin.compat.curios.CuriosCompat;
+import com.loischsiy.rotpspin.compat.d4c.LoveTrainBypass;
 import com.loischsiy.rotpspin.compat.tusk.ITuskCompat;
 import com.loischsiy.rotpspin.compat.tusk.TuskCompat;
 import com.loischsiy.rotpspin.config.SpinConfig;
@@ -19,6 +20,7 @@ import com.loischsiy.rotpspin.init.InitStands;
 import com.loischsiy.rotpspin.network.AddonPackets;
 import com.loischsiy.rotpspin.world.GyroSpawns;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
@@ -37,6 +39,7 @@ public class AddonMain {
     // Literal on purpose: the core must not touch compat classes before the mod is confirmed.
     private static final String CURIOS_MOD_ID = "curios";
     private static final String TUSK_MOD_ID = "rotp_t";
+    private static final String D4C_MOD_ID = "rotp_d4c";
     private static ITuskCompat tuskCompat = ITuskCompat.NOOP;
 
     public AddonMain() {
@@ -56,6 +59,10 @@ public class AddonMain {
         modEventBus.addListener(this::entityAttributes);
         if (isCuriosLoaded()) {
             CuriosCompat.init();
+        }
+        if (ModList.get().isLoaded(D4C_MOD_ID)) {
+            LoveTrainBypass.markLoaded();
+            MinecraftForge.EVENT_BUS.register(LoveTrainBypass.class);
         }
     }
 

@@ -17,6 +17,7 @@ import com.loischsiy.rotpspin.item.GyrosHolsterItem;
 import com.loischsiy.rotpspin.item.SteelBallItem;
 import com.loischsiy.rotpspin.item.WreckingBallItem;
 import com.loischsiy.rotpspin.power.SpinData;
+import com.loischsiy.rotpspin.compat.d4c.LoveTrainBypass;
 import com.loischsiy.rotpspin.power.BallBreakerAging;
 import com.loischsiy.rotpspin.power.BallBreakerBoost;
 import com.loischsiy.rotpspin.power.BallBreakerManifestation;
@@ -577,12 +578,17 @@ public class SteelBallEntity extends ItemNbtProjectileEntity {
             AddonMain.getTuskCompat().onSpinBallHit((LivingEntity) target, (LivingEntity) thrower,
                     SteelBallItem.isChipped(thrownStack));
         }
-        boolean hurt = super.hurtTarget(target, thrower);
+        // A Golden throw under the summoned Ball Breaker pierces D4C's Love Train (optional rotp_d4c).
+        boolean breaker = !level.isClientSide() && isSpinning() && !isSatellite()
+                && thrower instanceof LivingEntity && target instanceof LivingEntity
+                && BallBreakerBoost.shouldBoost(BallBreakerBoost.hasBallBreakerOut((LivingEntity) thrower),
+                        SpinData.goldenMultiplier(level, (LivingEntity) thrower));
+        boolean hurt = breaker
+                ? LoveTrainBypass.pierce(() -> super.hurtTarget(target, thrower))
+                : super.hurtTarget(target, thrower);
         if (hurt && !level.isClientSide() && isSpinning() && !isSatellite() && thrower instanceof LivingEntity) {
             SpinData.practiceHit((LivingEntity) thrower, target);
-            if (target instanceof LivingEntity
-                    && BallBreakerBoost.shouldBoost(BallBreakerBoost.hasBallBreakerOut((LivingEntity) thrower),
-                            SpinData.goldenMultiplier(level, (LivingEntity) thrower))) {
+            if (breaker) {
                 BallBreakerAging.apply((LivingEntity) target, BallBreakerManifestation.senescenceScale(
                         SteelBallItem.isChipped(thrownStack), SpinConfig.BALL_BREAKER_CHIPPED_RETENTION.get()));
             }

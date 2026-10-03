@@ -76,3 +76,10 @@ Spin (JoJo Part 7/8) for Ripples of the Past: kinetics, rotation, micro-vibratio
     versionRange="[0,)"
     ordering="AFTER"
     side="BOTH"
+# Optional: Ball Breaker pierces D4C's Love Train (see docs/integrations.md)
+[[dependencies.rotp_spin]]
+    modId="rotp_d4c"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"

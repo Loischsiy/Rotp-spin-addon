@@ -8,6 +8,7 @@ import com.github.standobyte.jojo.entity.stand.StandEntity;
 import com.github.standobyte.jojo.entity.stand.StandEntityTask;
 import com.github.standobyte.jojo.entity.stand.StandPose;
 import com.github.standobyte.jojo.power.impl.stand.IStandPower;
+import com.loischsiy.rotpspin.compat.d4c.LoveTrainBypass;
 import com.loischsiy.rotpspin.config.SpinConfig;
 import com.loischsiy.rotpspin.power.BallBreakerAging;
 import com.loischsiy.rotpspin.power.BallBreakerManifestation;
@@ -51,14 +52,17 @@ public class BallBreakerSenescence extends StandEntityAction {
         for (LivingEntity victim : world.getEntitiesOfClass(LivingEntity.class,
                 standEntity.getBoundingBox().inflate(range),
                 e -> e.isAlive() && e != user && e != standEntity)) {
-            victim.hurt(new EntityDamageSource("ballBreaker", standEntity).bypassArmor(), damage);
+            // Marked as projectile so D4C's Love Train does not shunt the touch onto bystanders:
+            // Ball Breaker reaches the Love Train holder itself (SBR ch. 83-84).
+            LoveTrainBypass.pierce(() -> victim.hurt(
+                    new EntityDamageSource("ballBreaker", standEntity).bypassArmor().setProjectile(), damage));
             LivingEntity target = BallBreakerAging.agingTarget(victim);
             if (target == null || target == user || aged.contains(target)) {
                 continue;
             }
             if (BallBreakerAging.apply(victim, scale) != null) {
                 aged.add(target);
-                target.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, duration, 1));
+                LoveTrainBypass.addEffect(target, new EffectInstance(Effects.MOVEMENT_SLOWDOWN, duration, 1));
             }
         }
     }

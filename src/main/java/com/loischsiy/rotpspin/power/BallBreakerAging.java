@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import com.github.standobyte.jojo.entity.stand.StandEntity;
 import com.github.standobyte.jojo.power.impl.stand.IStandPower;
+import com.loischsiy.rotpspin.compat.d4c.LoveTrainBypass;
 import com.loischsiy.rotpspin.config.SpinConfig;
 import com.loischsiy.rotpspin.init.InitEffects;
 
@@ -59,7 +60,7 @@ public final class BallBreakerAging {
         EffectInstance current = target.getEffect(InitEffects.SENESCENCE.get());
         int amplifier = nextAmplifier(current == null ? -1 : current.getAmplifier(),
                 SpinConfig.BALL_BREAKER_MAX_STACKS.get());
-        target.addEffect(new EffectInstance(InitEffects.SENESCENCE.get(), duration, amplifier));
+        LoveTrainBypass.addEffect(target, new EffectInstance(InitEffects.SENESCENCE.get(), duration, amplifier));
         float drain = standStaminaDrain(SpinConfig.BALL_BREAKER_STAND_STAMINA_DRAIN.get(), amplifier + 1, scale);
         if (drain > 0) {
             IStandPower.getStandPowerOptional(target).ifPresent(power -> {

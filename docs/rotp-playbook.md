@@ -213,6 +213,11 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
   `isStaminaInfinite()`, `getStamina()` / `setStamina(float)` на сервере. Эффект с атрибутами,
   числа которых в конфиге: регистрируй модификатор с заглушкой и переопредели
   `Effect#getAttributeModifierValue(amplifier, modifier)` (конфиг ещё не загружен при регистрации).
+- **Снять чужую отмену события** (Love Train из D4C, `compat/d4c/LoveTrainBypass`):
+  `@SubscribeEvent(priority = LOWEST, receiveCanceled = true)` + `setCanceled(false)` — Forge смотрит
+  на флаг после всех слушателей. Ограничивай флагом «идёт наш удар» (ThreadLocal вокруг `hurt`), чтобы
+  не ломать чужую защиту. `PotionAddedEvent` в Forge 36 не отменяемый: эффект в обход —
+  `LivingEntity#forceAddEffect` (проверяет `canBeAffected`, но не шлёт `PotionAddedEvent`).
 
 ## D. Предметы аддона
 - **`steel_ball`** — бросок с возвратом в руку; NBT-флаг «повреждён», влияющий на Golden Spin

@@ -2,6 +2,7 @@ package com.loischsiy.rotpspin.effect;
 
 import java.util.UUID;
 
+import com.loischsiy.rotpspin.compat.d4c.LoveTrainBypass;
 import com.loischsiy.rotpspin.config.SpinConfig;
 import com.loischsiy.rotpspin.power.BallBreakerAging;
 
@@ -59,8 +60,8 @@ public class SenescenceEffect extends Effect {
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
         if (!entity.level.isClientSide()) {
-            entity.hurt(DamageSource.WITHER,
-                    SpinConfig.BALL_BREAKER_SENESCENCE_DAMAGE.get().floatValue() * (amplifier + 1));
+            float damage = SpinConfig.BALL_BREAKER_SENESCENCE_DAMAGE.get().floatValue() * (amplifier + 1);
+            LoveTrainBypass.pierce(() -> entity.hurt(DamageSource.WITHER, damage));
         }
     }
 

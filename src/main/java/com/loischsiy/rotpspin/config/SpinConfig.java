@@ -226,6 +226,7 @@ public class SpinConfig {
     public static final ForgeConfigSpec.DoubleValue SAIL_MAX_HORIZONTAL_SPEED;
     public static final ForgeConfigSpec.DoubleValue SAIL_COST_PER_TICK;
     public static final ForgeConfigSpec.DoubleValue SAIL_START_ENERGY;
+    public static final ForgeConfigSpec.BooleanValue COMPAT_D4C_ENABLED;
     public static final ForgeConfigSpec.BooleanValue COMPAT_TUSK_ENABLED;
     public static final ForgeConfigSpec.IntValue COMPAT_TUSK_CHARGE_4;
     public static final ForgeConfigSpec.IntValue COMPAT_TUSK_CHARGE_5;
@@ -716,6 +717,10 @@ public class SpinConfig {
                 .define("counterRotationEnabled", true);
         COMPAT_TUSK_COUNTER_NEEDS_SUPER_SPIN = b.comment("Counter-rotation needs the thrower to hold Super Spin (and an unchipped ball); otherwise any lesson-gated spinning ball works.")
                 .define("counterRotationNeedsSuperSpin", true);
+        b.pop();
+        b.push("d4c");
+        COMPAT_D4C_ENABLED = b.comment("If the D4C stand addon (rotp_d4c) is installed, Ball Breaker (Golden throw under the summoned Stand, the senescence touch and its aging) pierces Love Train (SBR ch. 83-84). No effect without rotp_d4c.")
+                .define("enabled", true);
         b.pop();
         b.pop();
 

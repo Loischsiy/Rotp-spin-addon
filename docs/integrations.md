@@ -9,6 +9,7 @@
 | Ripples of the Past (обязательный) | `jojo` |
 | RotP Tusk Stand Addon (опциональный) | `rotp_t` |
 | Curios API (опциональный, реализован) | `curios` |
+| RotP D4C Addon (опциональный, реализован) | `rotp_d4c` |
 | Наш аддон | `rotp_spin` |
 
 Tusk-аддон: https://github.com/Yarost228/RotpTuskAddon, пакет `com.doggys_tilt.rotp_t`,
@@ -140,6 +141,33 @@ tuskCompat = ModList.get().isLoaded("rotp_t")
       20 блоков за ~8 с, без урона; клиентская синхронизация в порядке).
 - [x] `compat.curios.enabled=false` (горячая перезагрузка): кобура в поясе игнорируется (`R` ничего
       не делает), парус из слота Curios не раскрывается (урон от падения 20→15.5); после `true` снова работает.
+
+## D4C: Ball Breaker пробивает Love Train (реализовано)
+Аддон: https://modrinth.com/mod/d4c-dirtydeedsdonedirtcheap (проверено на 0.8.65-Alpha, 1.16.5).
+Jar обфусцирован (`com.mrlang.rotp_d4c.*`), а условия распространения запрещают перезаливать
+тестовые сборки, поэтому в репозитории его нет и `compileOnly` не используется.
+
+Как Love Train защищает владельца (эффект `rotp_d4c:love_train`, обработчики с приоритетом HIGHEST):
+- `LivingAttackEvent` и `LivingHurtEvent` отменяются всегда. Если атакующий — `LivingEntity`, а урон
+  не `isProjectile()`, «несчастье» сначала переносится на существ в радиусе 20 блоков.
+- Вредные эффекты: `PotionApplicableEvent` → `DENY`; ещё и `PotionAddedEvent.setCanceled(true)`,
+  но в Forge 36 это событие не отменяемое — вызов бросит исключение, если до него дойдёт.
+
+Наш шов, `compat/d4c/LoveTrainBypass` (без классов D4C, эффект ищется по имени реестра):
+- `pierce(...)` оборачивает урон Ball Breaker: удар шара с Золотым Спином при призванном Стенде,
+  Касание сенесценции, тик эффекта сенесценции. Пока он идёт, обработчики LOWEST
+  (`receiveCanceled = true`) снимают отмену атаки/урона и `DENY` (→ `DEFAULT`) у владельца Love Train.
+- Эффекты (сенесценция, замедление от касания) на владельца Love Train ставятся через
+  `forceAddEffect` — он не шлёт `PotionAddedEvent`, поэтому D4C не роняет игру.
+- Урон касания помечен `setProjectile()`, чтобы D4C не перенаправлял его на соседей: Ball Breaker
+  бьёт самого Валентайна (гл. 83–84). Удар шара и так снаряд (`DamageSource.arrow`).
+- Слушатели регистрируются в `AddonMain` только при `ModList.isLoaded("rotp_d4c")`;
+  ключ `compat.d4c.enabled` (по умолчанию `true`).
+
+Тестирование:
+- [x] Сборка и юнит-тест правила (`LoveTrainBypassTest`) без D4C.
+- [x] Поведение D4C сверено по байткоду 0.8.65-Alpha (`ah/ah`, `ah/al`).
+- [ ] В игре с D4C: Ball Breaker ранит и старит владельца Love Train, обычный шар — нет.
 
 ## Добавление новой интеграции
 Тот же паттерн: интерфейс в ядре + `NOOP` + реализация в `compat.<modid>` + `mandatory=false`
