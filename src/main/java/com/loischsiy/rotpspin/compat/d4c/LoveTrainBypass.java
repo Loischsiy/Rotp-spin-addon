@@ -3,6 +3,7 @@ package com.loischsiy.rotpspin.compat.d4c;
 import java.util.function.BooleanSupplier;
 
 import com.loischsiy.rotpspin.config.SpinConfig;
+import com.loischsiy.rotpspin.init.InitEffects;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.Effect;
@@ -20,7 +21,9 @@ import net.minecraftforge.registries.ForgeRegistries;
  * Optional D4C addon (rotp_d4c, docs/integrations.md): Ball Breaker pierces Love Train
  * (SBR ch. 83-84). Love Train cancels every attack and hurt event on its holder and denies
  * harmful effects at HIGHEST priority; while a Ball Breaker hit is in progress our LOWEST
- * listeners lift exactly those vetoes for the Love Train holder.
+ * listeners lift exactly those vetoes for the Love Train holder. Love Train also strips every
+ * harmful effect on each tick of its own effect; senescence is exempt from that cleanse only
+ * (milk and other removals behave as usual).
  *
  * No compile-time dependency on D4C: the effect is looked up by registry name, so this class
  * is safe to call without the mod (every call then falls through to vanilla behaviour).
@@ -42,6 +45,12 @@ public final class LoveTrainBypass {
     /** Pure rule: lift D4C's veto only inside a Ball Breaker hit on a Love Train holder. */
     public static boolean shouldLift(boolean enabled, boolean piercing, boolean hasLoveTrain) {
         return enabled && piercing && hasLoveTrain;
+    }
+
+    /** Pure rule: keep senescence when Love Train's own tick tries to wash it away. */
+    public static boolean shouldKeep(boolean enabled, boolean isSenescence, boolean hasLoveTrain,
+            boolean fromLoveTrainTick) {
+        return enabled && isSenescence && hasLoveTrain && fromLoveTrainTick;
     }
 
     /** Runs a Ball Breaker damage call; Love Train does not stop it. */
@@ -94,6 +103,30 @@ public final class LoveTrainBypass {
             // DEFAULT, not ALLOW: vanilla immunities (e.g. undead vs. poison) still apply.
             event.setResult(Event.Result.DEFAULT);
         }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onPotionRemove(PotionEvent.PotionRemoveEvent event) {
+        LivingEntity entity = event.getEntityLiving();
+        if (!active() || event.getPotion() != InitEffects.SENESCENCE.get() || !hasLoveTrain(entity)) {
+            return;
+        }
+        if (shouldKeep(true, true, true, calledFromLoveTrain())) {
+            event.setCanceled(true);
+        }
+    }
+
+    /** True if Love Train's Effect class is on the stack (its per-tick harmful-effect cleanse). */
+    private static boolean calledFromLoveTrain() {
+        // Java 8 target: no StackWalker. Runs only when senescence leaves a Love Train holder.
+        String loveTrainClass = loveTrain.getClass().getName();
+        StackTraceElement[] stack = new Throwable().getStackTrace();
+        for (int i = 0; i < stack.length && i < 32; i++) {
+            if (loveTrainClass.equals(stack[i].getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean active() {

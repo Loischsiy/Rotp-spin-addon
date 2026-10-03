@@ -25,4 +25,14 @@ class LoveTrainBypassTest {
     void loveTrainId() {
         assertEquals("rotp_d4c:love_train", LoveTrainBypass.LOVE_TRAIN_ID.toString());
     }
+
+    @Test
+    void keepsSenescenceOnlyAgainstLoveTrainCleanse() {
+        assertTrue(LoveTrainBypass.shouldKeep(true, true, true, true));
+        assertFalse(LoveTrainBypass.shouldKeep(false, true, true, true));
+        assertFalse(LoveTrainBypass.shouldKeep(true, false, true, true));
+        assertFalse(LoveTrainBypass.shouldKeep(true, true, false, true));
+        // milk, commands and other mods still remove it
+        assertFalse(LoveTrainBypass.shouldKeep(true, true, true, false));
+    }
 }
