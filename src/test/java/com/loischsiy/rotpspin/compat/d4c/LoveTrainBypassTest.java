@@ -35,4 +35,11 @@ class LoveTrainBypassTest {
         // milk, commands and other mods still remove it
         assertFalse(LoveTrainBypass.shouldKeep(true, true, true, false));
     }
+
+    @Test
+    void forcedEffectStaysExemptOnlyForItsDuration() {
+        assertTrue(LoveTrainBypass.keptUntil(100L, 40L));
+        assertTrue(LoveTrainBypass.keptUntil(100L, 100L));
+        assertFalse(LoveTrainBypass.keptUntil(100L, 101L));
+    }
 }

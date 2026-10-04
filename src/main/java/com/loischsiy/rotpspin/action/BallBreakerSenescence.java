@@ -16,7 +16,6 @@ import com.loischsiy.rotpspin.power.BallBreakerManifestation;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.EntityDamageSource;
 import net.minecraft.world.World;
 
 /**
@@ -52,10 +51,8 @@ public class BallBreakerSenescence extends StandEntityAction {
         for (LivingEntity victim : world.getEntitiesOfClass(LivingEntity.class,
                 standEntity.getBoundingBox().inflate(range),
                 e -> e.isAlive() && e != user && e != standEntity)) {
-            // Marked as projectile so D4C's Love Train does not shunt the touch onto bystanders:
-            // Ball Breaker reaches the Love Train holder itself (SBR ch. 83-84).
-            LoveTrainBypass.pierce(() -> victim.hurt(
-                    new EntityDamageSource("ballBreaker", standEntity).bypassArmor().setProjectile(), damage));
+            // Ball Breaker reaches a Love Train holder itself, not bystanders (SBR ch. 83-84).
+            LoveTrainBypass.pierce(() -> victim.hurt(LoveTrainBypass.touchSource(standEntity), damage));
             LivingEntity target = BallBreakerAging.agingTarget(victim);
             if (target == null || target == user || aged.contains(target)) {
                 continue;
