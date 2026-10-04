@@ -1,7 +1,9 @@
 package com.loischsiy.rotpspin.client.render;
 
 import com.loischsiy.rotpspin.AddonMain;
-import com.loischsiy.rotpspin.item.GyrosHolsterItem;
+import com.loischsiy.rotpspin.client.render.GyrosHolsterModel.BallSkin;
+import com.loischsiy.rotpspin.holster.HolsterNbt;
+import com.loischsiy.rotpspin.item.WreckingBallItem;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.Minecraft;
@@ -11,10 +13,13 @@ import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Draws the worn holster in the wearer's model space (called from a render layer, e.g. Curios).
@@ -37,8 +42,18 @@ public final class GyrosHolsterRender {
         }
         BipedModel<?> biped = (BipedModel<?>) ((LivingRenderer<?, ?>) renderer).getModel();
         model.copyPose(biped);
-        model.setBallCount(GyrosHolsterItem.getBallCount(holster));
+        CompoundNBT tag = holster.getTag();
+        model.setBalls(skin(HolsterNbt.ballId(tag, 0)), skin(HolsterNbt.ballId(tag, 1)));
         model.renderToBuffer(matrixStack, buffers.getBuffer(model.renderType(TEXTURE)), light, OverlayTexture.NO_OVERLAY,
                 1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    private static BallSkin skin(String itemId) {
+        if (itemId.isEmpty()) {
+            return BallSkin.NONE;
+        }
+        ResourceLocation id = ResourceLocation.tryParse(itemId);
+        Item item = id == null ? null : ForgeRegistries.ITEMS.getValue(id);
+        return item instanceof WreckingBallItem ? BallSkin.WRECKING : BallSkin.STEEL;
     }
 }

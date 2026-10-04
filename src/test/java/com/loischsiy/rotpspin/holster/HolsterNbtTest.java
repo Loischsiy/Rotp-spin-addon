@@ -65,4 +65,17 @@ class HolsterNbtTest {
         assertFalse(HolsterNbt.push(tag, ball("c"), 1));
         assertEquals(2, HolsterNbt.count(tag));
     }
+
+    @Test
+    void ballIdReadsSlotsInInsertionOrder() {
+        CompoundNBT tag = new CompoundNBT();
+        assertEquals("", HolsterNbt.ballId(null, 0));
+        assertEquals("", HolsterNbt.ballId(tag, 0));
+        HolsterNbt.push(tag, ball("rotp_spin:wrecking_ball"), 2);
+        HolsterNbt.push(tag, ball("rotp_spin:steel_ball"), 2);
+        assertEquals("rotp_spin:wrecking_ball", HolsterNbt.ballId(tag, 0));
+        assertEquals("rotp_spin:steel_ball", HolsterNbt.ballId(tag, 1));
+        assertEquals("", HolsterNbt.ballId(tag, 2));
+        assertEquals("", HolsterNbt.ballId(tag, -1));
+    }
 }

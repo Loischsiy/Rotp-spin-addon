@@ -19,6 +19,15 @@ public final class HolsterNbt {
         return holsterTag == null ? 0 : holsterTag.getList(BALLS_KEY, Constants.NBT.TAG_COMPOUND).size();
     }
 
+    /** Item id of the ball in slot {@code index} (0 = first in), or "" if the slot is empty. */
+    public static String ballId(@Nullable CompoundNBT holsterTag, int index) {
+        if (holsterTag == null || index < 0) {
+            return "";
+        }
+        ListNBT balls = holsterTag.getList(BALLS_KEY, Constants.NBT.TAG_COMPOUND);
+        return index < balls.size() ? balls.getCompound(index).getString("id") : "";
+    }
+
     /** Adds a ball if there is room. Returns whether it was added. */
     public static boolean push(CompoundNBT holsterTag, CompoundNBT ballNbt, int capacity) {
         ListNBT balls = holsterTag.getList(BALLS_KEY, Constants.NBT.TAG_COMPOUND);

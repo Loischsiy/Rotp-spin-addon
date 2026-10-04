@@ -33,6 +33,8 @@ public class GyrosHolsterModel extends Model {
     private final ModelRenderer hips;
     private final ModelRenderer ballRight;
     private final ModelRenderer ballLeft;
+    private final ModelRenderer wreckingRight;
+    private final ModelRenderer wreckingLeft;
 
     public GyrosHolsterModel() {
         super(RenderType::entityCutoutNoCull);
@@ -60,6 +62,17 @@ public class GyrosHolsterModel extends Model {
         ballLeft.setPos(0.0F, 0.0F, 0.0F);
         hips.addChild(ballLeft);
         ballLeft.texOffs(40, 8).addBox(-5.0F, 11.0F, -4.8F, 2.0F, 2.0F, 2.0F, 0.0F, false);
+
+        // Same cubes with the Wrecking Ball's copper/orange skin (texture rows 16-19)
+        wreckingRight = new ModelRenderer(this);
+        wreckingRight.setPos(0.0F, 0.0F, 0.0F);
+        hips.addChild(wreckingRight);
+        wreckingRight.texOffs(32, 16).addBox(3.0F, 11.0F, -4.8F, 2.0F, 2.0F, 2.0F, 0.0F, false);
+
+        wreckingLeft = new ModelRenderer(this);
+        wreckingLeft.setPos(0.0F, 0.0F, 0.0F);
+        hips.addChild(wreckingLeft);
+        wreckingLeft.texOffs(40, 16).addBox(-5.0F, 11.0F, -4.8F, 2.0F, 2.0F, 2.0F, 0.0F, false);
     }
 
     /** Fits the belt to the wearer's current pose (called after the wearer's model setupAnim). */
@@ -73,10 +86,19 @@ public class GyrosHolsterModel extends Model {
         hips.zRot = 0.0F;
     }
 
-    /** A ball is drawn in a holster only while the holster actually holds it. */
-    public void setBallCount(int count) {
-        ballRight.visible = count >= 1;
-        ballLeft.visible = count >= 2;
+    /**
+     * A ball is drawn in a holster only while the holster actually holds it, with the skin of the
+     * ball kind stored there: first ball in the right holster, second in the left one.
+     */
+    public void setBalls(BallSkin right, BallSkin left) {
+        ballRight.visible = right == BallSkin.STEEL;
+        wreckingRight.visible = right == BallSkin.WRECKING;
+        ballLeft.visible = left == BallSkin.STEEL;
+        wreckingLeft.visible = left == BallSkin.WRECKING;
+    }
+
+    public enum BallSkin {
+        NONE, STEEL, WRECKING
     }
 
     @Override

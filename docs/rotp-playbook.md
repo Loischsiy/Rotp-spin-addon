@@ -233,7 +233,9 @@ git -C .refs/addon-example show origin/new-model-anim-import --stat
   вешает на стак кобуры `ICurio` (`HolsterCurio`), его `render` зовёт клиентский
   `client.render.GyrosHolsterRender` → `GyrosHolsterModel` (геометрия из `docs/art/gyros_holster.bbmodel`,
   текстура `textures/entity/gyros_holster.png` 64×64). Кость `body` копирует позу торса игрока,
-  шары видны по числу шаров в кобуре. ТЗ — `docs/art/gyros_holster.md`.
+  шары видны по числу шаров в кобуре; скин берётся по типу шара в слоте (`HolsterNbt.ballId`: первый шар —
+  правая кобура, второй — левая): стальной — зелёный куб (UV 32/40,8), Wrecking Ball — медно-оранжевый
+  (UV 32/40,16). ТЗ — `docs/art/gyros_holster.md`.
 - **`calibration_buckle`** — латунная пряжка 1:1.618 с гравировкой Золотой спирали; включает
   Golden Spin в биомах без природных маркеров. Текстура 16×16, золотой прямоугольник 10×16 px.
 
