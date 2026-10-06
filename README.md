@@ -110,6 +110,13 @@ All shots taken headless in-game (`mcx`, Forge 1.16.5, llvmpipe) — no staging 
 
 ![Inventory with the three core items](docs/screenshots/03-items-inventory.png)
 
+**Spin throw: release and return.** The ball leaves the hand (empty first slot, Spin energy bar drains top-left),
+spins through the air — and comes back, because that is what rotation does.
+
+![Steel Ball mid-flight after a Spin throw](docs/screenshots/04-spin-throw-flight.png)
+
+![Throw and return, animated](docs/screenshots/05-spin-throw-return.gif)
+
 ## Usage
 
 **Learn and check progress:**
