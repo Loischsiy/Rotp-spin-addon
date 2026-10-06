@@ -117,6 +117,12 @@ spins through the air — and comes back, because that is what rotation does.
 
 ![Throw and return, animated](docs/screenshots/05-spin-throw-return.gif)
 
+**Ball Breaker in the flesh.** Green artificial humanoid with magenta core details,
+black-banded limbs and a shower of gold sparks on the punch. In survival it manifests
+from the gallop Super Spin throw — posed here via `/stand give` for the photo.
+
+![Ball Breaker punching, summoned beside the player](docs/screenshots/06-ball-breaker-punch.png)
+
 ## Usage
 
 **Learn and check progress:**
