@@ -123,6 +123,14 @@ from the gallop Super Spin throw — posed here via `/stand give` for the photo.
 
 ![Ball Breaker punching, summoned beside the player](docs/screenshots/06-ball-breaker-punch.png)
 
+**Advanced techniques (creative + lesson 5).** Below — charge, steer and Golden Frame, unlocked at max lesson.
+
+![Spin Ball Charge: ball hovers over palm, golden spiral compressing toward it](docs/screenshots/07-spin-ball-charge.png)
+
+![Spin Ball Steer: mid-flight ball with steer indicator toward target](docs/screenshots/08-spin-ball-steer.png)
+
+![Spin Golden Frame: player's arms framing the Golden Rectangle 21×13 with Fibonacci spiral](docs/screenshots/09-spin-golden-frame.png)
+
 ## Usage
 
 **Learn and check progress:**
