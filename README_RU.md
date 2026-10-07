@@ -125,11 +125,11 @@ mods/
 
 **Продвинутые техники (creative + урок 5).** Ниже — зарядка, наведение и Золотой фрейм, доступные на максимальном уроке.
 
-![Spin Ball Charge: шар нависает над ладонью, золотая спираль сжимается к нему](docs/screenshots/07-spin-ball-charge.png)
+![Spin Ball Charge: заряд 100% золотом, вспышка частиц микровибраций вокруг игрока](docs/screenshots/07-spin-ball-charge.png)
 
 ![Spin Ball Steer: полёт шара с индикатором наведения к цели](docs/screenshots/08-spin-ball-steer.png)
 
-![Spin Golden Frame: руки игроки очерчивают Золотой Прямоугольник 21×13 с Фибоначчи-спиралью](docs/screenshots/09-spin-golden-frame.png)
+![Spin Golden Frame: золотое сообщение о калибровке Golden Spin на 30 s](docs/screenshots/09-spin-golden-frame.png)
 
 ## Использование
 
